@@ -1,11 +1,10 @@
 {
   "name": "rhythm-rtc",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "private": true,
   "engines": {
     "node": "6.11.1"
   },
-  "postinstall": "cp node_modules/materialize-css/js/date_picker/picker.js node_modules/materialize-css/bin/picker.js",
   "browser": {
     "jquery": "./node_modules/jquery/dist/jquery.js",
     "materialize": "./node_modules/materialize-css/dist/js/materialize.js"
@@ -49,6 +48,7 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "postinstall": "coffee -c ./src/libs/mm.coffee"
   }
 }
