@@ -1,1 +1,1 @@
-web:node server.js
+web:./start_app.sh

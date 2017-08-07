@@ -5,7 +5,8 @@
  }
 
  main {
-     flex: 1 0 auto;
+     flex: 1 1 auto;
+     margin-top: 10px;
  }
 
 video {
@@ -18,7 +19,10 @@ video {
     -moz-transform:rotateY(180deg); /* Firefox */
     -o-transform : scaleX(-1);
     -webkit-transform : scaleX(-1);
-  transform : scaleX(-1);
+    transform : scaleX(-1);
+    height: 100%;
+    width: 100%;
+
 }
 
 p {
@@ -63,11 +67,26 @@ p {
   transform : scaleX(-1);
 }
 
-.remote{
-	margin-top: 25px;
+.remote{ margin-top: 25px;
 	height:100%;
 }
 
 a{
 	color:#E68308;
+}
+
+.logo-image {
+  height: auto;
+  max-height: 100px;
+  width: auto;
+  max-width: 100%;
+
+}
+
+.local-video {
+  padding-bottom: 50px;
+}
+
+.videoContainer {
+  padding: 0.25rem 0.75rem !important;
 }
