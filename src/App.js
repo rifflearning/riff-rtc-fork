@@ -12,7 +12,6 @@ class App extends React.Component {
     var opts = {
       // this will be made specificiable 
       roomname : this.props.room,
-      signalmasterUrl : "http://localhost:8888",
       username: this.props.user
     }
     var localVideoId = "local-video";

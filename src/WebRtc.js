@@ -27,6 +27,7 @@ class WebRtc extends React.Component {
 
     this.user_email = process.env.REACT_APP_SERVER_EMAIL;
     this.user_password = process.env.REACT_APP_SERVER_PASSWORD;
+    this.signalmaster_url = process.env.REACT_APP_SIGNALMASTER_URL;
   }
 
   connectToServer() {
@@ -53,7 +54,7 @@ class WebRtc extends React.Component {
       localVideoEl: ReactDOM.findDOMNode(this.refs.local),
       remoteVideosEl: "", // handled by our component
       autoRequestMedia: true,
-      url : this.props.options.signalmasterUrl,
+      url : this.signalmaster_url,
       nick: this.props.options.username,
       debug : false, 
     });

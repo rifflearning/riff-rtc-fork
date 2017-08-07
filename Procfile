@@ -1,1 +1,3 @@
-web:./start_app.sh
+web:npm start
+release: coffee -c ./src/libs/coffee.mm
+
