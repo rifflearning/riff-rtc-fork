@@ -4,6 +4,8 @@ import includes from 'lodash/includes';
 class RemoteVideoContainer extends React.Component {
   constructor(props) {
     super(props);
+    // i don't like this, but it's easy
+    // said the person who made every bad decision ever
     this.addingVideo = true;
   }
 

@@ -117,9 +117,9 @@ class WebRtc extends React.Component {
     return this.props.options.roomname
   }
 
-
-
   recordMeetingJoin() {
+    // transform participants to fit the required
+    // format of the rhythm-server
     let parts = this.getParticipants().map(
         (user) => { return { "participant": user } });
     
@@ -146,6 +146,7 @@ class WebRtc extends React.Component {
     console.log("ready");
     this.webrtc.joinRoom(this.props.options.roomname);
     // we do this after joinRoom to be sure the stream exists
+    // set threshold to appropriate value
     this.speakingEvents = new Sibilant(this.getLocalStream(), {passThrough: false, threshold: -35});
     this.authenticateAndRecord()
   }
@@ -214,7 +215,7 @@ class WebRtc extends React.Component {
 
 
   render() {
-    return (<div className = "row"> 
+    return (<div className = "row no-margin-bottom"> 
               <div id = "sidebar" className = "col s3">
                 <video className = "local-video"
                   id = {this.props.id}
