@@ -3,7 +3,7 @@
   "version": "0.2.0",
   "private": true,
   "engines": {
-    "node": "5.11.1"
+    "node": "6.11.1"
   },
   "dependencies": {
     "browserify": "11.2.0",
@@ -30,10 +30,10 @@
     "webpack": "^3.3.0"
   },
   "scripts": {
-    "start": "react-scripts start",
+    "start": "node server.js",
     "build": "react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
-    "postinstall": "coffee -c ./src/libs/mm.coffee"
+    "postinstall": "coffee -c ./src/libs/mm.coffee; npm run build"
   }
 }
