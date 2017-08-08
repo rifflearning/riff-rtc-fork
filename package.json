@@ -3,20 +3,7 @@
   "version": "0.2.0",
   "private": true,
   "engines": {
-    "node": "6.11.1"
-  },
-  "browser": {
-    "jquery": "./node_modules/jquery/dist/jquery.js",
-    "materialize": "./node_modules/materialize-css/dist/js/materialize.js"
-  },
-  "browserify-shim": {
-    "jquery": "$",
-    "materialize": "materialize"
-  },
-  "browserify": {
-    "transform": [
-      "browserify-shim"
-    ]
+    "node": "5.11.1"
   },
   "dependencies": {
     "browserify": "11.2.0",
@@ -39,10 +26,8 @@
     "simplewebrtc": "^2.2.3",
     "socket.io": "^2.0.3",
     "underscore": "^1.8.3",
+    "react-scripts": "1.0.4",
     "webpack": "^3.3.0"
-  },
-  "devDependencies": {
-    "react-scripts": "1.0.4"
   },
   "scripts": {
     "start": "react-scripts start",
