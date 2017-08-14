@@ -25,14 +25,13 @@ class WebRtc extends React.Component {
 
     this.connectToServer();
 
-    this.user_email = process.env.REACT_APP_SERVER_EMAIL;
-    this.user_password = process.env.REACT_APP_SERVER_PASSWORD;
+    this.server_email = process.env.REACT_APP_SERVER_EMAIL;
+    this.server_password = process.env.REACT_APP_SERVER_PASSWORD;
     this.signalmaster_url = process.env.REACT_APP_SIGNALMASTER_URL;
   }
 
   connectToServer() {
     // we create our socket + initialize our feathers app with it
-    console.log(process.env.REACT_APP_SERVER_URL);
     this.socket = io(process.env.REACT_APP_SERVER_URL, {
       'transports': [
         'websocket',
@@ -69,7 +68,6 @@ class WebRtc extends React.Component {
 
   componentDidUpdate() {
     if (this.mm) {
-      
       this.mm.update_users(this.getParticipants());
     }
   }
@@ -139,6 +137,7 @@ class WebRtc extends React.Component {
     // this is gross. but, it seems simplewebrtc doesn't 
     // support getting the local stream with its API
     // please forgive me for my sins
+    // we need this to hook in the audio/video data collection
     return this.webrtc.webrtc.localStreams[0];
   }
 
@@ -182,8 +181,8 @@ class WebRtc extends React.Component {
      */
     this.app.authenticate({
       type: 'local',
-      email: this.user_email,
-      password: this.user_password,
+      email: this.server_email,
+      password: this.server_password,
     }).then(function (result) {
       console.log("auth result!: ", result);
       this.token = result.token;

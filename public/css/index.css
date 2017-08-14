@@ -22,7 +22,6 @@ video {
     transform : scaleX(-1);
     height: 100%;
     width: 100%;
-
 }
 
 p {
@@ -31,13 +30,6 @@ p {
 	height:25px;
 }
 
-#box0 {
-	/*margin-top:25px;
-	margin-bottom: 10px;*/
-	border: 5px solid #555;
-	width:237px;
-	height:180px;
-}
 
 #videoWrapper {
   margin-top:30px;
