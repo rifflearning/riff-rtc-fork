@@ -29,6 +29,9 @@ p {
 	margin:0;
 	height:25px;
 }
+.local-video {
+  padding-bottom: 5px;
+}
 
 
 #videoWrapper {
@@ -75,9 +78,6 @@ a{
 
 }
 
-.local-video {
-  padding-bottom: 50px;
-}
 
 .videoContainer {
   padding: 0.25rem 0.75rem !important;

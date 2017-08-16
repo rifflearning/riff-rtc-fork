@@ -3,6 +3,9 @@ const _ = require('underscore')
 const $ = require('jquery')
 
 class Mediator {
+  
+  // COPIED FROM ORIGINAL RHYTHM-RTC PROJECT
+  // with some minor modifications
 
   // just sums up values of the turns object.
   get_total_transitions(turns) {
@@ -12,27 +15,23 @@ class Mediator {
   // transform to the right data to send to chart
   transform_turns(participants, turns) {
     console.log("transforming turns:", turns);
-
+    console.log("participants: ", participants);
     // filter out turns not by present participants
-    // var filtered_turns = _.filter(turns, function(turn){
-    //   return _.contains(participants, turn.participant);
-    // });
-    return turns;
+    var filtered_turns = _.filter(turns, function(turn){
+      return _.contains(participants, turn.participant);
+    });
+    return filtered_turns;
 
   }
 
   // update MM turns if it matches this hangout.
   maybe_update_mm_turns(data) {
     console.log("mm data turns:", data);
-    console.log("roomname ", this.roomName);
     
     if (data.meeting === this.roomName && this.mm.data.participants.length > 1) {
-      console.log(this.mm.data.participants);
-      console.log(this.roomName);
-      console.log(data.meeting);
-      this.mm.updateData({participants: this.mm.data.participants,
+      this.mm.updateData({participants: this.roomUsers,
         transitions: data.transitions,
-        turns: this.transform_turns(this.mm.data.participants, data.turns)});
+        turns: this.transform_turns(this.roomUsers, data.turns)});
     }
   }
 
@@ -81,7 +80,7 @@ class Mediator {
       console.log("roomname:", this.roomName);
       if (_.isEqual(obj._id, this.roomName)) {
         this.mm.updateData({
-          participants: obj.participants,
+          participants: this.roomUsers,
           transitions: this.mm.data.transitions,
           turns: this.mm.data.turns
         });
@@ -99,7 +98,6 @@ class Mediator {
     this.app = app;
     this.user = user;
     this.roomName = roomName;
-    // deep copy participants
     this.roomUsers = participants;
 
     if (!($('#meeting-mediator').is(':empty'))) {
@@ -120,7 +118,7 @@ class Mediator {
     this.mm.render('#meeting-mediator');
     this.maybe_update_mm_turns = this.maybe_update_mm_turns.bind(this);
     this.turns.on("updated", this.maybe_update_mm_turns)
-    this.start_participant_listener();
+    //this.start_participant_listener();
     this.start_meeting_listener();
   }
 

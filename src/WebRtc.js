@@ -9,6 +9,7 @@ import captureSpeakingEvent from './libs/audio';
 import io from 'socket.io-client';
 import cookie from 'react-cookie';
 import Mediator from './libs/charts';
+import MuteButton from './MuteButton';
 require('dotenv').config()
 
 
@@ -20,7 +21,8 @@ class WebRtc extends React.Component {
     this.removeVideo = this.removeVideo.bind(this);
     this.readyToCall = this.readyToCall.bind(this);
     this.state = {
-      peers: []        
+      peers: [],     
+      muted: false
     }
 
     this.connectToServer();
@@ -209,9 +211,23 @@ class WebRtc extends React.Component {
 
   unmute() {
     this.webrtc.unmute();
-    console.log("muted!");
+    console.log("unmuted!");
   }
 
+  muteClick() {
+    if (this.state.muted) {
+      this.unmute();
+    } else {
+      this.mute();
+    }
+
+    this.setState(function(state) {
+      return {
+        peers: state.peers,
+        muted: !state.muted
+      }
+    });
+  }
 
   render() {
     return (<div className = "row no-margin-bottom"> 
@@ -220,6 +236,7 @@ class WebRtc extends React.Component {
                   id = {this.props.id}
                   ref = "local" > 
                 </video > 
+                <MuteButton onClick={this.muteClick.bind(this)} muted={this.state.muted}/>
                 <div id ="meeting-mediator"  />
               </div>
               <RemoteVideoContainer ref = "remote" peers = {this.state.peers}/>
