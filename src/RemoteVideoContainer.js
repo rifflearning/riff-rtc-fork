@@ -4,9 +4,6 @@ import includes from 'lodash/includes';
 class RemoteVideoContainer extends React.Component {
   constructor(props) {
     super(props);
-    // i don't like this, but it's easy
-    // said the person who made every bad decision ever
-    this.addingVideo = true;
   }
 
 
@@ -33,46 +30,50 @@ class RemoteVideoContainer extends React.Component {
 
   
   componentWillUpdate(nextProps, nextState) {
-    // check to see if we're adding a video to know how to manipulate the DOM
-    this.addingVideo = nextProps.peers.length > this.props.peers.length;
-    
     // OK SO THIS IS GROSS BUT SIMPLEWEBRTC REQUIRES DOM MANIPULATION
-    if (!this.addingVideo) {
-      // convert to array of IDs for easier manipulation
-      let currentPeerList = nextProps.peers.map((peer) => peer.id);
-      let newPeerList = this.props.peers.map((peer) => peer.id);
+    // convert to array of IDs for easier manipulation
+    let newPeerList = nextProps.peers.map((peer) => peer.id);
+    let currentPeerList = this.props.peers.map((peer) => peer.id);
 
-      //remove the missing stream(s) from the DOM
-      newPeerList.forEach(function(peer) {
-        if (!includes(currentPeerList, peer)) {
-          let container = document.getElementById("container_" + peer);
-          // just in case, we iterate
-          while (container.firstChild) {
-            container.removeChild(container.firstChild);
-          }
-        }
-      });
+    console.log("CURRENT PEER LIST " + currentPeerList);
+    console.log("NEW PEER LIST " + newPeerList);
+    
 
-    }
+    //remove the missing stream(s) from the DOM
+    currentPeerList.forEach(function(peer) {
+      console.log("removing peer: " + peer + "from container container_" + peer);
+      let container = document.getElementById("container_" + peer);
+      // just in case, we iterate
+      while (container.firstChild) {
+        container.removeChild(container.firstChild);
+      }
+    });
+
   }
 
   componentDidUpdate() {
     // this is not very react-y but afaik the only way to get this to work
     // after we add the containers to the DOM via the react state change,
     // we have to attach the videos to their respective containers
-    if (this.addingVideo) {
-      this.props.peers.map(function(peer) {
-        // the container we added
-        let container = document.getElementById('container_' + peer.id);
+    this.props.peers.map(function(peer) {
+      // the container we added
+      let container = document.getElementById('container_' + peer.id);
+      if (!container.hasChildNodes()) {
+        console.log("Adding peer: " + peer.id + "to container container_" + peer.id);
         let video = peer.videoEl;
         container.appendChild(video);
-        // suppress contextmenu
+        video.load();
+        video.play();
         video.oncontextmenu = function() {
           return true;
         };
-      });
-    }
+      }
 
+    });
+      
+    this.props.peers.map(function(peer) {
+      peer.videoEl.play();
+    });
 
   }
   render() {

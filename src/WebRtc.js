@@ -93,18 +93,19 @@ class WebRtc extends React.Component {
       return;
     }
 
+    console.log("removing peer: " + peer.id);
     this.setState(function(state) {
       // find the peer in the array and remove it
-      for (var i=0; i < state.peers.length; i++) {
-        if (peer.id === state.peers[i].id) {
-          state.peers.remove(i);
-          break;
+      let newPeers = [];
+      state.peers.forEach(function (ele) {
+        if (ele.id !== peer.id) {
+          newPeers.push(ele);
         }
-      }
+      });
       return {
-        peers: state.peers
+        peers: newPeers
       }
-    })
+    });
 
     console.log('video removed ', peer);
   }
