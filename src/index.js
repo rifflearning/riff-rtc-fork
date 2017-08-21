@@ -13,4 +13,4 @@ let user = getUrlParam("user") || window.user_data.user_id || window.prompt("Ple
 let room = getUrlParam("room") || window.prompt("Please enter a room name!","room");
 
 ReactDOM.render(<App user = {user} room = {room} />, document.getElementById('rtc-container'));
-registerServiceWorker();
+//registerServiceWorker();

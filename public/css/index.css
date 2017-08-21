@@ -1,33 +1,35 @@
- body {
-     display: flex;
-     min-height: 100vh;
-     flex-direction: column;
- }
+* {
+  max-height: inherit;
+}
+body {
+  display: flex;
+  min-height: 100vh;
+  flex-direction: column;
+}
 
- main {
-     flex: 1 1 auto;
-     margin-top: 10px;
- }
+main {
+  flex: 1 1 auto;
+  margin-top: 10px;
+}
 
 video {
-	vertical-align:top;
-	padding:0;
-	display: inline-block;
-	/*Mirrors the video streams*/
-	transform: rotateY(180deg);
-    -webkit-transform:rotateY(180deg); /* Safari and Chrome */
-    -moz-transform:rotateY(180deg); /* Firefox */
-    -o-transform : scaleX(-1);
-    -webkit-transform : scaleX(-1);
-    transform : scaleX(-1);
-    height: 100%;
-    width: 100%;
+  vertical-align:top;
+  padding:0;
+  display: inline-block;
+  /*Mirrors the video streams*/
+  transform: rotateY(180deg);
+  -webkit-transform:rotateY(180deg); /* Safari and Chrome */
+  -moz-transform:rotateY(180deg); /* Firefox */
+  -o-transform : scaleX(-1);
+  -webkit-transform : scaleX(-1);
+  transform : scaleX(-1);
+  width: 100%;
 }
 
 p {
-	padding:0;
-	margin:0;
-	height:25px;
+  padding:0;
+  margin:0;
+  height:25px;
 }
 .local-video {
   padding-bottom: 5px;
@@ -36,7 +38,7 @@ p {
 
 #videoWrapper {
   margin-top:30px;
-	margin-bottom: 15px;
+  margin-bottom: 15px;
   margin-left: auto;
   margin-right:auto;
   width:237px;
@@ -50,10 +52,10 @@ p {
   top : 0;
   padding: 0;
   margin:5px;
-	width:227px;
-	height:170px;
+  width:227px;
+  height:170px;
 
-   /*Mirrors the overlay*/
+  /*Mirrors the overlay*/
   transform: rotateY(180deg);
   -webkit-transform:rotateY(180deg); /* Safari and Chrome */
   -moz-transform:rotateY(180deg); /* Firefox */
@@ -62,12 +64,9 @@ p {
   transform : scaleX(-1);
 }
 
-.remote{ margin-top: 25px;
-	height:100%;
-}
 
 a{
-	color:#E68308;
+  color:#E68308;
 }
 
 .logo-image {
@@ -78,6 +77,12 @@ a{
 
 }
 
+.remotes {
+  max-height: calc(100vh - 135px); 
+  max-height: -o-calc(100vh - 135px); /* opera */
+  max-height: -webkit-calc(100vh - 135px); /* google, safari */
+  max-height: -moz-calc(100vh - 135px); /* firefox */
+}
 
 .videoContainer {
   padding: 0.25rem 0.75rem !important;
