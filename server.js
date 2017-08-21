@@ -14,6 +14,7 @@ app.set('view engine', 'html');
 
 require('dotenv').config()
 app.use(cookieParser());
+app.enable("trust proxy");
 
 var bodyParser = require('body-parser');
 
@@ -48,7 +49,6 @@ function handle_launch(req, res, next) {
   store = new lti.Stores.RedisStore('consumer_key', client)
   req.lti = new lti.Provider(consumer_key, consumer_secret, store)
   req.session.body = req.body;
-  let validity;
   req.lti.valid_request(req, function (err, isValid) {
     console.log("checking if valid request");
     if (err) {
@@ -56,7 +56,7 @@ function handle_launch(req, res, next) {
       return err;
     } 
     req.session.isValid = isValid;
-    validity = isValid;
+    let validity = isValid;
     console.log("validity: " + req.session.isValid);
     req.session.user_id = req.body.user_id;
     req.session.body = req.body;

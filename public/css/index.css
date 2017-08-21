@@ -84,6 +84,20 @@ a{
   max-height: -moz-calc(100vh - 135px); /* firefox */
 }
 
+.half-remote {
+  max-height: calc(100% / 2);
+  max-height: -o-calc(100% / 2); /* opera */
+  max-height: -webkit-calc(100% / 2); /* google, safari */
+  max-height: -moz-calc(100% / 2); /* firefox */
+}
+
+.third-remote {
+  max-height: calc(100% / 3);
+  max-height: -o-calc(100% / 3); /* opera */
+  max-height: -webkit-calc(100% / 3); /* google, safari */
+  max-height: -moz-calc(100% / 3); /* firefox */
+}
+
 .videoContainer {
   padding: 0.25rem 0.75rem !important;
 }
@@ -98,4 +112,8 @@ a{
 
 .no-margin-bottom {
   margin-bottom: 0px !important;
+}
+
+#sidebar {
+  min-width: 300px;
 }
