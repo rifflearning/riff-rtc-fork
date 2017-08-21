@@ -37,11 +37,11 @@ app.get('/chat', chat_route);
 app.use(express.static(__dirname + '/build', {index: false, redirect: false}));  
 
 function chat_route(req, res) {
-  data = {};
-  data.user_id = req.session.user_id;
-  data.user_email = req.session.email;
-  
-  res.render(__dirname + '/build/index.html', { config: JSON.stringify(req.session.body) });
+  if (req.session.data) {
+    res.render(__dirname + '/build/index.html', { config: JSON.stringify(req.session.data) });
+  } else {
+    res.sendFile(__dirname + '/build/index.html');
+  }
 }
 
 function handle_launch(req, res, next) {
@@ -50,22 +50,19 @@ function handle_launch(req, res, next) {
   req.lti = new lti.Provider(consumer_key, consumer_secret, store)
   req.session.body = req.body;
   req.lti.valid_request(req, function (err, isValid) {
-    console.log("checking if valid request");
     if (err) {
+      // invalid lti launch request
       console.log(err);
-      return err;
-    } 
-    req.session.isValid = isValid;
-    let validity = isValid;
-    console.log("validity: " + req.session.isValid);
-    req.session.user_id = req.body.user_id;
-    req.session.body = req.body;
-    req.session.email = req.body.lis_person_contact_email_primary;
-      
-    if (req.session.isValid) {
-      return next();
+      return res.send("LTI Verification failed!");
     } else {
-      res.end("LTI Verification failed!");
+      req.session.isValid = isValid;
+      req.session.data = {}
+      req.session.data.user_id = req.body.user_id;
+      req.session.data.email = req.body.lis_person_contact_email_primary;
+      req.session.data.name = req.body.lis_person_name_full;
+      req.session.data.context_id = req.body.context_id;
+        
+      return next();
     }
   });
    
