@@ -10,6 +10,7 @@ import io from 'socket.io-client';
 import cookie from 'react-cookie';
 import Mediator from './libs/charts';
 import MuteButton from './MuteButton';
+import log from './libs/utils';
 require('dotenv').config()
 
 
@@ -25,6 +26,9 @@ class WebRtc extends React.Component {
       muted: false
     }
 
+
+    // rssi value over which we will consider a speaking event
+    this.THRESHOLD = -35;
     this.connectToServer();
 
     this.server_email = process.env.REACT_APP_SERVER_EMAIL;
@@ -51,6 +55,7 @@ class WebRtc extends React.Component {
   }
 
   componentDidMount() {
+
     this.webrtc = new SimpleWebRTC({
       localVideoEl: ReactDOM.findDOMNode(this.refs.local),
       remoteVideosEl: "", // handled by our component
@@ -65,7 +70,7 @@ class WebRtc extends React.Component {
     this.webrtc.on('videoRemoved', this.removeVideo);
     this.webrtc.on('readyToCall', this.readyToCall);
 
-    console.log("webrtc component mounted");
+    log("webrtc component mounted");
   }
 
   componentDidUpdate() {
@@ -75,7 +80,7 @@ class WebRtc extends React.Component {
   }
 
   addVideo(video, peer) {
-    console.log('adding video', peer);
+    log('adding video', peer);
     // we let the child component handle the dirty work
     this.setState(function(state) {
       return {
@@ -93,21 +98,15 @@ class WebRtc extends React.Component {
       return;
     }
 
-    console.log("removing peer: " + peer.id);
+    log("removing peer: " + peer.id);
     this.setState(function(state) {
       // find the peer in the array and remove it
-      let newPeers = [];
-      state.peers.forEach(function (ele) {
-        if (ele.id !== peer.id) {
-          newPeers.push(ele);
-        }
-      });
       return {
-        peers: newPeers
+        peers: state.peers.filter((x) => x.id !== peer.id)
       }
     });
 
-    console.log('video removed ', peer);
+    log('video removed ', peer);
   }
 
   getUser() {
@@ -118,6 +117,10 @@ class WebRtc extends React.Component {
     return this.props.options.roomname
   }
 
+  getName() {
+    return this.props.options.name || this.getUser();
+  }
+
   recordMeetingJoin() {
     // transform participants to fit the required
     // format of the rhythm-server
@@ -126,7 +129,7 @@ class WebRtc extends React.Component {
     
     return this.socket.emit('meetingJoined', {
       participant: this.getUser(),
-      name: this.getUser(),
+      name: this.getName(),
       participants: parts,
       meeting: this.getRoomname(),
       meetingUrl: window.location.href,
@@ -145,12 +148,13 @@ class WebRtc extends React.Component {
   }
 
   readyToCall() {
-    console.log("ready");
+    log("ready");
     this.webrtc.joinRoom(this.props.options.roomname);
     // we do this after joinRoom to be sure the stream exists
     // set threshold to appropriate value
-    this.speakingEvents = new Sibilant(this.getLocalStream(), {passThrough: false, threshold: -35});
-    this.authenticateAndRecord()
+    this.speakingEvents = new Sibilant(this.getLocalStream(), {passThrough: false, threshold: this.THRESHOLD});
+    // authenticate, and, on sucess, call record()
+    this.authenticate(record);
   }
 
 
@@ -163,11 +167,12 @@ class WebRtc extends React.Component {
 
   getInfo() {
     return { 
-      'username': this.props.options.username, 
-      'roomname': this.props.options.roomname,
+      'username': this.getUser(), 
+      'roomname': this.getRoomname(),
       'token': this.token
     };
   }
+
   startMM() {
     this.mm = new Mediator(
         this.app,
@@ -177,45 +182,54 @@ class WebRtc extends React.Component {
     );
   }
 
-  authenticateAndRecord() {
+  record() {
+    // begin tracking user events and sending them to server
+    this.speakingEvents.bind(
+      'stoppedSpeaking', 
+      captureSpeakingEvent(this.app, this.getInfo())
+    );
+    this.startMM();
+    face.startTracking($scope);
+
+  }
+
+  authenticate(callback) {
     /**
      * Authenticate w/ the Rhythm server and, on success,
      * begin recording events and offloading to server
+     *
+     * Calls the given function upon auth success
      */
     this.app.authenticate({
       type: 'local',
       email: this.server_email,
       password: this.server_password,
     }).then(function (result) {
-      console.log("auth result!: ", result);
+      log("auth result!: ", result);
       this.token = result.token;
       return this.recordMeetingJoin();
     }.bind(this)).catch(function (err) {
-      console.log('ERROR:', err);
+      log('ERROR:', err);
     }).then(function (result) {
-      console.log('meeting result:', result);
+      log('meeting result:', result);
       // we've confirmed auth - start communication w/ server
-      this.speakingEvents.bind(
-        'stoppedSpeaking', 
-        captureSpeakingEvent(this.app, this.getInfo())
-      );
-      this.startMM();
-      //
-      // face.startTracking($scope);
+      callback()
     }.bind(this));
   }
 
   mute() {
     this.webrtc.mute();
-    console.log("muted!");
+    log("muted!");
   }
 
   unmute() {
     this.webrtc.unmute();
-    console.log("unmuted!");
+    log("unmuted!");
   }
 
   muteClick() {
+    // mute the webrtc stream and update the state
+    
     if (this.state.muted) {
       this.unmute();
     } else {
@@ -237,20 +251,13 @@ class WebRtc extends React.Component {
                   id = {this.props.id}
                   ref = "local" > 
                 </video > 
-                <MuteButton onClick={this.muteClick.bind(this)} muted={this.state.muted}/>
-                <div id ="meeting-mediator"  />
+                <MuteButton onClick = {this.muteClick.bind(this)} muted = {this.state.muted}/>
+                <div id = "meeting-mediator"  />
               </div>
               <RemoteVideoContainer ref = "remote" peers = {this.state.peers}/>
             </div >
         );
   }
 }
-
-// utility function to remove elements from an array
-Array.prototype.remove = function(from, to) {
-  var rest = this.slice((to || from) + 1 || this.length);
-  this.length = from < 0 ? this.length + from : from;
-  return this.push.apply(this, rest);
-};
 
 export default WebRtc

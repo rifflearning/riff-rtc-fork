@@ -1,4 +1,5 @@
 import React from 'react';
+import log from 'libs/utils';
 import includes from 'lodash/includes';
 
 class RemoteVideoContainer extends React.Component {
@@ -35,13 +36,13 @@ class RemoteVideoContainer extends React.Component {
     let newPeerList = nextProps.peers.map((peer) => peer.id);
     let currentPeerList = this.props.peers.map((peer) => peer.id);
 
-    console.log("CURRENT PEER LIST " + currentPeerList);
-    console.log("NEW PEER LIST " + newPeerList);
+    log("CURRENT PEER LIST " + currentPeerList);
+    log("NEW PEER LIST " + newPeerList);
     
 
     //remove the missing stream(s) from the DOM
     currentPeerList.forEach(function(peer) {
-      console.log("removing peer: " + peer + "from container container_" + peer);
+      log("removing peer: " + peer + "from container container_" + peer);
       let container = document.getElementById("container_" + peer);
       // just in case, we iterate
       while (container.firstChild) {
@@ -59,7 +60,7 @@ class RemoteVideoContainer extends React.Component {
       // the container we added
       let container = document.getElementById('container_' + peer.id);
       if (!container.hasChildNodes()) {
-        console.log("Adding peer: " + peer.id + "to container container_" + peer.id);
+        log("Adding peer: " + peer.id + "to container container_" + peer.id);
         let video = peer.videoEl;
         container.appendChild(video);
         video.load();
