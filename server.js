@@ -56,6 +56,7 @@ function handle_launch(req, res, next) {
       return res.send("LTI Verification failed!");
     } else {
       req.session.isValid = isValid;
+      // collect the data we're interested in from the request
       req.session.data = {}
       req.session.data.user_id = req.body.user_id;
       req.session.data.email = req.body.lis_person_contact_email_primary;

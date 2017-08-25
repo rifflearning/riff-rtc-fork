@@ -154,7 +154,7 @@ class WebRtc extends React.Component {
     // set threshold to appropriate value
     this.speakingEvents = new Sibilant(this.getLocalStream(), {passThrough: false, threshold: this.THRESHOLD});
     // authenticate, and, on sucess, call record()
-    this.authenticate(record);
+    this.authenticate(this.record);
   }
 
 
@@ -189,7 +189,7 @@ class WebRtc extends React.Component {
       captureSpeakingEvent(this.app, this.getInfo())
     );
     this.startMM();
-    face.startTracking($scope);
+    //face.startTracking($scope);
 
   }
 
