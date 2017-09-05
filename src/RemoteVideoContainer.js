@@ -14,7 +14,7 @@ class RemoteVideoContainer extends React.Component {
     let peerLen = this.props.peers.length;
     let colVal;
     if (peerLen <= 1) {
-      colVal = "s12";
+      colVal = "s12 whole-remote";
     } else if (peerLen < 5) {
       colVal = "s6 half-remote";
     } else {
