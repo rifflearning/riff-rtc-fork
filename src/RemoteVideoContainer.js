@@ -1,5 +1,5 @@
 import React from 'react';
-import log from './libs/utils';
+import {log} from './libs/utils';
 import includes from 'lodash/includes';
 
 class RemoteVideoContainer extends React.Component {

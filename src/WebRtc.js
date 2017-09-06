@@ -10,7 +10,7 @@ import io from 'socket.io-client';
 import cookie from 'react-cookie';
 import Mediator from './libs/charts';
 import MuteButton from './MuteButton';
-import log from './libs/utils';
+import {log} from './libs/utils';
 require('dotenv').config()
 
 
