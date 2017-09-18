@@ -1,6 +1,7 @@
-const MM = require('./mm.js').MeetingMediator
-const _ = require('underscore')
-const $ = require('jquery')
+import {log} from './utils';
+const MM = require('./mm.js').MeetingMediator;
+const _ = require('underscore');
+const $ = require('jquery');
 
 class Mediator {
   
@@ -14,8 +15,8 @@ class Mediator {
 
   // transform to the right data to send to chart
   transform_turns(participants, turns) {
-    console.log("transforming turns:", turns);
-    console.log("participants: ", participants);
+    log("transforming turns:", turns);
+    log("participants: ", participants);
     // filter out turns not by present participants
     var filtered_turns = _.filter(turns, function(turn){
       return _.contains(participants, turn.participant);
@@ -26,7 +27,7 @@ class Mediator {
 
   // update MM turns if it matches this hangout.
   maybe_update_mm_turns(data) {
-    console.log("mm data turns:", data);
+    log("mm data turns:", data);
     
     if (data.meeting === this.roomName && this.mm.data.participants.length > 1) {
       this.mm.updateData({participants: this.roomUsers,
@@ -38,7 +39,7 @@ class Mediator {
   // update MM participants if it matches this hangout.
   // removes the local participants from the list.
   maybe_update_mm_participants() {
-    console.log('maybe updating mm partcipants...');
+    log('maybe updating mm partcipants...');
     // if there's only one person in the room, we want the ball to be at the center.
     // i think this should be handled by the viz code, but it's not and i
     // don't really want to modify it
@@ -51,17 +52,17 @@ class Mediator {
   }
 
   update_users(users) {
-    console.log("Updating users from: " + this.roomUsers + " to: " + users);
+    log("Updating users from: " + this.roomUsers + " to: " + users);
     this.roomUsers = users;
     this.maybe_update_mm_participants();
   }
 
   start_participant_listener() {
-    console.log("starting listening for participants");
+    log("starting listening for participants");
     var participantEvents = this.app.service('participantEvents');
     participantEvents.on('created', function (obj) {
-      console.log("got a new participant event:", obj);
-      console.log("roomname:", this.roomName);
+      log("got a new participant event:", obj);
+      log("roomname:", this.roomName);
       if (_.isEqual(obj.meeting, this.roomName)) {
         this.mm.updateData({
           participants: obj.participants,
@@ -73,11 +74,11 @@ class Mediator {
   }
 
   start_meeting_listener() {
-    console.log("starting listening for participants -- 2");
+    log("starting listening for participants -- 2");
     var meetings = this.app.service('meetings');
     meetings.on('patched', function (obj) {
-      console.log("meeting got updated:", obj);
-      console.log("roomname:", this.roomName);
+      log("meeting got updated:", obj);
+      log("roomname:", this.roomName);
       if (_.isEqual(obj._id, this.roomName)) {
         this.mm.updateData({
           participants: this.roomUsers,
@@ -89,25 +90,25 @@ class Mediator {
   }
 
   constructor(app, participants, user, roomName) {
-    console.log("INITIAL ROOMANME", roomName);
+    log("INITIAL ROOMANME", roomName);
     
     this.mm = null;
     this.mm_width = 300;
     this.mm_height = 300;
-    console.log('>> Starting meeting mediator...');
+    log('>> Starting meeting mediator...');
     this.app = app;
     this.user = user;
     this.roomName = roomName;
     this.roomUsers = participants;
 
     if (!($('#meeting-mediator').is(':empty'))) {
-      console.log("not starting a second MM...");
+      log("not starting a second MM...");
       return;
     }
 
     this.turns = this.app.service('turns');
-    console.log('MM participants:', this.roomUsers);
-    console.log("meeting mediator:", MM);
+    log('MM participants:', this.roomUsers);
+    log("meeting mediator:", MM);
     this.mm = new MM({participants: this.roomUsers,
       transitions: 0,
       turns: [],

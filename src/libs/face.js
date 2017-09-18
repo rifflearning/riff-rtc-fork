@@ -1,28 +1,25 @@
-const Thumos = require('thumos')
+const Thumos = require('thumos');
+import {log} from './utils';
 
-function trackFace (scope) {
+export default function trackFace(app, user, roomname, videoId) {
 
-  console.log("starting to track facial movement!");
+  log("starting to track facial movement!");
 
-  var faceEvents = new Thumos('box0','videoOverlay')
+  var faceEvents = new Thumos(videoId,'videoOverlay', false);
   faceEvents.bind('faceMoving', function (data) {
-    scope.app.service('faces').create(
-      {
-        'participant': scope.user,
-        'meeting': scope.roomName,
-        'timestamp': data.now.toISOString(),
-        'start_time': data.start.toISOString(),
-        'end_time': data.end.toISOString(),
-        'face_delta': data.delta,
-        'delta_array': data.array
-      }).then(function (res) {
-        console.log('face movement event is being emitted!!!', res)
-      }).catch(function (err) {
-        console.log('ERROR:', err)
-      })
-  })
+    this.app.service('faces').create({
+      'participant': user,
+      'meeting': roomName,
+      'timestamp': data.now.toISOString(),
+      'start_time': data.start.toISOString(),
+      'end_time': data.end.toISOString(),
+      'face_delta': data.delta,
+      'delta_array': data.array
+    }).then(function (res) {
+      log('face movement event is being emitted!!! ', res);
+    }).catch(function (err) {
+      log('ERROR: ', err);
+    });
+  });
 
-}
-module.exports = {
-  startTracking: trackFace
 }

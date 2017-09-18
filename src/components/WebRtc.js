@@ -5,12 +5,13 @@ import RemoteVideoContainer from './RemoteVideoContainer';
 import Sibilant from 'sibilant-webaudio';
 import feathers from 'feathers-client';
 import authentication from 'feathers-authentication/client';
-import captureSpeakingEvent from './libs/audio';
+import captureSpeakingEvent from '../libs/audio';
 import io from 'socket.io-client';
-import Mediator from './libs/charts';
+import cookie from 'react-cookie';
+import Mediator from '../libs/charts';
 import MuteButton from './MuteButton';
-import faceTracker from './libs/face';
-import {log} from './libs/utils';
+import {log} from '../libs/utils';
+import trackFace from '../libs/face'
 require('dotenv').config()
 
 
@@ -27,10 +28,10 @@ class WebRtc extends React.Component {
     }
 
 
-    // rssi value over which we will consider a speaking event
-    this.THRESHOLD = -35;
     this.connectToServer();
 
+    // rssi value over which we will consider a speaking event
+    this.THRESHOLD = process.env.SPEAKING_THRESHOLD || -35;
     this.server_email = process.env.REACT_APP_SERVER_EMAIL;
     this.server_password = process.env.REACT_APP_SERVER_PASSWORD;
     this.signalmaster_url = process.env.REACT_APP_SIGNALMASTER_URL;
@@ -153,7 +154,7 @@ class WebRtc extends React.Component {
     // we do this after joinRoom to be sure the stream exists
     // set threshold to appropriate value
     this.speakingEvents = new Sibilant(this.getLocalStream(), {passThrough: false, threshold: this.THRESHOLD});
-    // authenticate, and, on sucess, calls record()
+    // authenticate, and, on sucess, call record()
     this.authenticate();
   }
 
@@ -162,6 +163,7 @@ class WebRtc extends React.Component {
     let parts = this.state.peers.map(peer => peer.nick);
     parts.push(this.getUser());
     return parts;
+    
   }
 
   getInfo() {
@@ -188,7 +190,7 @@ class WebRtc extends React.Component {
       captureSpeakingEvent(this.app, this.getInfo())
     );
     this.startMM();
-    trackFace(app, this.getUser(), this.getRoomname(), this.props.id);
+    trackFace(this.app, this.getUser(), this.getRoomname(), this.props.id);
 
   }
 
@@ -212,7 +214,7 @@ class WebRtc extends React.Component {
     }).then(function (result) {
       log('meeting result:', result);
       // we've confirmed auth - start communication w/ server
-      this.record()
+      this.record();
     }.bind(this));
   }
 
@@ -244,20 +246,18 @@ class WebRtc extends React.Component {
   }
 
   render() {
-    return (
-      <div className = "row no-margin-bottom"> 
-        <div id = "sidebar" className = "col s3">
-          <video className = "local-video"
-            id = {this.props.id}
-            ref = "local" > 
-          <canvas id = "videoOverlay"> </canvas>
-          </video > 
-          <MuteButton onClick = {this.muteClick.bind(this)} muted = {this.state.muted}/>
-          <div id = "meeting-mediator"  />
-        </div>
-        <RemoteVideoContainer ref = "remote" peers = {this.state.peers}/>
-      </div >
-    );
+    return (<div className = "row no-margin-bottom"> 
+              <div id = "sidebar" className = "col s3">
+                <video className = "local-video"
+                  id = {this.props.id}
+                  ref = "local" > 
+                </video > 
+                <MuteButton onClick = {this.muteClick.bind(this)} muted = {this.state.muted}/>
+                <div id = "meeting-mediator"  />
+              </div>
+              <RemoteVideoContainer ref = "remote" peers = {this.state.peers}/>
+            </div >
+        );
   }
 }
 

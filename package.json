@@ -39,12 +39,13 @@
     "underscore": "^1.8.3",
     "webpack": "^3.3.0"
   },
+  "devDependencies": {},
   "scripts": {
     "start": "node server.js",
     "build": "react-scripts build",
     "dev": "react-scripts start",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
-    "postinstall": "coffee -c ./src/libs/mm.coffee; npm run build"
+    "postinstall": "coffee -c ./src/libs/mm.coffee; npm run build;"
   }
 }
