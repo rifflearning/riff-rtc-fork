@@ -75,6 +75,7 @@ a{
 
 }
 
+
 .whole-remote {
   height: calc((100vh - 144px) / 1);
   height: -o-calc((100vh - 144px) / 1); /* opera */
@@ -90,10 +91,10 @@ a{
 }
 
 .third-remote {
-  max-height: calc(100% / 3);
-  max-height: -o-calc(100% / 3); /* opera */
-  max-height: -webkit-calc(100% / 3); /* google, safari */
-  max-height: -moz-calc(100% / 3); /* firefox */
+  height: calc((100vh - 144px) / 3);
+  height: -o-calc((100vh - 144px) / 3); /* opera */
+  height: -webkit-calc((100vh - 144px) / 3); /* google, safari */
+  height: -moz-calc((100vh - 144px) / 3); /* firefox */
 }
 
 .videoContainer {
@@ -115,4 +116,22 @@ a{
 
 #sidebar {
   min-width: 300px;
+}
+
+#video-overlay {
+  position: absolute;
+  left : 0;
+  top : 0;
+  padding: 0;
+  margin:5px;
+  width:227px;
+  height:170px;
+
+  /*Mirrors the overlay*/
+  transform: rotateY(180deg);
+  -webkit-transform:rotateY(180deg); /* Safari and Chrome */
+  -moz-transform:rotateY(180deg); /* Firefox */
+  -o-transform : scaleX(-1);
+  -webkit-transform : scaleX(-1);
+  transform : scaleX(-1);
 }

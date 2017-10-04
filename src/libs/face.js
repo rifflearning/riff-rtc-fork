@@ -1,15 +1,15 @@
-const Thumos = require('thumos');
 import {log} from './utils';
+const Thumos = require('thumos');
 
 export default function trackFace(app, user, roomname, videoId) {
 
   log("starting to track facial movement!");
 
-  var faceEvents = new Thumos(videoId,'videoOverlay', false);
+  var faceEvents = new Thumos(videoId,'video-overlay', false);
   faceEvents.bind('faceMoving', function (data) {
     this.app.service('faces').create({
       'participant': user,
-      'meeting': roomName,
+      'meeting': roomname,
       'timestamp': data.now.toISOString(),
       'start_time': data.start.toISOString(),
       'end_time': data.end.toISOString(),

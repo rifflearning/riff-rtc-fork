@@ -252,6 +252,7 @@ class WebRtc extends React.Component {
                   id = {this.props.id}
                   ref = "local" > 
                 </video > 
+                <canvas id="video-overlay"> </canvas>
                 <MuteButton onClick = {this.muteClick.bind(this)} muted = {this.state.muted}/>
                 <div id = "meeting-mediator"  />
               </div>
