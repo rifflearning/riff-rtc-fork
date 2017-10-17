@@ -154,7 +154,7 @@ class WebRtc extends React.Component {
     // we do this after joinRoom to be sure the stream exists
     // set threshold to appropriate value
     this.speakingEvents = new Sibilant(this.getLocalStream(), {passThrough: false, threshold: this.THRESHOLD});
-    // authenticate, and, on sucess, call record()
+    // authenticate, and, on success, call record()
     this.authenticate();
   }
 
