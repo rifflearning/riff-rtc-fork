@@ -190,7 +190,6 @@ class WebRtc extends React.Component {
       captureSpeakingEvent(this.app, this.getInfo())
     );
     this.startMM();
-    trackFace(this.app, this.getUser(), this.getRoomname(), this.props.id);
 
   }
 
