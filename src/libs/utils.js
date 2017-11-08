@@ -13,7 +13,7 @@ function getUrlParam(sParam) {
   }
 };
 function log() {
-  if (process.env.DEBUG) {
+  if (process.env.REACT_APP_DEBUG == "true") {
     console.log.apply(console, arguments);
   }
 };
