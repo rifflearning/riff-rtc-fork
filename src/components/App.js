@@ -11,8 +11,10 @@ class App extends React.Component {
   render() {
     var opts = {
       // this will be made specificiable 
-      roomname : this.props.room,
-      username: this.props.user
+      roomname : this.props.user_data.room,
+      username: this.props.user_data.user_id,
+      name: this.props.user_data.name,
+      email: this.props.user_data.email
     }
     var localVideoId = "local-video";
     return (

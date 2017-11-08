@@ -9,7 +9,7 @@ class MuteButton extends React.Component {
       icon="mic_off";
     }
     return (
-      <a href="#" className="waves-effect waves-light btn-floating light-blue" onClick={this.props.onClick}>
+      <a href="#" className="waves-effect waves-light btn-floating light-blue mute" onClick={this.props.onClick}>
         <i className="small material-icons">{icon}</i>
       </a>
     );

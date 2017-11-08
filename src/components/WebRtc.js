@@ -75,6 +75,9 @@ class WebRtc extends React.Component {
   }
 
   componentDidUpdate() {
+    // we need to make sure meeting mediator updates when
+    // our participants change
+    // in the future this can be handled by state
     if (this.mm) {
       this.mm.update_users(this.getParticipants());
     }
@@ -94,14 +97,13 @@ class WebRtc extends React.Component {
     // remove the peer from state,
     // our child component will handle it automatically
     
-    // check to make sure we weren't called erroneously
+    // sanity check / make sure we weren't called erroneously
     if (!peer) {
       return;
     }
 
     log("removing peer: " + peer.id);
     this.setState(function(state) {
-      // find the peer in the array and remove it
       return {
         peers: state.peers.filter((x) => x.id !== peer.id)
       }
@@ -110,8 +112,12 @@ class WebRtc extends React.Component {
     log('video removed ', peer);
   }
 
-  getUser() {
+  getUserId() {
     return this.props.options.username;
+  }
+  
+  getUserEmail() {
+    return this.props.options.email;
   }
 
   getRoomname() {
@@ -119,7 +125,7 @@ class WebRtc extends React.Component {
   }
 
   getName() {
-    return this.props.options.name || this.getUser();
+    return this.props.options.name;
   }
 
   recordMeetingJoin() {
@@ -129,7 +135,8 @@ class WebRtc extends React.Component {
         (user) => { return { "participant": user } });
     
     return this.socket.emit('meetingJoined', {
-      participant: this.getUser(),
+      participant: this.getUserId(),
+      email: this.getUserEmail(),
       name: this.getName(),
       participants: parts,
       meeting: this.getRoomname(),
@@ -160,15 +167,15 @@ class WebRtc extends React.Component {
 
 
   getParticipants() {
+    // return an array of the participants' usernames
     let parts = this.state.peers.map(peer => peer.nick);
-    parts.push(this.getUser());
+    parts.push(this.getUserId());
     return parts;
-    
   }
 
   getInfo() {
     return { 
-      'username': this.getUser(), 
+      'username': this.getUserId(), 
       'roomname': this.getRoomname(),
       'token': this.token
     };
@@ -178,7 +185,7 @@ class WebRtc extends React.Component {
     this.mm = new Mediator(
         this.app,
         this.getParticipants(),
-        this.getUser(),
+        this.getUserId(),
         this.getRoomname()
     );
   }
@@ -190,7 +197,9 @@ class WebRtc extends React.Component {
       captureSpeakingEvent(this.app, this.getInfo())
     );
     this.startMM();
-    trackFace(this.app, this.getUser(), this.getRoomname(), this.props.id);
+    if (process.env.REACT_APP_TRACK_FACE == "true") {
+      trackFace(this.app, this.getUserId(), this.getRoomname(), this.props.id);
+    }
 
   }
 
@@ -213,7 +222,7 @@ class WebRtc extends React.Component {
       log('ERROR:', err);
     }).then(function (result) {
       log('meeting result:', result);
-      // we've confirmed auth - start communication w/ server
+      // we've confirmed auth & meeting join- start communication w/ server
       this.record();
     }.bind(this));
   }
@@ -248,11 +257,15 @@ class WebRtc extends React.Component {
   render() {
     return (<div className = "row no-margin-bottom"> 
               <div id = "sidebar" className = "col s3">
-                <video className = "local-video"
-                  id = {this.props.id}
-                  ref = "local" > 
-                </video > 
-                <canvas id="video-overlay"> </canvas>
+                <div id = 'local-container'>
+                  <video className = "local-video"
+                    id = {this.props.id}
+                    // this is necessary for thumos. yes, it is upsetting.
+                    // height = "170px" width="300px"
+                    ref = "local" > 
+                  </video > 
+                  <canvas id="video-overlay"> </canvas>
+                </div>
                 <MuteButton onClick = {this.muteClick.bind(this)} muted = {this.state.muted}/>
                 <div id = "meeting-mediator"  />
               </div>

@@ -7,7 +7,7 @@ export default function trackFace(app, user, roomname, videoId) {
 
   var faceEvents = new Thumos(videoId,'video-overlay', false);
   faceEvents.bind('faceMoving', function (data) {
-    this.app.service('faces').create({
+    app.service('faces').create({
       'participant': user,
       'meeting': roomname,
       'timestamp': data.now.toISOString(),
