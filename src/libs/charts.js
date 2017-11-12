@@ -29,7 +29,7 @@ class Mediator {
   maybe_update_mm_turns(data) {
     log("mm data turns:", data);
     
-    if (data.meeting === this.roomName && this.mm.data.participants.length > 1) {
+    if (data.room === this.roomName && this.mm.data.participants.length > 1) {
       this.mm.updateData({participants: this.roomUsers,
         transitions: data.transitions,
         turns: this.transform_turns(this.roomUsers, data.turns)});
@@ -63,7 +63,7 @@ class Mediator {
     participantEvents.on('created', function (obj) {
       log("got a new participant event:", obj);
       log("roomname:", this.roomName);
-      if (_.isEqual(obj.meeting, this.roomName)) {
+      if (_.isEqual(obj.room, this.roomName)) {
         this.mm.updateData({
           participants: obj.participants,
           transitions: this.mm.data.transitions,
@@ -79,7 +79,7 @@ class Mediator {
     meetings.on('patched', function (obj) {
       log("meeting got updated:", obj);
       log("roomname:", this.roomName);
-      if (_.isEqual(obj._id, this.roomName)) {
+      if (_.isEqual(obj.room, this.roomName)) {
         this.mm.updateData({
           participants: this.roomUsers,
           transitions: this.mm.data.transitions,

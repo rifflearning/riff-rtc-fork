@@ -9,7 +9,7 @@ export default function trackFace(app, user, roomname, videoId) {
   faceEvents.bind('faceMoving', function (data) {
     app.service('faces').create({
       'participant': user,
-      'meeting': roomname,
+      'room': roomname,
       'timestamp': data.now.toISOString(),
       'start_time': data.start.toISOString(),
       'end_time': data.end.toISOString(),

@@ -139,7 +139,7 @@ class WebRtc extends React.Component {
       email: this.getUserEmail(),
       name: this.getName(),
       participants: parts,
-      meeting: this.getRoomname(),
+      room: this.getRoomname(),
       meetingUrl: window.location.href,
       consent: true,
       consentDate: new Date().toISOString(),
