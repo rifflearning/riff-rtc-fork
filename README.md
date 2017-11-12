@@ -16,12 +16,15 @@ Files and Folders:
 - src: client side javascript
 
  
+
 Installing Required Modules:
 ----------------------------
 
  - `npm install`
 
+
 Running the Server:
 -------------------
- - Run the `start_app.sh` script 
+ - `npm start`
  
+
