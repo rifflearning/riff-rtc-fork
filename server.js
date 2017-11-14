@@ -1,12 +1,17 @@
-var express = require('express');  
-var app = express();  
-var server = require('http').createServer(app);  
-var io = require('socket.io')(server);
-var lti = require("ims-lti");
-var redis = require("redis");
-var session = require('express-session')
+const express = require('express');
+const app = express();
+const request = require('request');
+const server = require('http').createServer(app);
+const io = require('socket.io')(server);
+const lti = require("ims-lti");
+const redis = require("redis");
+const session = require('express-session')
 const cookieParser = require('cookie-parser');
-var mustacheExpress = require('mustache-express');
+const mustacheExpress = require('mustache-express');
+
+const consumer_key = process.env.CONSUMER_KEY;
+const consumer_secret = process.env.CONSUMER_SECRET;
+const room_map_url = process.env.ROOM_MAP_URL;
 
 app.engine('html', require('hogan-express'));
 
@@ -24,8 +29,15 @@ app.use(bodyParser.urlencoded({
 }));
 app.use(bodyParser.json());
 
-var consumer_key = process.env.CONSUMER_KEY;
-var consumer_secret = process.env.CONSUMER_SECRET;
+// it's the map it's the map it's the map it's the map it's the map!
+function get_room(id) {
+  let map;
+  request(room_map_url, function (error, resp, body) {
+    map = JSON.parse(body);
+  });
+
+  return map[id];
+}
 
 
 // Use the session middleware
@@ -34,7 +46,7 @@ app.use(session({ secret: process.env.SESSION_SECRET, cookie: { maxAge: 60000 }}
 let callIndex = 0;
 app.get('/chat', chat_route);
 
-app.use(express.static(__dirname + '/build', {index: false, redirect: false}));  
+app.use(express.static(__dirname + '/build', {index: false, redirect: false}));
 
 function chat_route(req, res) {
   if (req.session.data) {
@@ -62,11 +74,12 @@ function handle_launch(req, res, next) {
       req.session.data.email = req.body.lis_person_contact_email_primary;
       req.session.data.name = req.body.lis_person_name_full;
       req.session.data.context_id = req.body.context_id;
-        
+      req.session.data.room = get_room([req.body.user_id]);
+
       return next();
     }
   });
-   
+
 }
 
 app.post('/lti_launch', handle_launch, chat_route);
@@ -74,6 +87,6 @@ app.post('/lti_launch', handle_launch, chat_route);
 
 
 const port = process.env.PORT || 5000;
-server.listen(port);  
+server.listen(port);
 
 console.log("Listening!");
