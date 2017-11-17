@@ -1,83 +1,92 @@
-// Load required modules
-const http = require('http')
-const express = require('express')
-const io = require('socket.io')
-const easyrtc = require('easyrtc')
-const path = require('path')
-const browserify = require('browserify-middleware')
-const envify = require('envify/custom')
-const twilio = require('twilio')
-const app = express()
-const cors = require('cors')
+const express = require('express');
+const app = express();
+const request = require('request');
+const server = require('http').createServer(app);
+const io = require('socket.io')(server);
+const lti = require("ims-lti");
+const redis = require("redis");
+const session = require('express-session')
+const cookieParser = require('cookie-parser');
+const mustacheExpress = require('mustache-express');
 
-browserify.settings({
-  transform: ['envify']
-})
+const consumer_key = process.env.CONSUMER_KEY;
+const consumer_secret = process.env.CONSUMER_SECRET;
+const room_map_url = process.env.ROOM_MAP_URL;
+
+app.engine('html', require('hogan-express'));
+
+app.set('view engine', 'html');
+
+require('dotenv').config()
+app.use(cookieParser());
+app.enable("trust proxy");
+
+var bodyParser = require('body-parser');
+
+// configure the app to use bodyParser()
+app.use(bodyParser.urlencoded({
+  extended: true
+}));
+app.use(bodyParser.json());
+
+// it's the map it's the map it's the map it's the map it's the map!
+function get_room(id) {
+  let map;
+  request(room_map_url, function (error, resp, body) {
+    map = JSON.parse(body);
+  });
+
+  return map[id];
+}
 
 
-browserify.settings.development('basedir', __dirname)
-app.use(cors())
-app.get('/js/main.js', browserify('./client/main.js'))
-app.use(express.static(path.join(__dirname, '/public/')))
+// Use the session middleware
+app.use(session({ secret: process.env.SESSION_SECRET, cookie: { maxAge: 60000 }}))
 
-var webServer = http.createServer(app).listen(process.env.PORT)
+let callIndex = 0;
+app.get('/chat', chat_route);
 
-// Start Socket.io so it attaches itself to Express server
-var socketServer = io.listen(webServer, {'log level': 1})
+app.use(express.static(__dirname + '/build', {index: false, redirect: false}));
 
-easyrtc.setOption('logLevel', 'debug')
-
-// Setting up ICE STUN/TURN servers
-// Currently using twilio STUN servers TURN servers
-
-// twilio api authentication
-var accountSid = process.env.TWILIO_ID
-var authToken = process.env.TWILIO_TOKEN
-
-var client = new twilio.RestClient(accountSid, authToken)
-
-client.tokens.create({}, function (err, token) {
-  if (err) { console.log(err) }
-  var iceServers = token.ice_servers
-  console.log('twilio ice servers: ', iceServers)
-  console.log("started server on port:", process.env.PORT)
-  easyrtc.setOption('appIceServers', iceServers)
-})
-
-// Overriding the default easyrtcAuth listener, only so we can directly access its callback
-easyrtc.events.on('easyrtcAuth', function (socket, easyrtcid, msg, socketCallback, callback) {
-  easyrtc.events.defaultListeners.easyrtcAuth(socket, easyrtcid, msg, socketCallback, function (err, connectionObj) {
-    if (err || !msg.msgData || !msg.msgData.credential || !connectionObj) {
-      callback(err, connectionObj)
-      return
-    }
-
-    connectionObj.setField('credential', msg.msgData.credential, {'isShared': false})
-
-    console.log('[' + easyrtcid + '] Credential saved!', connectionObj.getFieldValueSync('credential'))
-
-    callback(err, connectionObj)
-  })
-})
-
-// To test, lets print the credential to the console for every room join!
-easyrtc.events.on('roomJoin', function (connectionObj, roomName, roomParameter, callback) {
-  console.log('[' + connectionObj.getEasyrtcid() + '] Credential retrieved!', connectionObj.getFieldValueSync('credential'))
-  easyrtc.events.defaultListeners.roomJoin(connectionObj, roomName, roomParameter, callback)
-})
-
-// Start EasyRTC server
-easyrtc.listen(app, socketServer, null, function (err, rtcRef) {
-  if (err) {
-    console.log('err:', err)
+function chat_route(req, res) {
+  if (req.session.data) {
+    res.render(__dirname + '/build/index.html', { config: JSON.stringify(req.session.data) });
+  } else {
+    res.sendFile(__dirname + '/build/index.html');
   }
+}
 
-  console.log('Initiated')
+function handle_launch(req, res, next) {
+  let client = redis.createClient(process.env.REDIS_URL)
+  store = new lti.Stores.RedisStore('consumer_key', client)
+  req.lti = new lti.Provider(consumer_key, consumer_secret, store)
+  req.session.body = req.body;
+  req.lti.valid_request(req, function (err, isValid) {
+    if (err) {
+      // invalid lti launch request
+      console.log(err);
+      return res.send("LTI Verification failed!");
+    } else {
+      req.session.isValid = isValid;
+      // collect the data we're interested in from the request
+      req.session.data = {}
+      req.session.data.user_id = req.body.user_id;
+      req.session.data.email = req.body.lis_person_contact_email_primary;
+      req.session.data.name = req.body.lis_person_name_full;
+      req.session.data.context_id = req.body.context_id;
+      req.session.data.room = get_room([req.body.user_id]);
 
-  rtcRef.events.on('roomCreate', function (appObj, creatorConnectionObj, roomName, roomOptions, callback) {
-    console.log('roomCreate fired! Trying to create: ' + roomName)
-    appObj.events.defaultListeners.roomCreate(appObj, creatorConnectionObj, roomName, roomOptions, callback)
-  })
-})
+      return next();
+    }
+  });
+
+}
+
+app.post('/lti_launch', handle_launch, chat_route);
 
 
+
+const port = process.env.PORT || 5000;
+server.listen(port);
+
+console.log("Listening!");
