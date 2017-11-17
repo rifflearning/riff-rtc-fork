@@ -1,3 +1,11 @@
+# Env variables
+.env
+
+# don't track built stuff
+build
+
+# ignore swap files
+*.swp
 # Logs
 logs
 *.log
@@ -26,6 +34,9 @@ coverage
 # Compiled binary addons (http://nodejs.org/api/addons.html)
 build/Release
 
+# Compiled MeetingMediator
+mm.js
+
 # Dependency directories
 node_modules
 jspm_packages
@@ -35,3 +46,5 @@ jspm_packages
 
 # Optional REPL history
 .node_repl_history
+
+
