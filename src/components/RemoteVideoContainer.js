@@ -23,7 +23,7 @@ class RemoteVideoContainer extends React.Component {
     
     return this.props.peers.map(function(peer) {
       return (
-        <div className = {"col videoContainer " + colVal} id = {"container_" + peer.id}>
+        <div className = {"col videoContainer remotes " + colVal} id = {"container_" + peer.id}>
         </div>
       );
     });

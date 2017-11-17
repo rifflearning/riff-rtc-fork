@@ -23,7 +23,7 @@ class WebRtc extends React.Component {
     this.removeVideo = this.removeVideo.bind(this);
     this.readyToCall = this.readyToCall.bind(this);
     this.state = {
-      peers: [],     
+      peers: [],
       muted: false
     }
 
@@ -63,7 +63,7 @@ class WebRtc extends React.Component {
       autoRequestMedia: true,
       url : this.signalmaster_url,
       nick: this.props.options.username,
-      debug : false, 
+      debug : false,
     });
 
     // register our webrtc functions with the corresponding events
@@ -96,7 +96,7 @@ class WebRtc extends React.Component {
   removeVideo(video, peer) {
     // remove the peer from state,
     // our child component will handle it automatically
-    
+
     // sanity check / make sure we weren't called erroneously
     if (!peer) {
       return;
@@ -115,7 +115,7 @@ class WebRtc extends React.Component {
   getUserId() {
     return this.props.options.username;
   }
-  
+
   getUserEmail() {
     return this.props.options.email;
   }
@@ -133,7 +133,7 @@ class WebRtc extends React.Component {
     // format of the rhythm-server
     let parts = this.getParticipants().map(
         (user) => { return { "participant": user } });
-    
+
     return this.socket.emit('meetingJoined', {
       participant: this.getUserId(),
       email: this.getUserEmail(),
@@ -148,7 +148,7 @@ class WebRtc extends React.Component {
   }
 
   getLocalStream() {
-    // this is gross. but, it seems simplewebrtc doesn't 
+    // this is gross. but, it seems simplewebrtc doesn't
     // support getting the local stream with its API
     // please forgive me for my sins
     // we need this to hook in the audio/video data collection
@@ -174,8 +174,8 @@ class WebRtc extends React.Component {
   }
 
   getInfo() {
-    return { 
-      'username': this.getUserId(), 
+    return {
+      'username': this.getUserId(),
       'roomname': this.getRoomname(),
       'token': this.token
     };
@@ -193,7 +193,7 @@ class WebRtc extends React.Component {
   record() {
     // begin tracking user events and sending them to server
     this.speakingEvents.bind(
-      'stoppedSpeaking', 
+      'stoppedSpeaking',
       captureSpeakingEvent(this.app, this.getInfo())
     );
     this.startMM();
@@ -239,7 +239,7 @@ class WebRtc extends React.Component {
 
   muteClick() {
     // mute the webrtc stream and update the state
-    
+
     if (this.state.muted) {
       this.unmute();
     } else {
@@ -255,19 +255,21 @@ class WebRtc extends React.Component {
   }
 
   render() {
-    return (<div className = "row no-margin-bottom"> 
+    return (<div className = "row no-margin-bottom">
               <div id = "sidebar" className = "col s3">
                 <div id = 'local-container'>
                   <video className = "local-video"
                     id = {this.props.id}
                     // this is necessary for thumos. yes, it is upsetting.
-                    // height = "170px" width="300px"
-                    ref = "local" > 
-                  </video > 
-                  <canvas id="video-overlay"> </canvas>
+                    height = "225" width = "300"
+                    ref = "local" >
+                  </video>
+                  <canvas id = "video-overlay"
+                    height = "225" width = "300">
+                  </canvas>
                 </div>
                 <MuteButton onClick = {this.muteClick.bind(this)} muted = {this.state.muted}/>
-                <div id = "meeting-mediator"  />
+                <div id = "meeting-mediator"/>
               </div>
               <RemoteVideoContainer ref = "remote" peers = {this.state.peers}/>
             </div >
