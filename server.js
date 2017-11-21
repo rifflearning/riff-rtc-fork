@@ -32,6 +32,7 @@ app.use(bodyParser.json());
 // it's the map it's the map it's the map it's the map it's the map!
 function get_room(id) {
   let map;
+  // we dont store the map because it can change
   request(room_map_url, function (error, resp, body) {
     map = JSON.parse(body);
   });
@@ -69,12 +70,13 @@ function handle_launch(req, res, next) {
     } else {
       req.session.isValid = isValid;
       // collect the data we're interested in from the request
-      req.session.data = {}
+      let email = req.body.lis_person_contact_email_primary;
+      req.session.data = {};
       req.session.data.user_id = req.body.user_id;
-      req.session.data.email = req.body.lis_person_contact_email_primary;
+      req.session.data.email = email;
       req.session.data.name = req.body.lis_person_name_full;
       req.session.data.context_id = req.body.context_id;
-      req.session.data.room = get_room([req.body.user_id]);
+      req.session.data.room = get_room([email]);
 
       return next();
     }
