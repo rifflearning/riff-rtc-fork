@@ -79,7 +79,7 @@ class RemoteVideoContainer extends React.Component {
   }
   render() {
     return (
-      <div className = "remotes col s9" id = "remoteVideos">
+      <div className = "remotes" id = "remoteVideos">
         <div ref = "remotes" className = "row"> 
           {this.videos()}
         </div>
