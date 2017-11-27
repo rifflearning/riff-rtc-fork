@@ -9,6 +9,7 @@ const session = require('express-session')
 const cookieParser = require('cookie-parser');
 const mustacheExpress = require('mustache-express');
 
+require('dotenv').config()
 const consumer_key = process.env.CONSUMER_KEY;
 const consumer_secret = process.env.CONSUMER_SECRET;
 const room_map_url = process.env.ROOM_MAP_URL;
@@ -17,7 +18,6 @@ app.engine('html', require('hogan-express'));
 
 app.set('view engine', 'html');
 
-require('dotenv').config()
 app.use(cookieParser());
 app.enable("trust proxy");
 
@@ -29,15 +29,21 @@ app.use(bodyParser.urlencoded({
 }));
 app.use(bodyParser.json());
 
+var map;
+
 // it's the map it's the map it's the map it's the map it's the map!
-function get_room(id) {
-  let map;
-  // we dont store the map because it can change
+function update_map() {
   request(room_map_url, function (error, resp, body) {
     map = JSON.parse(body);
   });
+}
 
-  return map[id];
+update_map()
+
+function get_room(id, callback) {
+  // we update the map because it can change
+  update_map()
+  return map[id]
 }
 
 
@@ -76,7 +82,7 @@ function handle_launch(req, res, next) {
       req.session.data.email = email;
       req.session.data.name = req.body.lis_person_name_full;
       req.session.data.context_id = req.body.context_id;
-      req.session.data.room = get_room([email]);
+      req.session.data.room = get_room(email);
 
       return next();
     }
