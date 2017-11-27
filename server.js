@@ -38,12 +38,17 @@ function update_map() {
   });
 }
 
-update_map()
+update_map();
 
 function get_room(id, callback) {
   // we update the map because it can change
-  update_map()
-  return map[id]
+  update_map();
+  if (map[id] !== undefined) {
+    return map[id];
+  } else {
+    // this way the user is prompted for a room name, worst case
+    return undefined;
+  }
 }
 
 
