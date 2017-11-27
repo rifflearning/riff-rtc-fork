@@ -26,7 +26,7 @@ aside {
 
 /* don't display the user video if the screen is not */
 /* tall enough to display both the user and the visualiztion */
-@media screen and (max-height: 650px) {
+@media screen and (max-height: 620px) {
   #local-container {
     display:none;
   }
@@ -88,6 +88,7 @@ a {
 .videoContainer {
   overflow: hidden;
   padding: 0.25rem 0.75rem !important;
+  margin-bottom: 10px;
 }
 
 #local-container {
