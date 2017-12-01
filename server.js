@@ -33,9 +33,11 @@ var map;
 
 // it's the map it's the map it's the map it's the map it's the map!
 function update_map() {
-  request(room_map_url, function (error, resp, body) {
-    map = JSON.parse(body);
-  });
+  if (room_map_url !== "nope") {
+    request(room_map_url, function (error, resp, body) {
+      map = JSON.parse(body);
+    });
+  }
 }
 
 update_map();
