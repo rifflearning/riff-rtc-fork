@@ -197,7 +197,7 @@ class WebRtc extends React.Component {
       captureSpeakingEvent(this.app, this.getInfo())
     );
     this.startMM();
-    if (process.env.REACT_APP_TRACK_FACE == "true") {
+    if (process.env.REACT_APP_TRACK_FACE === "true") {
       trackFace(this.app, this.getUserId(), this.getRoomname(), this.props.id);
     }
 
