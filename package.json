@@ -3,7 +3,7 @@
   "version": "0.2.0",
   "private": true,
   "engines": {
-    "node": "^8.11.1"
+    "node": ">=7"
   },
   "dependencies": {
     "body-parser": "^1.17.2",
