@@ -1,9 +1,27 @@
 {
   "name": "rhythm-rtc",
+  "description": "WebRTC browser client that connects to the rhythm-server",
   "version": "0.2.0",
   "private": true,
+  "homepage": "",
+  "keywords": [
+    "feathers",
+	"WebRTC"
+  ],
+  "license": "MIT",
+  "repository": {},
+  "author": {},
+  "contributors": [],
+  "bugs": {},
   "engines": {
     "node": ">=7"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "build": "node scripts/build.js",
+    "dev": "node scripts/start.js",
+    "test": "node scripts/test.js --env=jsdom",
+    "postinstall": "coffee -c ./src/libs/mm.coffee; npm run build;"
   },
   "dependencies": {
     "autoprefixer": "^7.1.0",
@@ -27,13 +45,6 @@
     "d3": "^3.5.17",
     "dirty-json": "^0.6.0",
     "dotenv": "^4.0.0",
-    "eslint": "^3.19.0",
-    "eslint-config-react-app": "^1.0.2",
-    "eslint-loader": "^1.7.1",
-    "eslint-plugin-flowtype": "^2.33.0",
-    "eslint-plugin-import": "^2.2.0",
-    "eslint-plugin-jsx-a11y": "^5.0.1",
-    "eslint-plugin-react": "^7.0.1",
     "express-ims-lti": "^0.2.4",
     "express-session": "^1.15.5",
     "extract-text-webpack-plugin": "^2.1.0",
@@ -79,12 +90,14 @@
     "webpack-sources": "^1.0.1",
     "whatwg-fetch": "^2.0.3"
   },
-  "scripts": {
-    "start": "node server.js",
-    "build": "node scripts/build.js",
-    "dev": "node scripts/start.js",
-    "test": "node scripts/test.js --env=jsdom",
-    "postinstall": "coffee -c ./src/libs/mm.coffee; npm run build;"
+  "devDependencies": {
+    "eslint": "^3.19.0",
+    "eslint-config-react-app": "^1.0.2",
+    "eslint-loader": "^1.7.1",
+    "eslint-plugin-flowtype": "^2.33.0",
+    "eslint-plugin-import": "^2.2.0",
+    "eslint-plugin-jsx-a11y": "^5.0.1",
+    "eslint-plugin-react": "^7.0.1"
   },
   "jest": {
     "collectCoverageFrom": [
