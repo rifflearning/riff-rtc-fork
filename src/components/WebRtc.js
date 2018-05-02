@@ -3,8 +3,9 @@ import ReactDOM from 'react-dom';
 import SimpleWebRTC from 'simplewebrtc';
 import RemoteVideoContainer from './RemoteVideoContainer';
 import Sibilant from 'sibilant-webaudio';
-import feathers from 'feathers-client';
-import authentication from 'feathers-authentication/client';
+import feathers from '@feathersjs/feathers';
+import socketio from '@feathersjs/socketio-client';
+import auth from '@feathersjs/authentication-client';
 import captureSpeakingEvent from '../libs/audio';
 import io from 'socket.io-client';
 import cookie from 'react-cookie';
@@ -50,9 +51,8 @@ class WebRtc extends React.Component {
     })
 
     this.app = feathers()
-      .configure(feathers.hooks())
-      .configure(feathers.socketio(this.socket))
-      .configure(authentication());
+      .configure(socketio(this.socket))
+      .configure(auth({jwt: {}, local: {}}));
   }
 
   componentDidMount() {
@@ -216,7 +216,7 @@ class WebRtc extends React.Component {
       password: this.server_password,
     }).then(function (result) {
       log("auth result!: ", result);
-      this.token = result.token;
+      this.token = result.accessToken;
       return this.recordMeetingJoin();
     }.bind(this)).catch(function (err) {
       log('ERROR:', err);
