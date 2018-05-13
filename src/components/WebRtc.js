@@ -211,7 +211,7 @@ class WebRtc extends React.Component {
      * Calls the given function upon auth success
      */
     this.app.authenticate({
-      type: 'local',
+      strategy: 'local',
       email: this.server_email,
       password: this.server_password,
     }).then(function (result) {
