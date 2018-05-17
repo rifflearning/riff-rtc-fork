@@ -197,7 +197,7 @@ class WebRtc extends React.Component {
       captureSpeakingEvent(this.app, this.getInfo())
     );
     this.startMM();
-    if (process.env.REACT_APP_TRACK_FACE == "true") {
+    if (process.env.REACT_APP_TRACK_FACE === "true") {
       trackFace(this.app, this.getUserId(), this.getRoomname(), this.props.id);
     }
 
@@ -255,8 +255,8 @@ class WebRtc extends React.Component {
   }
 
   render() {
-    return (<div className = "row no-margin-bottom">
-              <div id = "sidebar" className = "col s3">
+    return (<div>
+              <aside id = "sidebar">
                 <div id = 'local-container'>
                   <video className = "local-video"
                     id = {this.props.id}
@@ -270,7 +270,7 @@ class WebRtc extends React.Component {
                 </div>
                 <MuteButton onClick = {this.muteClick.bind(this)} muted = {this.state.muted}/>
                 <div id = "meeting-mediator"/>
-              </div>
+              </aside>
               <RemoteVideoContainer ref = "remote" peers = {this.state.peers}/>
             </div >
         );

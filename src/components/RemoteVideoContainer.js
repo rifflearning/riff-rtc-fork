@@ -14,11 +14,13 @@ class RemoteVideoContainer extends React.Component {
     let peerLen = this.props.peers.length;
     let colVal;
     if (peerLen <= 1) {
-      colVal = "s12 whole-remote";
+      colVal = "s12 one-to-two-remote";
+    } else if (peerLen === 2) {
+      colVal = "s6 one-to-two-remote";
     } else if (peerLen < 5) {
-      colVal = "s6 half-remote";
+      colVal = "s6 three-to-five-remote";
     } else {
-      colVal = "s4 third-remote";
+      colVal = "s4 six-plus-remote";
     }
     
     return this.props.peers.map(function(peer) {
@@ -79,7 +81,7 @@ class RemoteVideoContainer extends React.Component {
   }
   render() {
     return (
-      <div className = "remotes col s9" id = "remoteVideos">
+      <div className = "remotes" id = "remoteVideos">
         <div ref = "remotes" className = "row"> 
           {this.videos()}
         </div>
