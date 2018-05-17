@@ -9,6 +9,7 @@ const session = require('express-session')
 const cookieParser = require('cookie-parser');
 const mustacheExpress = require('mustache-express');
 
+require('dotenv').config()
 const consumer_key = process.env.CONSUMER_KEY;
 const consumer_secret = process.env.CONSUMER_SECRET;
 const room_map_url = process.env.ROOM_MAP_URL;
@@ -17,7 +18,6 @@ app.engine('html', require('hogan-express'));
 
 app.set('view engine', 'html');
 
-require('dotenv').config()
 app.use(cookieParser());
 app.enable("trust proxy");
 
@@ -29,14 +29,28 @@ app.use(bodyParser.urlencoded({
 }));
 app.use(bodyParser.json());
 
-// it's the map it's the map it's the map it's the map it's the map!
-function get_room(id) {
-  let map;
-  request(room_map_url, function (error, resp, body) {
-    map = JSON.parse(body);
-  });
+var map;
 
-  return map[id];
+// it's the map it's the map it's the map it's the map it's the map!
+function update_map() {
+  if (room_map_url !== "nope") {
+    request(room_map_url, function (error, resp, body) {
+      map = JSON.parse(body);
+    });
+  }
+}
+
+update_map();
+
+function get_room(id, callback) {
+  // we update the map because it can change
+  update_map();
+  if (map[id] !== undefined) {
+    return map[id];
+  } else {
+    // this way the user is prompted for a room name, worst case
+    return undefined;
+  }
 }
 
 
@@ -69,12 +83,13 @@ function handle_launch(req, res, next) {
     } else {
       req.session.isValid = isValid;
       // collect the data we're interested in from the request
-      req.session.data = {}
+      let email = req.body.lis_person_contact_email_primary;
+      req.session.data = {};
       req.session.data.user_id = req.body.user_id;
-      req.session.data.email = req.body.lis_person_contact_email_primary;
+      req.session.data.email = email;
       req.session.data.name = req.body.lis_person_name_full;
       req.session.data.context_id = req.body.context_id;
-      req.session.data.room = get_room([req.body.user_id]);
+      req.session.data.room = get_room(email);
 
       return next();
     }
