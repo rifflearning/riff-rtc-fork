@@ -63,14 +63,13 @@ app.get('/chat', chat_route);
 app.use(express.static(__dirname + '/build', {index: false, redirect: false}));
 
 function chat_route(req, res) {
-  if (req.session.data) {
-    res.render(__dirname + '/build/index.html', { config: JSON.stringify(req.session.data) });
-  } else {
-    res.sendFile(__dirname + '/build/index.html');
-  }
+  let config = req.session.data ? JSON.stringify(req.session.data) : '{}';
+  console.log(`INFO: chat_route: config=${config}`)
+  res.render(`${__dirname}/build/index.html`, { config });
 }
 
 function handle_launch(req, res, next) {
+  console.log('INFO: handle_launch')
   let client = redis.createClient(process.env.REDIS_URL)
   store = new lti.Stores.RedisStore('consumer_key', client)
   req.lti = new lti.Provider(consumer_key, consumer_secret, store)
