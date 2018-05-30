@@ -1,7 +1,7 @@
 {
   "name": "rhythm-rtc",
   "description": "WebRTC browser client that connects to the rhythm-server",
-  "version": "0.3.0-dev.2",
+  "version": "0.3.0-dev.3",
   "private": true,
   "homepage": "",
   "keywords": [
