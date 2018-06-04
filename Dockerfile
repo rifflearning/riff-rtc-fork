@@ -38,6 +38,8 @@ COPY . /app
 VOLUME /app
 WORKDIR /app
 RUN ls -al
-CMD ["npm", "build", "&&", "npm", "start"]
+RUN npm install
+RUN npm build
+CMD ["npm", "start"]
 # ENTRYPOINT ["/bin/bash"]
 
