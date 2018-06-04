@@ -33,13 +33,14 @@ COPY bashrc /home/node/.bashrc
 
 EXPOSE 3001
 
+RUN npm install
+RUN npm build
+
 # riff-rtc repository working directory must be bound at /app and all dependent packages installed
 COPY . /app
 VOLUME /app
 WORKDIR /app
 RUN ls -al
-RUN npm install
-RUN npm build
 CMD ["npm", "start"]
 # ENTRYPOINT ["/bin/bash"]
 
