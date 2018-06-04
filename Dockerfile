@@ -27,21 +27,18 @@ RUN echo "root:password" | chpasswd
 # The node:8 npm v 5.6 has some issues, update it to 6.0
 RUN npm install -g npm
 
+WORKDIR /app
+COPY . .
+RUN npm install
+RUN npm build
+
 # node images have a node user w/ UID 1000 (works well for me for now, but more thought may be needed later) -mjl
 USER node
 COPY bashrc /home/node/.bashrc
 
 EXPOSE 3001
 
-COPY . .
-RUN npm install
-RUN npm build
-
 # riff-rtc repository working directory must be bound at /app and all dependent packages installed
-COPY . /app
-VOLUME /app
-WORKDIR /app
-RUN ls -al
 CMD ["npm", "start"]
 # ENTRYPOINT ["/bin/bash"]
 
