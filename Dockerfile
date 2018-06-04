@@ -1,6 +1,22 @@
 FROM node:8
 LABEL Description="This image runs riff-rtc which serves the pages to enable video chat w/ the Media Manager"
 
+# set environment variables
+ENV REACT_APP_SERVER_TOKEN=$REACT_APP_SERVER_TOKEN
+ENV REACT_APP_SERVER_URL=$REACT_APP_SERVER_URL
+ENV REACT_APP_SERVER_EMAIL=$REACT_APP_SERVER_EMAIL
+ENV REACT_APP_SERVER_PASSWORD=$REACT_APP_SERVER_PASSWORD
+ENV REACT_APP_TRACK_FACE=$REACT_APP_TRACK_FACE
+ENV REACT_APP_DEBUG=$REACT_APP_DEBUG
+ENV REACT_APP_SIGNALMASTER_URL=$REACT_APP_SIGNALMASTER_URL
+ENV PORT=$PORT
+ENV CONSUMER_KEY=$CONSUMER_KEY
+ENV CONSUMER_SECRET=$CONSUMER_SECRET
+ENV SESSION_SECRET=$SESSION_SECRET
+ENV ROOM_MAP_URL=$ROOM_MAP_URL
+ENV CI=$CI
+ENV NODE_ENV=$NODE_ENVAUTH_ON=true
+
 # Modified bashrc which defines some aliases and an interactive prompt (for both root & node users)
 COPY bashrc /root/.bashrc
 
@@ -18,6 +34,7 @@ COPY bashrc /home/node/.bashrc
 EXPOSE 3001
 
 # riff-rtc repository working directory must be bound at /app and all dependent packages installed
+COPY . /app
 VOLUME /app
 WORKDIR /app
 RUN ls -al
