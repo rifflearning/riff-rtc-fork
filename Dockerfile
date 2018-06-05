@@ -30,7 +30,7 @@ RUN npm install -g npm
 WORKDIR /app
 COPY . .
 RUN npm install
-RUN npm build
+RUN npm run-script build
 
 # node images have a node user w/ UID 1000 (works well for me for now, but more thought may be needed later) -mjl
 USER node
