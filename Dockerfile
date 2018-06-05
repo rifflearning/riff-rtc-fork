@@ -44,12 +44,14 @@ RUN echo "root:password" | chpasswd
 # The node:8 npm v 5.6 has some issues, update it to 6.0
 RUN npm install -g npm
 
+# copy and install dependencies separately so they cache
 WORKDIR /app
-COPY . .
 
-RUN ls -al /app/
-
+COPY package.json .
 RUN npm install
+
+COPY . .
+RUN npm install -g coffeescript
 RUN npm run-script build
 
 # node images have a node user w/ UID 1000 (works well for me for now, but more thought may be needed later) -mjl
