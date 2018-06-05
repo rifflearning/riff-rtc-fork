@@ -15,7 +15,8 @@ ENV CONSUMER_SECRET=$CONSUMER_SECRET
 ENV SESSION_SECRET=$SESSION_SECRET
 ENV ROOM_MAP_URL=$ROOM_MAP_URL
 ENV CI=$CI
-ENV NODE_ENV=$NODE_ENVAUTH_ON=true
+ENV NODE_ENV=$NODE_ENV
+ENV AUTH_ON=$AUTH_ON
 
 # Modified bashrc which defines some aliases and an interactive prompt (for both root & node users)
 COPY bashrc /root/.bashrc
