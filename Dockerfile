@@ -41,14 +41,14 @@ COPY bashrc /root/.bashrc
 # this shouldn't exist in a production container
 RUN echo "root:password" | chpasswd
 
-RUN echo "$NODE_ENV"
-RUN echo "$PORT"
-
 # The node:8 npm v 5.6 has some issues, update it to 6.0
 RUN npm install -g npm
 
 WORKDIR /app
 COPY . .
+
+RUN ls -al /app/
+
 RUN npm install
 RUN npm run-script build
 
@@ -58,8 +58,6 @@ WORKDIR /app
 COPY bashrc /home/node/.bashrc
 
 EXPOSE 3001
-
-RUN ls -al /app/
 
 # riff-rtc repository working directory must be bound at /app and all dependent packages installed
 CMD ["npm", "start"]
