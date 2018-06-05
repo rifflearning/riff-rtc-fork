@@ -1,6 +1,22 @@
 FROM node:8
 LABEL Description="This image runs riff-rtc which serves the pages to enable video chat w/ the Media Manager"
 
+ARG REACT_APP_SERVER_TOKEN
+ARG REACT_APP_SERVER_URL
+ARG REACT_APP_SERVER_EMAIL
+ARG REACT_APP_SERVER_PASSWORD
+ARG REACT_APP_TRACK_FACE
+ARG REACT_APP_DEBUG
+ARG REACT_APP_SIGNALMASTER_URL
+ARG PORT
+ARG CONSUMER_KEY
+ARG CONSUMER_SECRET
+ARG SESSION_SECRET
+ARG ROOM_MAP_URL
+ARG CI
+ARG NODE_ENV
+ARG AUTH_ON
+
 # set environment variables
 ENV REACT_APP_SERVER_TOKEN=$REACT_APP_SERVER_TOKEN
 ENV REACT_APP_SERVER_URL=$REACT_APP_SERVER_URL
@@ -25,6 +41,9 @@ COPY bashrc /root/.bashrc
 # this shouldn't exist in a production container
 RUN echo "root:password" | chpasswd
 
+RUN echo "$NODE_ENV"
+RUN echo "$PORT"
+
 # The node:8 npm v 5.6 has some issues, update it to 6.0
 RUN npm install -g npm
 
@@ -35,9 +54,12 @@ RUN npm run-script build
 
 # node images have a node user w/ UID 1000 (works well for me for now, but more thought may be needed later) -mjl
 USER node
+WORKDIR /app
 COPY bashrc /home/node/.bashrc
 
 EXPOSE 3001
+
+RUN ls -al /app/
 
 # riff-rtc repository working directory must be bound at /app and all dependent packages installed
 CMD ["npm", "start"]
