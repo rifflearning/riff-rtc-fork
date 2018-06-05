@@ -1,5 +1,5 @@
 import {log} from './utils';
-const MM = require('./mm.js').MeetingMediator;
+const MM = require('./mm').MeetingMediator;
 const _ = require('underscore');
 const $ = require('jquery');
 
