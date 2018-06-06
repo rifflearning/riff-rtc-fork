@@ -4,6 +4,8 @@ import App from './components/App';
 import registerServiceWorker from './registerServiceWorker';
 import './index.css';
 import {getUrlParam} from "./libs/utils"
+import 'materialize-css/dist/js/materialize.js';
+import 'materialize-css/dist/css/materialize.css';
 
 let user_data = window.user_data || {};
 user_data.user_id = user_data.user_id || getUrlParam("user") || window.prompt("Please enter a username!","name") || "default";
