@@ -1,6 +1,5 @@
 import {log} from './utils';
 const MM = require('./mm.js').MeetingMediator;
-const _ = require('underscore');
 
 class Mediator {
 
@@ -9,7 +8,7 @@ class Mediator {
 
   // just sums up values of the turns object.
   get_total_transitions(turns) {
-    return _.reduce(_.values(turns), function(m, n){return m+n;}, 0);
+    return Object.values(turns).reduce((total, curval) => total + curval, 0);
   }
 
   // transform to the right data to send to chart
@@ -17,14 +16,27 @@ class Mediator {
     log("transforming turns:", turns);
     log("participants: ", participants);
     // filter out turns not by present participants
-    var filtered_turns = _.filter(turns, function(turn){
-      return _.contains(participants, turn.participant);
-    });
+    var filtered_turns = turns.filter(turn => participants.includes(turn.participant));
     return filtered_turns;
-
   }
 
   // update MM turns if it matches this hangout.
+  //
+  // example:
+  //   data:
+  //     participants:
+  //       - "Mike"
+  //       - "Beth"
+  //     transitions: 2
+  //     turns:
+  //       -
+  //         _id: "5b183d0d1af76300111c871d"
+  //         participant: "Beth"
+  //         turns: 0.5294117647058824
+  //       -
+  //         _id: "5b183d0d1af76300111c871c"
+  //         participant: "Mike"
+  //         turns: 0.47058823529411764
   maybe_update_mm_turns(data) {
     log("mm data turns:", data);
 
@@ -62,7 +74,7 @@ class Mediator {
     participantEvents.on('created', function (obj) {
       log("got a new participant event:", obj);
       log("roomname:", this.roomName);
-      if (_.isEqual(obj.room, this.roomName)) {
+      if (obj.room === this.roomName) {
         this.mm.updateData({
           participants: obj.participants,
           transitions: this.mm.data.transitions,
@@ -78,7 +90,7 @@ class Mediator {
     meetings.on('patched', function (obj) {
       log("meeting got updated:", obj);
       log("roomname:", this.roomName);
-      if (_.isEqual(obj.room, this.roomName)) {
+      if (obj.room === this.roomName) {
         this.mm.updateData({
           participants: this.roomUsers,
           transitions: this.mm.data.transitions,

@@ -9,7 +9,6 @@
                      require('d3-scale'),
                      require('d3-transition'),
                     )
-  _ = require('underscore')
 
   NETWORK_RADIUS = 115
   PARTICIPANT_NODE_RADIUS = 20
@@ -138,7 +137,7 @@
         .attr "class", "nodeFill"
         .attr "fill", "#FFFFFF"
         .attr "r", (d) =>
-          if (d.participant == 'energy' or _.contains(@localParticipants, d.participant))
+          if (d.participant == 'energy' or @localParticipants.includes(d.participant))
             0
           else
             @nodeRadius(d) - 3
@@ -153,7 +152,7 @@
           else
             "rotate(#{ (-1 * (@constantRotationAngle() + @angle(d.participant))) })"
         .attr "fill", (d) =>
-          if (_.contains(@localParticipants, d.participant))
+          if (@localParticipants.includes(d.participant))
             "#FFFFFF"
           else
             "#000000"
@@ -169,7 +168,7 @@
     nodeColor: (d) =>
       if (d.participant == 'energy')
         @sphereColorScale(@data.transitions)
-      else if _.contains(@localParticipants, d.participant)
+      else if @localParticipants.includes(d.participant)
         PARTICIPANT_NODE_COLOR_LOCAL
       else
         PARTICIPANT_NODE_COLOR_OTHER
