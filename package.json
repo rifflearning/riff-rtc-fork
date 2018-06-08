@@ -78,7 +78,7 @@
     "redis": "^2.8.0",
     "request": "^2.87.0",
     "sibilant-webaudio": "^0.1.4",
-    "simplewebrtc": "^2.2.3",
+    "simplewebrtc": "^3.0.1",
     "socket.io": "^2.1.1",
     "socket.io-client": "^2.1.1",
     "strip-json-comments": "^2.0.1",
