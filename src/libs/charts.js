@@ -1,7 +1,6 @@
 import {log} from './utils';
 const MM = require('./mm.js').MeetingMediator;
 const _ = require('underscore');
-const $ = require('jquery');
 
 class Mediator {
 
@@ -101,7 +100,7 @@ class Mediator {
     this.roomName = roomName;
     this.roomUsers = participants;
 
-    if (!($('#meeting-mediator').is(':empty'))) {
+    if (!elementIsEmpty('#meeting-mediator')) {
       log("not starting a second MM...");
       return;
     }
@@ -123,6 +122,15 @@ class Mediator {
     this.start_meeting_listener();
   }
 
+}
+
+function elementIsEmpty(selector)
+{
+  let element = document.querySelector(selector);
+  if (element === null)
+    throw new Error(`selector: '${selector}' did not reference any element in the document`);
+
+  return element.childElementCount === 0;
 }
 
 export default Mediator

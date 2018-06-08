@@ -54,7 +54,6 @@
     "hogan-express": "^0.5.2",
     "html-webpack-plugin": "^2.28.0",
     "ims-lti": "^3.0.2",
-    "jquery": "^3.1.0",
     "json-loader": "^0.5.7",
     "lodash": "^4.17.4",
     "materialize-css": "^0.100.2",
