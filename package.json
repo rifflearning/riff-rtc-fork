@@ -20,7 +20,6 @@
     "start": "node server.js",
     "build": "node -r dotenv/config scripts/build.js",
     "dev": "node scripts/start.js",
-    "test": "node scripts/test.js --env=jsdom",
     "postinstall": "coffee -c ./src/libs/mm.coffee; npm run build;"
   },
   "dependencies": {
@@ -30,7 +29,6 @@
     "autoprefixer": "^7.1.0",
     "babel-core": "^6.24.1",
     "babel-eslint": "^7.2.3",
-    "babel-jest": "^20.0.3",
     "babel-loader": "^7.0.0",
     "babel-minify-webpack-plugin": "^0.2.0",
     "babel-preset-react-app": "^3.0.0",
@@ -91,33 +89,7 @@
     "eslint-plugin-import": "^2.11.0",
     "eslint-plugin-jsx-a11y": "^6.0.3",
     "eslint-plugin-react": "^7.7.0",
-    "jest": "^23.1.0",
     "react-error-overlay": "^1.0.4"
-  },
-  "jest": {
-    "collectCoverageFrom": [
-      "src/**/*.{js,jsx}"
-    ],
-    "setupFiles": [
-      "<rootDir>/config/polyfills.js"
-    ],
-    "testMatch": [
-      "<rootDir>/src/**/__tests__/**/*.js?(x)",
-      "<rootDir>/src/**/?(*.)(spec|test).js?(x)"
-    ],
-    "testEnvironment": "node",
-    "testURL": "http://localhost",
-    "transform": {
-      "^.+\\.(js|jsx)$": "<rootDir>/node_modules/babel-jest",
-      "^.+\\.css$": "<rootDir>/config/jest/cssTransform.js",
-      "^(?!.*\\.(js|jsx|css|json)$)": "<rootDir>/config/jest/fileTransform.js"
-    },
-    "transformIgnorePatterns": [
-      "[/\\\\]node_modules[/\\\\].+\\.(js|jsx)$"
-    ],
-    "moduleNameMapper": {
-      "^react-native$": "react-native-web"
-    }
   },
   "babel": {
     "presets": [
