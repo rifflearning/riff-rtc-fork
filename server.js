@@ -1,32 +1,32 @@
 const express = require('express');
 const app = express();
-const request = require('request');
 const server = require('http').createServer(app);
 const io = require('socket.io')(server);
-const lti = require("ims-lti");
-const redis = require("redis");
+
 const session = require('express-session')
 const cookieParser = require('cookie-parser');
-const mustacheExpress = require('mustache-express');
+const bodyParser = require('body-parser');
+const serveStatic = require('serve-static');
+const hoganExpress = require('hogan-express'); // mustache templating engine
+
+const request = require('request');
+const lti = require("ims-lti");
+const redis = require("redis");
 
 require('dotenv').config()
 const consumer_key = process.env.CONSUMER_KEY;
 const consumer_secret = process.env.CONSUMER_SECRET;
 const room_map_url = process.env.ROOM_MAP_URL;
 
-app.engine('html', require('hogan-express'));
-
+app.engine('html', hoganExpress);
 app.set('view engine', 'html');
 
 app.use(cookieParser());
 app.enable("trust proxy");
 
-var bodyParser = require('body-parser');
 
 // configure the app to use bodyParser()
-app.use(bodyParser.urlencoded({
-  extended: true
-}));
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 
 var map;
@@ -44,6 +44,8 @@ update_map();
 
 function get_room(id, callback) {
   // we update the map because it can change
+  // TODO: ? if the map can change, shouldn't we wait until it's been updated before we use it?
+  // TODO: update_map is asynchronous -mjl 2018-06-05
   update_map();
   if (map[id] !== undefined) {
     return map[id];
@@ -56,11 +58,11 @@ function get_room(id, callback) {
 
 // Use the session middleware
 app.use(session({ secret: process.env.SESSION_SECRET, cookie: { maxAge: 60000 }}))
+app.use(serveStatic(__dirname + '/build', { index: false, redirect: false }));
 
-let callIndex = 0;
 app.get('/chat', chat_route);
+app.post('/lti_launch', handle_launch, chat_route);
 
-app.use(express.static(__dirname + '/build', {index: false, redirect: false}));
 
 function chat_route(req, res) {
   let config = req.session.data ? JSON.stringify(req.session.data) : '{}';
@@ -95,9 +97,6 @@ function handle_launch(req, res, next) {
   });
 
 }
-
-app.post('/lti_launch', handle_launch, chat_route);
-
 
 
 const port = process.env.PORT || 5000;
