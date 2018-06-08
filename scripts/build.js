@@ -1,7 +1,8 @@
 'use strict';
 
 // Do this as the first thing so that any code reading it knows the right env.
-//process.env.NODE_ENV = 'production';
+// If environment variable NODE_ENV was not specified, assume production
+process.env.NODE_ENV = process.env.NODE_ENV || 'production';
 
 // Makes the script crash on unhandled rejections instead of silently
 // ignoring them. In the future, promise rejections that are not handled will
@@ -14,9 +15,9 @@ process.on('unhandledRejection', err => {
 require('../config/env');
 
 // use production if we're in production, otherwise use dev
-const config = process.env.NODE_ENV == 'production' ?
-      require('../config/webpack.config.prod') :
-      require('../config/webpack.config.dev');
+const createProdBuild = process.env.NODE_ENV === 'production';
+const config = createProdBuild ? require('../config/webpack.config.prod')
+                               : require('../config/webpack.config.dev');
 
 const path = require('path');
 const chalk = require('chalk');
@@ -91,13 +92,18 @@ measureFileSizesBeforeBuild(paths.appBuild)
     }
   );
 
-// Create the production build and print the deployment instructions.
+// Create the build and print the deployment instructions.
 function build(previousFileSizes) {
-  console.log('Creating an optimized build...');
+  console.log(`Creating ${process.env.NODE_ENV === 'production' ? 'an optimized production' : 'a development'} build...`);
 
+  let buildStartTime = Date.now();
   let compiler = webpack(config);
   return new Promise((resolve, reject) => {
     compiler.run((err, stats) => {
+      let buildTime = Date.now() - buildStartTime;
+      let buildMin = Math.floor(buildTime / 60000);
+      let buildSec = Math.floor(buildTime / 1000) % 60;
+      console.log(`...build time: ${buildMin}m${buildSec}s`);
       if (err) {
         return reject(err);
       }
