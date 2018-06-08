@@ -4,7 +4,7 @@ const _ = require('underscore');
 const $ = require('jquery');
 
 class Mediator {
-  
+
   // COPIED FROM ORIGINAL RHYTHM-RTC PROJECT
   // with some minor modifications
 
@@ -28,7 +28,7 @@ class Mediator {
   // update MM turns if it matches this hangout.
   maybe_update_mm_turns(data) {
     log("mm data turns:", data);
-    
+
     if (data.room === this.roomName && this.mm.data.participants.length > 1) {
       this.mm.updateData({participants: this.roomUsers,
         transitions: data.transitions,
@@ -90,8 +90,8 @@ class Mediator {
   }
 
   constructor(app, participants, user, roomName) {
-    log("INITIAL ROOMANME", roomName);
-    
+    log("INITIAL ROOMNAME", roomName);
+
     this.mm = null;
     this.mm_width = 300;
     this.mm_height = 300;
