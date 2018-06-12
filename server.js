@@ -7,7 +7,7 @@ const session = require('express-session')
 const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const serveStatic = require('serve-static');
-const hoganExpress = require('hogan-express'); // mustache templating engine
+const hoganXpress = require('hogan-xpress'); // mustache templating engine
 
 const request = require('request');
 const lti = require("ims-lti");
@@ -18,7 +18,7 @@ const consumer_key = process.env.CONSUMER_KEY;
 const consumer_secret = process.env.CONSUMER_SECRET;
 const room_map_url = process.env.ROOM_MAP_URL;
 
-app.engine('html', hoganExpress);
+app.engine('html', hoganXpress);
 app.set('view engine', 'html');
 
 app.use(cookieParser());
