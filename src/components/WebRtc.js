@@ -33,14 +33,17 @@ class WebRtc extends React.Component {
 
     // rssi value over which we will consider a speaking event
     this.THRESHOLD = process.env.SPEAKING_THRESHOLD || -35;
-    this.server_email = process.env.REACT_APP_SERVER_EMAIL;
-    this.server_password = process.env.REACT_APP_SERVER_PASSWORD;
-    this.signalmaster_url = process.env.REACT_APP_SIGNALMASTER_URL;
+    this.server_email = window.client_config.dataServer.email;
+    this.server_password = window.client_config.dataServer.password;
+    this.signalmaster_url = window.client_config.signalMaster.url;
   }
 
   connectToServer() {
     // we create our socket + initialize our feathers app with it
-    this.socket = io(process.env.REACT_APP_SERVER_URL, {
+    let dataserverPath = window.client_config.dataServer.path || '';
+    dataserverPath += '/socket.io';
+    this.socket = io(window.client_config.dataServer.url, {
+      'path': dataserverPath,
       'transports': [
         'websocket',
         'flashsocket',
@@ -197,7 +200,7 @@ class WebRtc extends React.Component {
       captureSpeakingEvent(this.app, this.getInfo())
     );
     this.startMM();
-    if (process.env.REACT_APP_TRACK_FACE === "true") {
+    if (window.client_config.faceTracking.enabled) {
       trackFace(this.app, this.getUserId(), this.getRoomname(), this.props.id);
     }
 
