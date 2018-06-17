@@ -94,7 +94,7 @@ measureFileSizesBeforeBuild(paths.appBuild)
 
 // Create the build and print the deployment instructions.
 function build(previousFileSizes) {
-  console.log(`Creating ${process.env.NODE_ENV === 'production' ? 'an optimized production' : 'a development'} build...`);
+  console.log(`Creating ${createProdBuild ? 'an optimized production' : 'a development'} build...`);
 
   let buildStartTime = Date.now();
   let compiler = webpack(config);
