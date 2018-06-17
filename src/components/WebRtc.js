@@ -3,8 +3,9 @@ import ReactDOM from 'react-dom';
 import SimpleWebRTC from 'simplewebrtc';
 import RemoteVideoContainer from './RemoteVideoContainer';
 import Sibilant from 'sibilant-webaudio';
-import feathers from 'feathers-client';
-import authentication from 'feathers-authentication/client';
+import feathers from '@feathersjs/feathers';
+import socketio from '@feathersjs/socketio-client';
+import auth from '@feathersjs/authentication-client';
 import captureSpeakingEvent from '../libs/audio';
 import io from 'socket.io-client';
 import cookie from 'react-cookie';
@@ -32,14 +33,17 @@ class WebRtc extends React.Component {
 
     // rssi value over which we will consider a speaking event
     this.THRESHOLD = process.env.SPEAKING_THRESHOLD || -35;
-    this.server_email = process.env.REACT_APP_SERVER_EMAIL;
-    this.server_password = process.env.REACT_APP_SERVER_PASSWORD;
-    this.signalmaster_url = process.env.REACT_APP_SIGNALMASTER_URL;
+    this.server_email = window.client_config.dataServer.email;
+    this.server_password = window.client_config.dataServer.password;
+    this.signalmaster_url = window.client_config.signalMaster.url;
   }
 
   connectToServer() {
     // we create our socket + initialize our feathers app with it
-    this.socket = io(process.env.REACT_APP_SERVER_URL, {
+    let dataserverPath = window.client_config.dataServer.path || '';
+    dataserverPath += '/socket.io';
+    this.socket = io(window.client_config.dataServer.url, {
+      'path': dataserverPath,
       'transports': [
         'websocket',
         'flashsocket',
@@ -50,9 +54,8 @@ class WebRtc extends React.Component {
     })
 
     this.app = feathers()
-      .configure(feathers.hooks())
-      .configure(feathers.socketio(this.socket))
-      .configure(authentication());
+      .configure(socketio(this.socket))
+      .configure(auth({jwt: {}, local: {}}));
   }
 
   componentDidMount() {
@@ -197,7 +200,7 @@ class WebRtc extends React.Component {
       captureSpeakingEvent(this.app, this.getInfo())
     );
     this.startMM();
-    if (process.env.REACT_APP_TRACK_FACE == "true") {
+    if (window.client_config.faceTracking.enabled) {
       trackFace(this.app, this.getUserId(), this.getRoomname(), this.props.id);
     }
 
@@ -211,12 +214,12 @@ class WebRtc extends React.Component {
      * Calls the given function upon auth success
      */
     this.app.authenticate({
-      type: 'local',
+      strategy: 'local',
       email: this.server_email,
       password: this.server_password,
     }).then(function (result) {
       log("auth result!: ", result);
-      this.token = result.token;
+      this.token = result.accessToken;
       return this.recordMeetingJoin();
     }.bind(this)).catch(function (err) {
       log('ERROR:', err);
@@ -255,8 +258,8 @@ class WebRtc extends React.Component {
   }
 
   render() {
-    return (<div className = "row no-margin-bottom">
-              <div id = "sidebar" className = "col s3">
+    return (<div>
+              <aside id = "sidebar">
                 <div id = 'local-container'>
                   <video className = "local-video"
                     id = {this.props.id}
@@ -270,7 +273,7 @@ class WebRtc extends React.Component {
                 </div>
                 <MuteButton onClick = {this.muteClick.bind(this)} muted = {this.state.muted}/>
                 <div id = "meeting-mediator"/>
-              </div>
+              </aside>
               <RemoteVideoContainer ref = "remote" peers = {this.state.peers}/>
             </div >
         );
