@@ -18,7 +18,7 @@
   },
   "scripts": {
     "start": "node server.js",
-    "build": "node -r dotenv/config scripts/build.js",
+    "build": "coffee -c ./src/libs/mm.coffee; node -r dotenv/config scripts/build.js",
     "dev": "node scripts/start.js",
     "postinstall": "coffee -c ./src/libs/mm.coffee; npm run build;"
   },
