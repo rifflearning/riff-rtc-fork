@@ -18,13 +18,9 @@
   },
   "scripts": {
     "start": "node server.js",
-    "build": "coffee -c ./src/libs/mm.coffee; node scripts/build.js",
+    "build": "coffee -c ./src/libs/mm.coffee; node -r dotenv/config scripts/build.js",
     "dev": "node scripts/start.js",
-<<<<<<< HEAD
-    "postinstall": "coffee -c ./src/libs/mm.coffee; npm run build;"
-=======
     "test": "node scripts/test.js --env=jsdom"
->>>>>>> npm install gets cached in Dockerfile now; compile coffeescript in build
   },
   "dependencies": {
     "@feathersjs/authentication-client": "^1.0.2",
