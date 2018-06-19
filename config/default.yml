@@ -8,10 +8,7 @@ server:
     consumerSecret: secret
   
 client:
-  signalMaster:
-    url: http://localhost:3002
   dataServer:
-    url: http://localhost:3000
     path:
     email: default-user-email
     password: default-user-password
