@@ -59,15 +59,21 @@ class WebRtc extends React.Component {
   }
 
   componentDidMount() {
-
-    this.webrtc = new SimpleWebRTC({
+    let signalmasterPath = window.client_config.signalMaster.path || '';
+    signalmasterPath += '/socket.io';
+    let webRtcConfig = {
       localVideoEl: ReactDOM.findDOMNode(this.refs.local),
       remoteVideosEl: "", // handled by our component
       autoRequestMedia: true,
-      url : this.signalmaster_url,
+      url: this.signalmaster_url,
+      socketio: {
+        path: signalmasterPath
+      },
       nick: this.props.options.username,
-      debug : false,
-    });
+      debug: true,
+    };
+    log('WebRTC config: ', webRtcConfig);
+    this.webrtc = new SimpleWebRTC(webRtcConfig);
 
     // register our webrtc functions with the corresponding events
     this.webrtc.on('videoAdded', this.addVideo);
