@@ -3,6 +3,7 @@ var webpack = require('webpack');
 var nodeExternals = require('webpack-node-externals');
 var DashboardPlugin = require('webpack-dashboard/plugin');
 var HtmlWebpackPlugin = require('html-webpack-plugin');
+require('dotenv').config();
 
 module.exports = {
     devtool: 'eval',
@@ -38,8 +39,8 @@ module.exports = {
                 }
             },
             {
-                test: /\.css$/,  
-                include: /node_modules/,  
+                test: /\.css$/,
+                include: /node_modules/,
                 loaders: ['style-loader', 'css-loader'],
             },
             { test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/,
@@ -54,6 +55,12 @@ module.exports = {
             inject: 'body',
             template: 'public/index.html'
         }),
+        new webpack.DefinePlugin({
+            NODE_ENV: JSON.stringify(process.env.NODE_ENV || 'development'),
+            'process.env': {
+                REACT_APP_DEBUG: JSON.stringify(process.env.REACT_APP_DEBUG)
+            }
+        }),
         new webpack.HotModuleReplacementPlugin(),
         new DashboardPlugin()
     ],
@@ -63,5 +70,12 @@ module.exports = {
         inline: true,
         stats: false,
         watchOptions: { poll: 1000, ignored: /node_modules/ }
-    }
+    },
+    // Some libraries import Node modules but don't use them in the browser.
+    // Tell Webpack to provide empty mocks for them so importing them works.
+    node: {
+        fs: 'empty',
+        net: 'empty',
+        tls: 'empty',
+    },
 };
