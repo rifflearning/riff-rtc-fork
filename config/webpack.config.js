@@ -38,8 +38,8 @@ module.exports = {
                 }
             },
             {
-                test: /\.css$/,  
-                include: /node_modules/,  
+                test: /\.css$/,
+                include: /node_modules/,
                 loaders: ['style-loader', 'css-loader'],
             },
             { test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/,
