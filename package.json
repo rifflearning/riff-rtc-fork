@@ -58,9 +58,10 @@
     "webpack-node-externals": "^1.7.2"
   },
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js",
-    "build": "coffee -c src/libs/mm.coffee; webpack"
+      "test": "echo \"Error: no test specified\" && exit 1",
+      "start": "node server.js",
+      "build": "coffee -c src/libs/mm.coffee; webpack --config config/webpack.config.js",
+      "build:dev": "coffee -c src/libs/mm.coffee; webpack --config config/webpack.config.dev.js"
   },
   "repository": {
     "type": "git",
