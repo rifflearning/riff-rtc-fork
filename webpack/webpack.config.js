@@ -1,9 +1,20 @@
-var path = require('path');
-var webpack = require('webpack');
-var nodeExternals = require('webpack-node-externals');
-var DashboardPlugin = require('webpack-dashboard/plugin');
-var HtmlWebpackPlugin = require('html-webpack-plugin');
+const path = require('path');
+const webpack = require('webpack');
+const nodeExternals = require('webpack-node-externals');
+const DashboardPlugin = require('webpack-dashboard/plugin');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
+const fs = require('fs-extra');
+
+// Load the variables defined in the .env file into process.env
 require('dotenv').config();
+
+const paths = {
+  appPublic: path.resolve('public'),
+  appBuild: path.resolve('build'),
+  appHtml: path.resolve('public/index.html'),
+};
+
+copyPublicFolder();
 
 module.exports = {
     devtool: 'eval',
@@ -13,7 +24,7 @@ module.exports = {
         fs: 'empty'
     },
     output: {
-        path: path.resolve('build'),
+        path: paths.appBuild,
         filename: 'bundle.js'
     },
     resolve: {
@@ -79,3 +90,10 @@ module.exports = {
         tls: 'empty',
     },
 };
+
+function copyPublicFolder() {
+  fs.copySync(paths.appPublic, paths.appBuild, {
+    dereference: true,
+    filter: file => file !== paths.appHtml,
+  });
+}
