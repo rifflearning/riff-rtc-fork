@@ -23,7 +23,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js",
-    "build": "coffee -c src/libs/mm.coffee; webpack --config config/webpack.config.js"
+    "build": "coffee -c src/libs/mm.coffee; webpack --config webpack/webpack.config.js"
   },
   "engines": {
     "node": ">=8"
