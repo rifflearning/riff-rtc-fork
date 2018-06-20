@@ -1,7 +1,6 @@
 var path = require('path');
 var webpack = require('webpack');
 var nodeExternals = require('webpack-node-externals');
-var DashboardPlugin = require('webpack-dashboard/plugin');
 var HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
@@ -35,7 +34,8 @@ module.exports = {
                 enforce: 'pre',
                 use: {
                     loader: require.resolve('./strip-json-loader'),
-                }
+                },
+                type: "javascript/auto"
             },
             {
                 test: /\.css$/,
@@ -54,14 +54,5 @@ module.exports = {
             inject: 'body',
             template: 'public/index.html'
         }),
-        new webpack.HotModuleReplacementPlugin(),
-        new DashboardPlugin()
     ],
-    devServer: {
-        hot: true,
-        quiet: true,
-        inline: true,
-        stats: false,
-        watchOptions: { poll: 1000, ignored: /node_modules/ }
-    }
 };
