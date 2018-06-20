@@ -44,9 +44,12 @@ class Mediator {
     log("mm data turns:", data);
 
     if (data.room === this.roomName && this.mm.data.participants.length > 1) {
+      log("Updating meeting mediator")
       this.mm.updateData({participants: this.roomUsers,
         transitions: data.transitions,
         turns: this.transform_turns(this.roomUsers, data.turns)});
+    } else {
+      log("not updating...participants and room: ", data.room, this.roomName, this.mm.data.participants.length)
     }
   }
 
@@ -94,6 +97,7 @@ class Mediator {
       log("meeting got updated:", obj);
       log("roomname:", this.roomName);
       if (obj.room === this.roomName) {
+        log("room matches... updating meeting mediator")
         this.mm.updateData({
           participants: this.roomUsers,
           transitions: this.mm.data.transitions,
