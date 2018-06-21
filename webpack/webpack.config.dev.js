@@ -1,19 +1,9 @@
-const path = require('path');
-const webpack = require('webpack');
-const nodeExternals = require('webpack-node-externals');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-const fs = require('fs-extra');
-
-// Load the variables defined in the .env file into process.env
-require('dotenv').config();
-
-const paths = {
-  appPublic: path.resolve('public'),
-  appBuild: path.resolve('build'),
-  appHtml: path.resolve('public/index.html'),
-};
-
-copyPublicFolder();
+var path = require('path');
+var webpack = require('webpack');
+var nodeExternals = require('webpack-node-externals');
+var DashboardPlugin = require('webpack-dashboard/plugin');
+var HtmlWebpackPlugin = require('html-webpack-plugin');
+var BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
 
 module.exports = {
     devtool: 'eval',
@@ -23,7 +13,7 @@ module.exports = {
         fs: 'empty'
     },
     output: {
-        path: paths.appBuild,
+        path: path.resolve('build'),
         filename: 'bundle.js'
     },
     resolve: {
@@ -62,29 +52,19 @@ module.exports = {
         ]
     },
     plugins: [
+        new BundleAnalyzerPlugin(),
         new HtmlWebpackPlugin({
             inject: 'body',
             template: 'public/index.html'
         }),
-        new webpack.DefinePlugin({
-            NODE_ENV: JSON.stringify(process.env.NODE_ENV || 'development'),
-            'process.env': {
-                REACT_APP_DEBUG: JSON.stringify(process.env.REACT_APP_DEBUG)
-            }
-        }),
+        new webpack.HotModuleReplacementPlugin(),
+        new DashboardPlugin()
     ],
-    // Some libraries import Node modules but don't use them in the browser.
-    // Tell Webpack to provide empty mocks for them so importing them works.
-    node: {
-        fs: 'empty',
-        net: 'empty',
-        tls: 'empty',
-    },
+    devServer: {
+        hot: true,
+        quiet: true,
+        inline: true,
+        stats: false,
+        watchOptions: { poll: 1000, ignored: /node_modules/ }
+    }
 };
-
-function copyPublicFolder() {
-  fs.copySync(paths.appPublic, paths.appBuild, {
-    dereference: true,
-    filter: file => file !== paths.appHtml,
-  });
-}
