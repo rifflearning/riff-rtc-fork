@@ -43,6 +43,9 @@ all : lint build test
 build : src/libs/mm.js
 	$(WEBPACK) --mode production --config webpack/webpack.config.js
 
+build-dev : src/libs/mm.js
+	$(WEBPACK) --mode development --config webpack/webpack.config.dev.js
+	
 doc :
 	@echo doc would run the compiler: $(COMPILER)
 
