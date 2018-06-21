@@ -1,7 +1,33 @@
 {
   "name": "riff-rtc",
+  "description": "WebRTC browser client that connects to the riff-server",
   "version": "0.4.0-dev.1",
+  "license": "MIT",
   "private": true,
+  "keywords": [
+    "feathers",
+    "rhythm",
+    "WebRTC"
+  ],
+  "homepage": "https://github.com/rifflearning/riff-rtc#readme",
+  "author": "Dan Calacci",
+  "contributors": [
+    "Jordan Reedie",
+    "Mike Lippert <mike@rifflearning.com>"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/rifflearning/riff-rtc.git"
+  },
+  "bugs": "https://github.com/rifflearning/riff-rtc/issues",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js",
+    "build": "coffee -c src/libs/mm.coffee; webpack --config config/webpack.config.js"
+  },
+  "engines": {
+    "node": ">=8"
+  },
   "dependencies": {
     "@feathersjs/authentication-client": "^1.0.2",
     "@feathersjs/client": "^3.5.2",
@@ -11,17 +37,16 @@
     "config": "^1.30.0",
     "cookie-parser": "^1.4.3",
     "d3-scale": "^2.1.0",
+    "d3-selection": "^1.3.0",
     "d3-transition": "^1.1.1",
     "dotenv": "^6.0.0",
     "express": "^4.16.3",
     "express-session": "^1.15.6",
-    "fs": "0.0.1-security",
     "hogan-xpress": "^1.0.8",
-    "http": "0.0.0",
     "ims-lti": "^3.0.2",
-    "jquery": "^3.3.1",
     "json-loader": "^0.5.7",
     "materialize-css": "^0.100.2",
+    "react": "^16.4.0",
     "react-cookie": "^2.2.0",
     "react-dom": "^16.4.1",
     "redis": "^2.8.0",
@@ -30,8 +55,8 @@
     "sibilant-webaudio": "^0.1.4",
     "simplewebrtc": "^3.0.1",
     "socket.io": "^2.1.1",
+    "socket.io-client": "^2.1.1",
     "thumos": "^1.0.0",
-    "underscore": "^1.9.1",
     "webrtc-adapter": "^6.2.1"
   },
   "devDependencies": {
@@ -41,12 +66,10 @@
     "babel-preset-react": "^6.24.1",
     "css-loader": "^0.28.11",
     "file-loader": "^1.1.11",
-    "fs": "0.0.1-security",
     "hjson": "^3.1.1",
     "html-webpack-plugin": "^3.2.0",
     "json-strip-loader": "^1.0.2",
     "json5-loader": "^1.0.1",
-    "react": "^16.4.1",
     "react-dev-utils": "^5.0.1",
     "strip-json-comments": "^2.0.1",
     "style-loader": "^0.21.0",
@@ -56,20 +79,5 @@
     "webpack-dashboard": "^2.0.0",
     "webpack-dev-server": "^3.1.4",
     "webpack-node-externals": "^1.7.2"
-  },
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js",
-    "build": "coffee -c src/libs/mm.coffee; webpack"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/rifflearning/riff-rtc.git"
-  },
-  "author": "",
-  "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/rifflearning/riff-rtc/issues"
-  },
-  "homepage": "https://github.com/rifflearning/riff-rtc#readme"
+  }
 }

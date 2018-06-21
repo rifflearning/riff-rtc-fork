@@ -41,7 +41,7 @@ help :
 all : lint build test
 
 build : src/libs/mm.js
-	node scripts/build.js
+	$(WEBPACK) --config config/webpack.config.js
 
 doc :
 	@echo doc would run the compiler: $(COMPILER)
