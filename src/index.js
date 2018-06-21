@@ -2,10 +2,9 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import App from './components/App';
 import registerServiceWorker from './registerServiceWorker';
-import './index.css';
-import {getUrlParam} from "./libs/utils"
-import 'materialize-css/dist/js/materialize.js';
-import 'materialize-css/dist/css/materialize.css';
+import {getUrlParam} from "./libs/utils";
+import '../node_modules/materialize-css/dist/js/materialize.js';
+import '../node_modules/materialize-css/dist/css/materialize.css';
 import 'webrtc-adapter';  // see https://bloggeek.me/webrtc-adapter-js/ for what this does.
 
 let user_data = window.user_data || {};
