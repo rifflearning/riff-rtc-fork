@@ -18,6 +18,8 @@ if (user_data.room === undefined) {
   // just in case
   user_data.room = "DEMOROOM"
 }
+console.log("debug mode: ", window.client_config.react_app_debug)
+
 ReactDOM.render(<App user_data={user_data} />, document.getElementById('rtc-container'));
 //registerServiceWorker();
 
