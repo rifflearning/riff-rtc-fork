@@ -29,7 +29,7 @@ LINT_FORMAT = stylish
 help :
 	@echo ""                                                                          ; \
 	echo "Useful targets in this riff-rtc Makefile:"                                  ; \
-	echo "- build     :"                                                              ; \
+	echo "- build     : build (webpack) the production client"                        ; \
 	echo "------ the following are placeholder targets not yet implemented: -----"    ; \
 	echo "- all       : run lint, build, test"                                        ; \
 	echo "- lint      : run lint over the sources & tests; display results to stdout" ; \
@@ -41,7 +41,7 @@ help :
 all : lint build test
 
 build : src/libs/mm.js
-	$(WEBPACK) --config webpack/webpack.config.js
+	$(WEBPACK) --mode production --config webpack/webpack.config.js
 
 doc :
 	@echo doc would run the compiler: $(COMPILER)
