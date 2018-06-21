@@ -70,8 +70,8 @@ class WebRtc extends React.Component {
       autoRequestMedia: true,
       url: this.signalmaster_url,
       socketio: {
-        path: signalmasterPath
-
+        path: signalmasterPath,
+        forceNew: true,
       },
       nick: this.props.options.username,
       debug: !!window.client_config.webrtc_debug,
