@@ -38,6 +38,6 @@ COPY . /app
 VOLUME /app
 WORKDIR /app
 RUN ls -al
-CMD ["npm", "start"]
+CMD ["npm", "build", "&&", "npm", "start"]
 # ENTRYPOINT ["/bin/bash"]
 
