@@ -28,7 +28,6 @@ class WebRtc extends React.Component {
       muted: false
     }
 
-
     this.connectToServer();
 
     // rssi value over which we will consider a speaking event
@@ -36,6 +35,8 @@ class WebRtc extends React.Component {
     this.server_email = window.client_config.dataServer.email;
     this.server_password = window.client_config.dataServer.password;
     this.signalmaster_url = window.client_config.signalMaster.url;
+
+    log("using email and pass: ", this.server_email, this.server_password)
   }
 
   connectToServer() {
@@ -67,13 +68,21 @@ class WebRtc extends React.Component {
       autoRequestMedia: true,
       url: this.signalmaster_url,
       socketio: {
+        'force new connection': true,
         path: signalmasterPath
       },
       nick: this.props.options.username,
-      debug: true,
+      debug: window.client_config.webrtc_debug
     };
     log('WebRTC config: ', webRtcConfig);
     this.webrtc = new SimpleWebRTC(webRtcConfig);
+
+    this.webrtc.on('connectionReady', function (sessionId) {
+      log("connected! session id:", sessionId);
+      log("current peers:", this.webrtc.getPeers());
+      log("webrtc object:", this.webrtc);
+      log("webrtc connection object:", this.webrtc.connection);
+    });
 
     // register our webrtc functions with the corresponding events
     this.webrtc.on('videoAdded', this.addVideo);
@@ -93,7 +102,7 @@ class WebRtc extends React.Component {
   }
 
   addVideo(video, peer) {
-    log('adding video', peer);
+    log('PEER adding video', peer);
     // we let the child component handle the dirty work
     this.setState(function(state) {
       return {
@@ -166,12 +175,16 @@ class WebRtc extends React.Component {
 
   readyToCall() {
     log("ready");
-    this.webrtc.joinRoom(this.props.options.roomname);
-    // we do this after joinRoom to be sure the stream exists
-    // set threshold to appropriate value
-    this.speakingEvents = new Sibilant(this.getLocalStream(), {passThrough: false, threshold: this.THRESHOLD});
-    // authenticate, and, on success, call record()
-    this.authenticate();
+    log("webrtc object:", this.webrtc)
+    this.webrtc.joinRoom(this.props.options.roomname, function (err, rd) {
+        log("err:", err, "rd:", rd);
+        console.log("room description:", rd);
+         // we do this after joinRoom to be sure the stream exists
+        // set threshold to appropriate value
+        this.speakingEvents = new Sibilant(this.getLocalStream(), {passThrough: false, threshold: this.THRESHOLD});
+        // authenticate, and, on success, call record()
+        this.authenticate();
+    }.bind(this));
   }
 
 
@@ -228,7 +241,7 @@ class WebRtc extends React.Component {
       this.token = result.accessToken;
       return this.recordMeetingJoin();
     }.bind(this)).catch(function (err) {
-      log('ERROR:', err);
+      log('auth ERROR:', err);
     }).then(function (result) {
       log('meeting result:', result);
       // we've confirmed auth & meeting join- start communication w/ server

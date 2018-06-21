@@ -1,4 +1,6 @@
 client:
+  react_app_debug: true
+  webrtc_debug: true
   # the docker container reverse proxy will forward websocket connections
   signalMaster:
     url: /

@@ -35,9 +35,6 @@ RUN npm install -g npm
 # copy and install dependencies separately so they cache
 WORKDIR /app
 
-COPY package.json .
-RUN npm install
-
 # node images have a node user w/ UID 1000 (works well for me for now, but more thought may be needed later) -mjl
 USER node
 WORKDIR /app
