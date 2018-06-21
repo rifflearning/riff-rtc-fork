@@ -41,7 +41,10 @@ help :
 all : lint build test
 
 build : src/libs/mm.js
-	node scripts/build.js
+	npm run build:prod
+
+build-dev : src/libs/mm.js
+	npm run build:dev
 
 doc :
 	@echo doc would run the compiler: $(COMPILER)
