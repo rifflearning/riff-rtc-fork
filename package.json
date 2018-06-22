@@ -53,6 +53,7 @@
     "react": "^16.4.0",
     "react-cookie": "^2.2.0",
     "react-dom": "^16.4.1",
+    "react-router-dom": "^4.3.1",
     "redis": "^2.8.0",
     "request": "^2.87.0",
     "serve-static": "^1.13.2",

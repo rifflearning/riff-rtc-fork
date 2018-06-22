@@ -1,6 +1,15 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import WebRtc from './WebRtc';
+import Home from './Home';
+
+import {
+  BrowserRouter as Router,
+  Route,
+  Link,
+  Switch,
+  Redirect
+} from 'react-router-dom';
 
 class App extends React.Component {
 
@@ -11,17 +20,41 @@ class App extends React.Component {
   render() {
     var opts = {
       // this will be made specificiable 
-      roomname : this.props.user_data.room,
-      username: this.props.user_data.user_id,
-      name: this.props.user_data.name,
-      email: this.props.user_data.email
-    }
+      roomname : "roomname",
+      username: "username",
+      name: "a name",
+      email: "an email"
+    };
+
     var localVideoId = "local-video";
     return (
-      <div className = "rtc-container">
-        <WebRtc options = {opts} id = {localVideoId} />
+      <div>
+        <head>
+          <title>Chat | Rhythm RTC</title>
+        </head>
+        <nav class="nav-wrapper light-blue lighten-1" role="navigation">
+          <a id="logo-container" href="" class="brand-logo">Rhythm</a>
+          <ul id="nav-mobile" class="right">
+            <li><Link to="/home">Home</Link></li>
+            <li><Link to="/room">Chat</Link></li>
+          </ul>
+        </nav>
+        <main>
+          <Route path="/home" component={Home}/>
+          <Route path="/room"
+                 render={(props) => <WebRtc {...props} options={opts} id={localVideoId}/>}
+            />
+        </main>
+
+        <footer class="page-footer orange darken-1 no-margin-top no-padding-top">
+          <div class="footer-copyright">
+            <div class="container">
+              © 2017
+            </div>
+          </div>
+        </footer>
       </div>
-      );
+    );
   };
 }
 

@@ -63,9 +63,8 @@ function get_room(id, callback) {
 app.use(session({ secret: config.get('server.sessionSecret'), cookie: { maxAge: 60000 }}));
 app.use(serveStatic(__dirname + '/build', { index: false, redirect: false }));
 
-app.get('/chat', chat_route);
 app.post('/lti_launch', handle_launch, chat_route);
-
+app.get('*', chat_route);
 
 function chat_route(req, res) {
   let user_data = req.session.user_data ? JSON.stringify(req.session.user_data) : '{}';
