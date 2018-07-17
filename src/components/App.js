@@ -29,9 +29,7 @@ class App extends React.Component {
     var localVideoId = "local-video";
     return (
       <div>
-        <head>
-          <title>Chat | Rhythm RTC</title>
-        </head>
+        <title>Chat | Rhythm RTC</title>
         <nav class="nav-wrapper light-blue lighten-1" role="navigation">
           <a id="logo-container" href="" class="brand-logo">Rhythm</a>
           <ul id="nav-mobile" class="right">
@@ -46,9 +44,9 @@ class App extends React.Component {
             />
         </main>
 
-        <footer class="page-footer orange darken-1 no-margin-top no-padding-top">
-          <div class="footer-copyright">
-            <div class="container">
+        <footer className="page-footer orange darken-1 no-margin-top no-padding-top">
+          <div className="footer-copyright">
+            <div className="container">
               © 2017
             </div>
           </div>
