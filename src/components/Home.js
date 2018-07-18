@@ -4,6 +4,17 @@ import styles from './Home.css';
 import {log} from '../libs/utils';
 import getUserMedia from 'getusermedia';
 import attachMediaStream from 'attachmediastream';
+import styled, { injectGlobal, keyframes } from 'styled-components';
+
+const Button = styled.button.attrs({
+  className: 'btn waves-effect waves-light',
+})`
+  background-color: #93769D !important;
+
+  &:focus {
+    background-color: #A98AB5 !important;
+  }
+`;
 
 class Home extends React.Component {
 
@@ -37,9 +48,8 @@ class Home extends React.Component {
         <video className={styles.bgvid} ref={this.bgvid} autoPlay muted></video>
         <br/>
         <br/>
-        <h1 class="header center orange-text">Rhythm</h1>
         <div class="row center">
-          <h5 class="header col s12 light flow-text">Augmented social interaction on the web.</h5>
+          <h5 class="header col s12 light white-text flow-text">Augmented social interaction on the web.</h5>
         </div>
         <br/>
         <br/>
@@ -51,9 +61,9 @@ class Home extends React.Component {
                 </input>
               </div>
               <div class="col s3">
-                <button class="btn waves-effect waves-light" type="submit">Create or Join Room
+                <Button type="submit">Create or Join Room
                   <i class="material-icons right">chat_bubble</i>
-                </button>
+                </Button>
               </div>
             </div>
           </div>
@@ -65,9 +75,9 @@ class Home extends React.Component {
 
         <div class="row center">
           <div class="col s12">
-            <div class="btn waves-effect waves-light" id="quickRoom">Create Quick Room
+            <Button id="quickRoom">Create Quick Room
               <i class="material-icons right">chat_bubble_outline</i>
-            </div>
+            </Button>
           </div>
         </div>
       </div>

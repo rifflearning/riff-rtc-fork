@@ -6,6 +6,7 @@ import {getUrlParam} from "./libs/utils";
 import '../node_modules/materialize-css/dist/js/materialize.js';
 import '../node_modules/materialize-css/dist/css/materialize.css';
 import 'webrtc-adapter';  // see https://bloggeek.me/webrtc-adapter-js/ for what this does.
+import '../public/css/style.css';
 import { AppContainer } from 'react-hot-loader';
 import {
   BrowserRouter as Router,

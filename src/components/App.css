@@ -1,0 +1,8 @@
+.brandImg {
+    padding-left: 5px; /* Fix a little issue of the logo "sticking" to the left side of the screen too much */
+    height: 100%;
+    position: relative;
+    top:1px;
+    margin: 10px 10px;
+}
+
