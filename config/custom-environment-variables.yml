@@ -1,4 +1,5 @@
 server:
+  port: PORT
   sessionSecret: SESSION_SECRET
   lti:
     consumerKey: CONSUMER_KEY
