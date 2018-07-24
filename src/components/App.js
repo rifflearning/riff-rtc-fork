@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import WebRtc from './WebRtc';
 import Home from './Home';
+import SignUp from "./SignUp"
 import styled, { injectGlobal, keyframes } from 'styled-components';
 
 import {
@@ -24,7 +25,7 @@ const Brandimg = styled.img`
 const NavBar = styled.nav.attrs({
   className: 'navbar is-transparent'
 })`
-  background-color:rgba(255, 255, 255, 0.1);
+  background-color:rgba(255, 255, 255, 0);
   min-height: 3.25rem;
   .navbar-item img {
     max-height: 100%;
@@ -90,9 +91,10 @@ class App extends React.Component {
       </NavBar>
       <main>
         <Route path="/home" component={Home}/>
-        <Route path="/room/:roomname"
-        render={(props) => <WebRtc {...props} options={opts} id={localVideoId}/>}
-      />
+        <Route path="/room/:roomname" render={(props) => <WebRtc {...props} options={opts} id={localVideoId}/>} />
+
+        <Route exact path="/signup" component={SignUp} />
+
     </main>
 
     <Footer>

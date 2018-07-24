@@ -16,19 +16,20 @@ import {
 const GradientCard = styled.div.attrs({
   className: 'card'
 })`
-background: linear-gradient(30deg, rgba(84,48,96,1) 20%, rgba(138,106,148,1) 50%, rgba(229,178,245,1) 100%);
+background: linear-gradient(30deg, rgba(138,106,148,1) 12%, rgba(171,69,171,1) 87%);
 border-radius: 5px;
 .card-content p {
   color: #fff;
 }
 `
-
+// linear-gradient(30deg, rgba(84,48,96,1) 20%, rgba(138,106,148,1) 50%, rgba(229,178,245,1) 100%);
 //linear-gradient(66deg, rgba(70,19,85,1) 0%, rgba(138,106,148,1) 69%, rgba(201,155,215,0.9) 100%);
 
 const TextInputStart = styled.a.attrs({
   className: 'button is-static'
 })`
-background: #fff;
+background-color: #fff;
+border-color: #fff;
 margin-left: 1px;
 `
 
@@ -57,7 +58,7 @@ class MakeMeetingCard extends React.Component {
       <GradientCard>
         <div class="card-content">
           <p class="title">
-            Make a room to ...
+            Start a room to make your meetings actually engaging.
           </p>
           <div class="field has-addons">
             <p class="control">
@@ -74,9 +75,6 @@ class MakeMeetingCard extends React.Component {
               </a>
             </div>
           </div>
-          <p>
-            Share the link with friends to start riffing!
-          </p>
         </div>
       </GradientCard>
     )
