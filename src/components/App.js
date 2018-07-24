@@ -2,8 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import WebRtc from './WebRtc';
 import Home from './Home';
-
-import styles from './App.css';
+import styled, { injectGlobal, keyframes } from 'styled-components';
 
 import {
   BrowserRouter as Router,
@@ -13,6 +12,39 @@ import {
   Redirect
 } from 'react-router-dom';
 
+
+// Styling
+// #  min-width: 3.75rem;
+// #  max-height: 80%;
+const Brandimg = styled.img`
+  width: 63px;
+  height: 50px;
+`;
+
+const NavBar = styled.nav.attrs({
+  className: 'navbar is-transparent'
+})`
+  background-color:rgba(255, 255, 255, 0.1);
+  min-height: 3.25rem;
+  .navbar-item img {
+    max-height: 100%;
+  }
+`;
+
+const NavItem = styled.a.attrs({
+  className: 'navbar-item'
+})`
+
+`
+
+const Footer = styled.footer.attrs({
+  className: 'footer'
+})`
+  background-color: #f6f0fb;
+`
+
+// App component
+
 class App extends React.Component {
 
   constructor(props) {
@@ -21,7 +53,7 @@ class App extends React.Component {
 
   render() {
     var opts = {
-      // this will be made specificiable 
+      // this will be made specificiable
       roomname : "roomname",
       username: "username",
       name: "a name",
@@ -31,35 +63,48 @@ class App extends React.Component {
     var localVideoId = "local-video";
     return (
       <div>
-        <title>Chat | Rhythm RTC</title>
-        <nav class="nav-wrapper transparent z-depth-0" role="navigation">
-          <Link to="/home">
-            <img className={styles.brandImg} src={require('../../assets/rifflogo.jpeg')}>
-            </img>
-          </Link>
-          <ul id="nav-mobile" class="right">
-            <li><Link to="/home">Home</Link></li>
-            <li><Link to="/room">Chat</Link></li>
-          </ul>
-        </nav>
-        <main>
-          <Route path="/home" component={Home}/>
-          <Route path="/room"
-                 render={(props) => <WebRtc {...props} options={opts} id={localVideoId}/>}
-            />
-        </main>
-
-        <footer className="page-footer darken-1 no-margin-top no-padding-top transparent">
-          <div className="footer-copyright">
-            <div className="container">
-              © 2017
-            </div>
+        <title>Riff</title>
+        <NavBar role="navigation" aria-label="main navigation">
+          <div class="navbar-brand">
+            <a class="navbar-item" href="/home">
+            <Brandimg src={require('../../assets/rifflogo.jpeg')}/>
+            </a>
+          <div class="navbar-burger burger">
+            <span></span>
+            <span></span>
+            <span></span>
           </div>
-        </footer>
-      </div>
-    );
-  };
-}
+        </div>
+        <div class="navbar-menu">
+          <div class="navbar-start">
+            <NavItem>
+              <Link to="/home">Home</Link>
+            </NavItem>
+            <NavItem>
+              <Link to="/room">Chat</Link>
+            </NavItem>
+          </div>
+          <div class="navbar-end">
+          </div>
+        </div>
+      </NavBar>
+      <main>
+        <Route path="/home" component={Home}/>
+        <Route path="/room/:roomname"
+        render={(props) => <WebRtc {...props} options={opts} id={localVideoId}/>}
+      />
+    </main>
 
+    <Footer>
+      <div class="content has-text-centered">
+        <p>
+          <strong>Riff</strong> © 2017
+        </p>
+      </div>
+    </Footer>
+  </div>
+);
+};
+}
 
 export default App;

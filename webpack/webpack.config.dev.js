@@ -4,6 +4,7 @@ var nodeExternals = require('webpack-node-externals');
 var DashboardPlugin = require('webpack-dashboard/plugin');
 var HtmlWebpackPlugin = require('html-webpack-plugin');
 var BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+const ExtractTextPlugin = require("extract-text-webpack-plugin");
 var combineLoaders = require('webpack-combine-loaders');
 //var MiniCssExtractPlugin = require("mini-css-extract-plugin");
 
@@ -36,10 +37,22 @@ module.exports = {
       {
         test: /\.json$/,
         enforce: 'pre',
-        use: {
-          loader: require.resolve('./strip-json-loader'),
-        },
+        exclude:'/node_modules/clmtrackr/',
+        use: [
+          'cache-loader',
+          require.resolve('./strip-json-loader'),
+        ],
         type: "javascript/auto"
+      },
+      {
+        test: /\.scss$/,
+        use: ExtractTextPlugin.extract({
+          fallback: 'style-loader',
+          use: [
+            'css-loader',
+            'sass-loader'
+          ]
+        })
       },
       {
         test: /\.css$/,
@@ -77,6 +90,7 @@ module.exports = {
     }),
     new webpack.HotModuleReplacementPlugin(),
     new DashboardPlugin(),
+    new ExtractTextPlugin("css/styles.css")
     // new MiniCssExtractPlugin({
     //   filename: 'styles.css'
     // })

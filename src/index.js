@@ -3,10 +3,10 @@ import ReactDOM from 'react-dom';
 import App from './components/App';
 import registerServiceWorker from './registerServiceWorker';
 import {getUrlParam} from "./libs/utils";
-import '../node_modules/materialize-css/dist/js/materialize.js';
-import '../node_modules/materialize-css/dist/css/materialize.css';
+import "./index.scss"
 import 'webrtc-adapter';  // see https://bloggeek.me/webrtc-adapter-js/ for what this does.
-import '../public/css/style.css';
+
+import history from './history';
 import { AppContainer } from 'react-hot-loader';
 import {
   BrowserRouter as Router,
@@ -16,9 +16,12 @@ import {
   Redirect
 } from 'react-router-dom';
 
+import { createStore } from 'redux'
+import riffApp from './reducers'
+const store = createStore(riffApp)
 
 ReactDOM.render(
-  <Router>
+  <Router history={history}>
     <App />
   </Router>, document.getElementById('root')
 );

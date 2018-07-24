@@ -7,8 +7,8 @@ module.exports = function(source) {
   try {
     var Hjson = require('hjson');
 
-    var parsedSource = Hjson.parse(source.replace(/\s*;\s*$/,""));
-    let str = JSON.stringify(parsedSource);
+//    var parsedSource = Hjson.parse(source.replace(/\s*;\s*$/,""));
+    let str = JSON.stringify(source);
     return `module.exports = ${str}`;
 
   } catch (err) {
