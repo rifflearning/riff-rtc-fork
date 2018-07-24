@@ -1,11 +1,10 @@
 import React from "react";
-import { withRouter } from 'react-router-dom';
 
-const SignUpView = ({ onSubmit }) => {
+const LoginView = ({ onSubmit }) => {
   return (
     <div class="card-content">
       <p class="title">
-        Sign Up
+        Log In
       </p>
       <form onSubmit={onSubmit}>
         <div class="field">
@@ -25,10 +24,10 @@ const SignUpView = ({ onSubmit }) => {
             <button class="button is-link" type="submit">Submit</button>
           </div>
         </div>
-    </form>
-</div>
+      </form>
+    </div>
   );
 };
 
-export default withRouter(SignUpView);
- 
+export default LoginView;
+

@@ -4,6 +4,7 @@ import WebRtc from './WebRtc';
 import Home from './Home';
 import SignUp from "./SignUp"
 import styled, { injectGlobal, keyframes } from 'styled-components';
+import history from "../history"
 
 import {
   BrowserRouter as Router,
@@ -15,8 +16,6 @@ import {
 
 
 // Styling
-// #  min-width: 3.75rem;
-// #  max-height: 80%;
 const Brandimg = styled.img`
   width: 63px;
   height: 50px;
@@ -45,6 +44,7 @@ const Footer = styled.footer.attrs({
 `
 
 // App component
+// TODO: separate nav bar into its own component
 
 class App extends React.Component {
 
@@ -65,48 +65,54 @@ class App extends React.Component {
     return (
       <div>
         <title>Riff</title>
-        <NavBar role="navigation" aria-label="main navigation">
-          <div class="navbar-brand">
-            <a class="navbar-item" href="/home">
-            <Brandimg src={require('../../assets/rifflogo.jpeg')}/>
-            </a>
-          <div class="navbar-burger burger">
-            <span></span>
-            <span></span>
-            <span></span>
+        <Router history={history}>
+          <div>
+            <NavBar role="navigation" aria-label="main navigation">
+              <div class="navbar-brand">
+                <a class="navbar-item" href="/home">
+                  <Brandimg src={require('../../assets/rifflogo.jpeg')}/>
+                </a>
+                <div class="navbar-burger burger">
+                  <span></span>
+                  <span></span>
+                  <span></span>
+                </div>
+              </div>
+              <div class="navbar-menu">
+                <div class="navbar-start">
+                  <NavItem>
+                    <Link to="/home">Home</Link>
+                  </NavItem>
+                  <NavItem>
+                    <Link to="/room">Chat</Link>
+                  </NavItem>
+                </div>
+                <div class="navbar-end">
+                  <NavItem >
+                    <Link to="/signup">Sign Up</Link>
+                  </NavItem>
+                  <NavItem >
+                    <Link to="/login">Login</Link>
+                  </NavItem>
+                </div>
+              </div>
+            </NavBar>
+            <Route path="/home" component={Home}/>
+            <Route path="/room/:roomname" render={(props) => <WebRtc {...props} options={opts} id={localVideoId}/>}></Route>
+            <Route exact path="/signup" component={SignUp} />
           </div>
-        </div>
-        <div class="navbar-menu">
-          <div class="navbar-start">
-            <NavItem>
-              <Link to="/home">Home</Link>
-            </NavItem>
-            <NavItem>
-              <Link to="/room">Chat</Link>
-            </NavItem>
+        </Router>
+
+        <Footer>
+          <div class="content has-text-centered">
+            <p>
+              <strong>Riff</strong> © 2017
+            </p>
           </div>
-          <div class="navbar-end">
-          </div>
-        </div>
-      </NavBar>
-      <main>
-        <Route path="/home" component={Home}/>
-        <Route path="/room/:roomname" render={(props) => <WebRtc {...props} options={opts} id={localVideoId}/>} />
-
-        <Route exact path="/signup" component={SignUp} />
-
-    </main>
-
-    <Footer>
-      <div class="content has-text-centered">
-        <p>
-          <strong>Riff</strong> © 2017
-        </p>
+        </Footer>
       </div>
-    </Footer>
-  </div>
-);
-};
+    );
+  };
 }
 
 export default App;

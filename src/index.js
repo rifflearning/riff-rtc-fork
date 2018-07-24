@@ -3,28 +3,23 @@ import ReactDOM from 'react-dom';
 import App from './components/App';
 import registerServiceWorker from './registerServiceWorker';
 import {getUrlParam} from "./libs/utils";
-import "./index.scss"
+import "./index.scss";
 import 'webrtc-adapter';  // see https://bloggeek.me/webrtc-adapter-js/ for what this does.
 
 import history from './history';
 import { AppContainer } from 'react-hot-loader';
 import {
   BrowserRouter as Router,
-  Route,
-  Link,
-  Switch,
-  Redirect
+  Route
 } from 'react-router-dom';
 
-import { createStore } from 'redux'
-import riffApp from './reducers'
-const store = createStore(riffApp)
+import { createStore } from 'redux';
+import riffApp from './reducers';
+const store = createStore(riffApp);
 
-ReactDOM.render(
-  <Router history={history}>
-    <App />
-  </Router>, document.getElementById('root')
-);
+//const AppRoot = withRouter(App);
+
+ReactDOM.render(<App />, document.getElementById('root'));
 //registerServiceWorker();
 
 
