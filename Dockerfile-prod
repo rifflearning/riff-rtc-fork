@@ -1,9 +1,10 @@
 #
 # ---- Base Node image ----
-FROM node:8 AS base
+ARG NODE_VER=8
+FROM node:${NODE_VER} AS base
 # The node:8 npm (v 5.6) has some issues, update it to latest
 RUN npm install -g npm
-# set create and set working directory owned by user
+# create and set working directory owned by non-root user; set that user
 WORKDIR /app
 RUN chown node:node /app
 USER node
