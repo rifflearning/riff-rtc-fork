@@ -1,6 +1,9 @@
+# Args for FROM directives
+ARG NODE_VER=8
+ARG RTC_BUILD_TAG=latest
+
 #
 # ---- Base Node image ----
-ARG NODE_VER=8
 FROM node:${NODE_VER} AS base
 # The node:8 npm (v 5.6) has some issues, update it to latest
 RUN npm install -g npm
@@ -11,7 +14,7 @@ USER node
 
 #
 # ---- existing rtc build image ----
-FROM rifflearning/rtc-build AS build
+FROM rifflearning/rtc-build:${RTC_BUILD_TAG} AS build
 
 #
 # ---- Release ----

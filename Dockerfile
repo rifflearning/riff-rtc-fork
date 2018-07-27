@@ -1,6 +1,8 @@
+# Args for FROM directives
+ARG NODE_VER=8
+
 #
 # ---- Base Node image ----
-ARG NODE_VER=8
 FROM node:${NODE_VER} AS base
 # The node:8 npm (v 5.6) has some issues, update it to latest
 RUN npm install -g npm
