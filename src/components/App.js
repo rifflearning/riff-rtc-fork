@@ -94,14 +94,6 @@ class App extends React.Component {
             <Route exact path="/signup" component={SignUp} />
           </div>
         </Router>
-
-        <Footer>
-          <div class="content has-text-centered">
-            <p>
-              <strong>Riff</strong> © 2017
-            </p>
-          </div>
-        </Footer>
       </div>
     );
   };
