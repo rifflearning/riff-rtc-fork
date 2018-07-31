@@ -7,7 +7,7 @@ import styled, { injectGlobal, keyframes } from 'styled-components';
 import history from "../history"
 
 import {
-  BrowserRouter as Router,
+  Router,
   Route,
   Link,
   Switch,
@@ -80,20 +80,12 @@ class App extends React.Component {
               </div>
               <div class="navbar-menu">
                 <div class="navbar-start">
-                  <NavItem>
-                    <Link to="/home">Home</Link>
-                  </NavItem>
-                  <NavItem>
-                    <Link to="/room">Chat</Link>
-                  </NavItem>
+                  <Link class='navbar-item' to="/home">Home</Link>
+                  <Link class='navbar-item' to="/room">Chat</Link>
                 </div>
                 <div class="navbar-end">
-                  <NavItem >
-                    <Link to="/signup">Sign Up</Link>
-                  </NavItem>
-                  <NavItem >
-                    <Link to="/login">Login</Link>
-                  </NavItem>
+                  <Link class='navbar-item' to="/signup">Sign Up</Link>
+                  <Link class='navbar-item' to="/login">Login</Link>
                 </div>
               </div>
             </NavBar>

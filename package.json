@@ -30,7 +30,7 @@
     "start:dev": "concurrently --kill-others \"npm run start:dev-server\" \"npm run start:dev-client\""
   },
   "engines": {
-    "node": ">=8"
+    "node": ">=10"
   },
   "dependencies": {
     "@feathersjs/authentication-client": "^1.0.2",
@@ -70,12 +70,12 @@
     "webrtc-adapter": "^6.2.1"
   },
   "devDependencies": {
+    "@babel/core": "^7.0.0-beta.55",
+    "@babel/preset-env": "^7.0.0-beta.55",
+    "@babel/preset-react": "^7.0.0-beta.55",
     "ajv": "^6.5.1",
     "autoprefixer": "^8.6.3",
-    "babel-core": "^6.26.3",
-    "babel-loader": "^7.1.4",
-    "babel-preset-env": "^1.7.0",
-    "babel-preset-react": "^6.24.1",
+    "babel-loader": "^8.0.0-beta.4",
     "bulma": "^0.7.1",
     "cache-loader": "^1.2.2",
     "clean-webpack-plugin": "^0.1.19",

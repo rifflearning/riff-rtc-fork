@@ -2,8 +2,9 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import WebRtc from './WebRtc';
 import Home from './Home';
-import history from '../history'
+import { withRouter } from 'react-router-dom';
 import styled, { injectGlobal, keyframes } from 'styled-components';
+import util from 'util'
 
 import {
   BrowserRouter as Router,
@@ -81,4 +82,4 @@ class MakeMeetingCard extends React.Component {
   }
 }
 
-export default MakeMeetingCard;
+export default withRouter(MakeMeetingCard);

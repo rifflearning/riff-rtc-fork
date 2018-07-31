@@ -3,8 +3,16 @@
 // Import a Google Font
 @import url('https://fonts.googleapis.com/css?family=Nunito:400,700');
 
-// Set your brand colors
+// WIDTHS
+// In Bulma, this makes the hamburger only appear in small screens.
+// Without it, it appears by default even in med-big screens 
+$gap: 32px;
+$tablet:	568px;
+$desktop:	896px + (2 * $gap);
+//$widescreen:	1152px + (2 * $gap);
+//$fullhd:	1344px + (2 * $gap);
 
+// BRAND COLORS
 $gray: #57606f;
 $purple: rgb(138,106,148);
 $pink: rgb(243,	108,	110);

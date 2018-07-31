@@ -12,6 +12,7 @@ module.exports = {
   devtool: 'eval',
   entry: './src/index.js',
   target: 'web',
+  mode: 'development',
   node: {
     fs: 'empty'
   },
@@ -26,11 +27,18 @@ module.exports = {
     rules: [
       {
         test: /\.js$/,
-        exclude: '/\.json$/',
+        include: path.resolve("src"),
         use: {
           loader: 'babel-loader',
           options: {
-            presets: ['react']
+            presets: ['@babel/preset-react',
+            ["@babel/preset-env", {
+              "targets": {
+                "chrome": 52
+              },
+              "modules": false,
+              "loose": true
+            }]],
           }
         }
       },
