@@ -13,8 +13,10 @@ class SignUpContainer extends Component {
 
   constructor(props) {
     super(props);
-    this.handleSignUp = this.handleSignUp.bind(this);
     this.state = { ...INITIAL_STATE };
+    this.handleSignUp = this.handleSignUp.bind(this);
+    this.render = this.render.bind(this);
+    this.handleChange = this.handleChange.bind(this);
   }
 
   async handleSignUp (event) {
@@ -33,6 +35,10 @@ class SignUpContainer extends Component {
     }
   }
 
+  handleChange (obj) {
+    this.setState(obj);
+  }
+
   render() {
     const {
       email,
@@ -43,52 +49,11 @@ class SignUpContainer extends Component {
       history,
     } = this.props;
 
-    const isInvalid =
-    password === '' ||
-    email === '';
-
-    return (
-      <div class="columns">
-        <div class="column">
-          <div class="card-content">
-            <p class="title">
-              Sign Up
-            </p>
-            <form onSubmit={this.handleSignUp}>
-              <div class="field">
-                <label class="label">email</label>
-                <div class="control">
-                  <input class="input"
-                    value={email}
-                    type="text"
-                    name="email"
-                    placeholder="example@riff.com"
-                    onChange={event => this.setState({'email': event.target.value})}/>
-                </div>
-              </div>
-              <div class="field">
-                <label class="label">password</label>
-                <div class="control">
-                  <input class="input"
-                    value={password}
-                    type="password"
-                    name="password"
-                    placeholder="something unique and long"
-                    onChange={event => this.setState({'password': event.target.value})}/>
-                </div>
-              </div>
-              <div class="field">
-                <div class="control">
-                  <button class="button is-link" type="submit" disabled={isInvalid}>Submit</button>
-                </div>
-              </div>
-            </form>
-          </div>
-          <div class="column">
-          </div>
-        </div>
-      </div>
-    );
+    return <SignUpView onSubmit={this.handleSignUp}
+      email={this.state.email}
+      password={this.state.password}
+      handleChange={this.handleChange}
+      isInvalid={this.isInvalid}/>;
   }
 }
 
