@@ -43,6 +43,9 @@ class SignUpView extends Component {
                     <button class="button is-link" type="submit" disabled={isInvalid}>Submit</button>
                   </div>
                 </div>
+                { this.props.error && <div class="notification is-warning">
+                  <button class="delete" onClick={this.props.clearError}></button>
+                  {this.props.error.message}</div>}
               </form>
             </div>
             <div class="column">

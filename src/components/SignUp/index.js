@@ -17,6 +17,7 @@ class SignUpContainer extends Component {
     this.handleSignUp = this.handleSignUp.bind(this);
     this.render = this.render.bind(this);
     this.handleChange = this.handleChange.bind(this);
+    this.clearError = this.clearError.bind(this);
   }
 
   async handleSignUp (event) {
@@ -31,12 +32,18 @@ class SignUpContainer extends Component {
       this.props.history.push("/home");
       console.log("history:",this.props.history);
     } catch (error) {
-      alert(error);
+      this.setState({'error': error});
     }
   }
 
   handleChange (obj) {
     this.setState(obj);
+  }
+
+  clearError (event) {
+    event.preventDefault();
+    console.log("event", event.target, event);
+    this.setState({error: null});
   }
 
   render() {
@@ -49,7 +56,10 @@ class SignUpContainer extends Component {
       history,
     } = this.props;
 
-    return <SignUpView onSubmit={this.handleSignUp}
+    return <SignUpView
+      error={this.state.error}
+      clearError={this.clearError}
+      onSubmit={this.handleSignUp}
       email={this.state.email}
       password={this.state.password}
       handleChange={this.handleChange}
