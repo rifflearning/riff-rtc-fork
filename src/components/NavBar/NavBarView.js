@@ -1,0 +1,47 @@
+import React, { Component } from "react";
+import { withRouter } from 'react-router-dom';
+import styled, { injectGlobal, keyframes } from 'styled-components';
+import { Link } from 'react-router-dom';
+
+// Styling
+const Brandimg = styled.img`
+  width: 63px;
+  height: 50px;
+`;
+
+const NavBar = styled.nav.attrs({
+  className: 'navbar is-transparent'
+})`
+  background-color:rgba(255, 255, 255, 0);
+  min-height: 3.25rem;
+  .navbar-item img {
+    max-height: 100%;
+  }
+`;
+
+const NavBarView = ({}) => (
+  <NavBar role="navigation" aria-label="main navigation">
+    <div class="navbar-brand">
+      <a class="navbar-item" href="/home">
+      <Brandimg src={require('../../../assets/rifflogo.jpeg')}/>
+    </a>
+    <div class="navbar-burger burger">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+  </div>
+  <div class="navbar-menu">
+    <div class="navbar-start">
+      <Link className='navbar-item' to="/home">Home</Link>
+      <Link className='navbar-item' to="/room">Chat</Link>
+    </div>
+    <div class="navbar-end">
+      <Link className='navbar-item' to="/signup">Sign Up</Link>
+      <Link className='navbar-item' to="/login">Login</Link>
+    </div>
+  </div>
+</NavBar>
+)
+
+export default withRouter(NavBarView);

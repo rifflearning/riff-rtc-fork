@@ -1,70 +1,49 @@
-import React, { Component } from "react";
-import { withRouter } from "react-router-dom";
-import app from "../../libs/base";
-import SignUpView from "./SignUpView";
+import React, { Component } from "react"
+import { withRouter } from "react-router-dom"
+import { connect } from 'react-redux'
+import auth from "../../firebase"
+import {
+  attemptUserCreate,
+  clearAuthError,
+  changePasswordState,
+  changeEmailState }
+from "../../redux/actions/auth"
+import SignUpView from "./SignUpView"
 
-const INITIAL_STATE = {
-  email: '',
-  password: '',
-  error: null
-};
+const mapStateToProps = state => ({
+  error: state.auth.error,
+  email: state.auth.input.email,
+  password: state.auth.input.password,
+  isInvalid: state.auth.input.email == '' || state.auth.input.password == '',
+})
 
-class SignUpContainer extends Component {
-
-  constructor(props) {
-    super(props);
-    this.state = { ...INITIAL_STATE };
-    this.handleSignUp = this.handleSignUp.bind(this);
-    this.render = this.render.bind(this);
-    this.handleChange = this.handleChange.bind(this);
-    this.clearError = this.clearError.bind(this);
-  }
-
-  async handleSignUp (event) {
+const mapDispatchToProps = dispatch => ({
+  handleSignUp: event => {
     event.preventDefault();
-    console.log("event:", event, event.target);
-    const { email, password } = event.target.elements;
-    console.log("email", email, "password", password);
-    try {
-      const user = await app
-            .auth()
-            .createUserWithEmailAndPassword(email.value, password.value);
-      this.props.history.push("/home");
-      console.log("history:",this.props.history);
-    } catch (error) {
-      this.setState({'error': error});
-    }
-  }
+    console.log("Handlng signup...")
+    const {email, password} = event.target.elements;
+    dispatch(attemptUserCreate(email.value, password.value));
+  },
 
-  handleChange (obj) {
-    this.setState(obj);
-  }
+  handlePassword: pass => {
+    dispatch(changePasswordState(pass));
+  },
 
-  clearError (event) {
+  handleEmail: email => {
+    console.log("handling email...")
+    dispatch(changeEmailState(email));
+  },
+
+  clearError: event => {
     event.preventDefault();
-    console.log("event", event.target, event);
-    this.setState({error: null});
+    console.log("event", event, event.target);
+    dispatch(clearAuthError());
   }
+})
 
-  render() {
-    const {
-      email,
-      password,
-    } = this.state;
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(SignUpView)
 
-    const {
-      history,
-    } = this.props;
-
-    return <SignUpView
-      error={this.state.error}
-      clearError={this.clearError}
-      onSubmit={this.handleSignUp}
-      email={this.state.email}
-      password={this.state.password}
-      handleChange={this.handleChange}
-      isInvalid={this.isInvalid}/>;
-  }
-}
-
-export default withRouter(SignUpContainer);
+//export default withRouter(SignUpContainer);

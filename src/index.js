@@ -8,18 +8,14 @@ import 'webrtc-adapter';  // see https://bloggeek.me/webrtc-adapter-js/ for what
 
 import history from './history';
 import { AppContainer } from 'react-hot-loader';
-import {
-  BrowserRouter as Router,
-  Route
-} from 'react-router-dom';
+import store from './redux/store'
+import { Provider } from 'react-redux';
 
-import { createStore } from 'redux';
-import riffApp from './reducers';
-const store = createStore(riffApp);
-
-//const AppRoot = withRouter(App);
-
-ReactDOM.render(<App />, document.getElementById('root'));
+ReactDOM.render(
+  <Provider store={store}>
+    <App />
+  </Provider>,
+  document.getElementById('root'));
 //registerServiceWorker();
 
 
