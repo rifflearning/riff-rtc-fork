@@ -29,12 +29,12 @@ const ProfileLinks = (props) => {
   } else {
     return <div class="navbar-end">
       <Link className='navbar-item' to="/profile">Profile</Link>
-      <Link className='navbar-item' to="/logout">Log Out</Link>
+      <Link className='navbar-item' to="/home" onClick={ props.handleLogOut }>Log Out</Link>
     </div>
   }
 }
 
-const NavBarView = ({loggedIn}) => (
+const NavBarView = ({loggedIn, handleLogOut}) => (
   <NavBar role="navigation" aria-label="main navigation">
     <div class="navbar-brand">
       <a class="navbar-item" href="/home">
@@ -51,7 +51,7 @@ const NavBarView = ({loggedIn}) => (
       <Link className='navbar-item' to="/home">Home</Link>
       <Link className='navbar-item' to="/room">Chat</Link>
     </div>
-    <ProfileLinks loggedIn={loggedIn}></ProfileLinks>
+    <ProfileLinks loggedIn={loggedIn} handleLogOut={handleLogOut}></ProfileLinks>
   </div>
 </NavBar>
 )

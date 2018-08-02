@@ -3,6 +3,8 @@ import ReactDOM from 'react-dom';
 import WebRtc from './WebRtc';
 import Home from './Home';
 import SignUp from "./SignUp"
+import LogIn from "./LogIn"
+import Profile from "./Profile"
 import NavBar from "./NavBar"
 import styled, { injectGlobal, keyframes } from 'styled-components';
 import store from '../redux/store'
@@ -50,6 +52,8 @@ class App extends React.Component {
             <Route path="/home" component={Home}/>
             <Route path="/room/:roomname" render={(props) => <WebRtc {...props} options={opts} id={localVideoId}/>}></Route>
             <Route exact path="/signup" component={SignUp} />
+            <Route exact path="/login" component={LogIn} />
+            <Route exact path="/profile" component={Profile} />
           </div>
         </Router>
       </div>
