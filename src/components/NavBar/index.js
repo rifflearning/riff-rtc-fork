@@ -4,6 +4,7 @@ import NavBarView from "./NavBarView";
 import { connect } from 'react-redux'
 
 const mapStateToProps = state => ({
+  loggedIn: state.auth.loggedIn
 })
 
 const mapDispatchToProps = dispatch => ({
@@ -13,12 +14,3 @@ export default withRouter(connect(
   mapStateToProps,
   mapDispatchToProps
 )(NavBarView));
-//
-// class NavBarContainer extends Component {
-//
-//   constructor(props) {
-//     super(props);
-//     this.state = { };
-//   }
-//
-// }

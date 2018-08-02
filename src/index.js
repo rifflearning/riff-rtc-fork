@@ -8,17 +8,20 @@ import 'webrtc-adapter';  // see https://bloggeek.me/webrtc-adapter-js/ for what
 
 import history from './history';
 import { AppContainer } from 'react-hot-loader';
-import store from './redux/store'
+import {store, persistor} from './redux/store'
 import { Provider } from 'react-redux';
+import { PersistGate } from 'redux-persist/integration/react'
 import { ConnectedRouter } from 'connected-react-router'
 
 import browserHistory from './history'
 
 ReactDOM.render(
   <Provider store={store}>
-    <ConnectedRouter history={browserHistory}>
-      <App/>
-    </ConnectedRouter>
+    <PersistGate loading={null} persistor={persistor}>
+      <ConnectedRouter history={browserHistory}>
+        <App/>
+      </ConnectedRouter>
+    </PersistGate>
   </Provider>,
   document.getElementById('root'));
 //registerServiceWorker();

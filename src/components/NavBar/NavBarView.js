@@ -19,7 +19,22 @@ const NavBar = styled.nav.attrs({
   }
 `;
 
-const NavBarView = ({}) => (
+const ProfileLinks = (props) => {
+  if (!props.loggedIn) {
+    return (
+      <div class="navbar-end">
+        <Link className='navbar-item' to="/signup">Sign Up</Link>
+        <Link className='navbar-item' to="/login">Login</Link>
+      </div>)
+  } else {
+    return <div class="navbar-end">
+      <Link className='navbar-item' to="/profile">Profile</Link>
+      <Link className='navbar-item' to="/logout">Log Out</Link>
+    </div>
+  }
+}
+
+const NavBarView = ({loggedIn}) => (
   <NavBar role="navigation" aria-label="main navigation">
     <div class="navbar-brand">
       <a class="navbar-item" href="/home">
@@ -36,10 +51,7 @@ const NavBarView = ({}) => (
       <Link className='navbar-item' to="/home">Home</Link>
       <Link className='navbar-item' to="/room">Chat</Link>
     </div>
-    <div class="navbar-end">
-      <Link className='navbar-item' to="/signup">Sign Up</Link>
-      <Link className='navbar-item' to="/login">Login</Link>
-    </div>
+    <ProfileLinks loggedIn={loggedIn}></ProfileLinks>
   </div>
 </NavBar>
 )
