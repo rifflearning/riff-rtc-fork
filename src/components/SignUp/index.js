@@ -8,7 +8,9 @@ import {
   changePasswordState,
   changeEmailState }
 from "../../redux/actions/auth"
+import { push } from 'connected-react-router'
 import SignUpView from "./SignUpView"
+
 
 const mapStateToProps = state => ({
   error: state.auth.error,
@@ -41,9 +43,9 @@ const mapDispatchToProps = dispatch => ({
   }
 })
 
-export default connect(
+export default withRouter(connect(
   mapStateToProps,
   mapDispatchToProps
-)(SignUpView)
+)(SignUpView))
 
 //export default withRouter(SignUpContainer);

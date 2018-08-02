@@ -10,9 +10,9 @@ import { push } from 'react-router-redux'
   export const createUserSuccess = (resp) => {
     console.log("create user success...", resp)
     let user  = {
-      email: action.user.user.email,
-      uid: action.user.user.uid,
-      verified: action.user.user.emailVerified
+      email: resp.user.email,
+      uid: resp.user.uid,
+      verified: resp.user.emailVerified
     }
     return {
       type: CREATE_USER_SUCCESS,
@@ -54,6 +54,7 @@ import { push } from 'react-router-redux'
     .then((resp) => {
       dispatch(createUserSuccess(resp));
     }).then(() => {
+      console.log("pushing home...")
       dispatch(push("/home"))
     })
     .catch((error) => dispatch(createUserFail(error)));

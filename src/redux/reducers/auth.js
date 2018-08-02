@@ -36,7 +36,7 @@ const auth = (state = initialState, action) => {
         case('LOG_OUT'):
             return {loggingOut: true}
         case(CREATE_USER_SUCCESS):
-            return { ...state, loggedIn: true,  user: action.user}
+            return { ...state, loggedIn: true, user: action.user}
         case(CREATE_USER_FAIL):
             return { ...state, loggedIn: false, error: action.error}
         case(CLEAR_ERROR):

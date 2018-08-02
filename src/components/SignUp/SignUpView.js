@@ -117,4 +117,4 @@ const SignUpView = ({handleSignUp,
             </div>
           </div>
         )
-export default withRouter(SignUpView);
+export default SignUpView;

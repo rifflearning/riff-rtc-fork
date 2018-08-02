@@ -4,6 +4,7 @@ import {log} from '../libs/utils';
 import MakeMeetingCard from './MakeMeetingCard';
 import getUserMedia from 'getusermedia';
 import attachMediaStream from 'attachmediastream';
+import { withRouter } from "react-router-dom"
 import styled, { injectGlobal, keyframes } from 'styled-components';
 
 const Button = styled.button.attrs({
@@ -53,4 +54,4 @@ class Home extends React.Component {
 
 }
 
-export default Home;
+export default withRouter(Home);

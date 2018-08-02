@@ -5,8 +5,8 @@ import Home from './Home';
 import SignUp from "./SignUp"
 import NavBar from "./NavBar"
 import styled, { injectGlobal, keyframes } from 'styled-components';
-import { syncHistoryWithStore, routerReducer } from 'react-router-redux'
 import store from '../redux/store'
+import { withRouter } from "react-router-dom"
 import {
   Router,
   Route,
@@ -16,7 +16,6 @@ import {
 } from 'react-router';
 
 import browserHistory from "../history"
-const history = syncHistoryWithStore(browserHistory, store)
 
 const Footer = styled.footer.attrs({
   className: 'footer'
@@ -44,7 +43,7 @@ class App extends React.Component {
     return (
       <div>
         <title>Riff</title>
-        <Router history={history}>
+        <Router history={browserHistory}>
           <div>
             <NavBar>
             </NavBar>

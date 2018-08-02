@@ -10,10 +10,15 @@ import history from './history';
 import { AppContainer } from 'react-hot-loader';
 import store from './redux/store'
 import { Provider } from 'react-redux';
+import { ConnectedRouter } from 'connected-react-router'
+
+import browserHistory from './history'
 
 ReactDOM.render(
   <Provider store={store}>
-    <App />
+    <ConnectedRouter history={browserHistory}>
+      <App/>
+    </ConnectedRouter>
   </Provider>,
   document.getElementById('root'));
 //registerServiceWorker();
