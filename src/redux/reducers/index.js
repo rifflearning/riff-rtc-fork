@@ -1,6 +1,7 @@
 import { combineReducers } from 'redux';
 import auth from './auth';
 import chat from './chat';
+import makeMeeting from './makeMeeting';
 
 const initialState = {
   inChat: false,
@@ -9,5 +10,6 @@ const initialState = {
 
 export default combineReducers({
   auth,
-  chat
+  chat,
+  makeMeeting
 });

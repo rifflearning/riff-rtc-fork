@@ -6,7 +6,7 @@ import { CREATE_USER_SUCCESS,
          CLEAR_ERROR,
          LOG_OUT} from '../constants/ActionTypes';
 import app from "../../firebase"
-import { push } from 'react-router-redux'
+import { push } from 'connected-react-router'
 
 export const createUserSuccess = (resp) => {
   console.log("create user success...", resp)
