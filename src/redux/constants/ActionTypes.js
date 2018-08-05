@@ -10,6 +10,8 @@ export const LOG_OUT = 'LOG_OUT';
 export const MAKE_MEETING_INPUT_CHANGE = 'CHAT::MAKE_MTG_INPUT_CHANGE';
 export const JOIN_ROOM = 'CHAT::JOIN_ROOM';
 
+export const CHAT_START_WEBRTC = 'CHAT::START_WEBRTC';
+export const CHAT_SET_WEBRTC_CONFIG = 'CHAT::SET_WEBRTC_CONFIG';
 export const JOINING_ROOM = 'CHAT::JOINING_ROOM';
 export const IN_ROOM = 'CHAT::IN_ROOM';
 export const MUTE_AUDIO = 'CHAT::MUTE_AUDIO';

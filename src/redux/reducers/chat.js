@@ -1,4 +1,5 @@
 import {
+  CHAT_SET_WEBRTC_CONFIG,
   JOIN_ROOM,
   JOINING_ROOM,
   IN_ROOM,
@@ -18,6 +19,10 @@ const initialState = {
     authenticated: false,
     token: null,
     error: null
+  },
+  webRtc: {
+    config: null,
+    signalMasterPath: ''
   }
 }
 
@@ -29,8 +34,11 @@ const chat = (state = initialState, action) => {
   switch (action.type) {
   case(JOIN_ROOM):
     return {...state, joiningRoom: true, roomName: action.roomName};
+  case(CHAT_SET_WEBRTC_CONFIG):
+    return {...state, webRtc: {config: action.webRtcConfig,
+                               signalMasterPath: action.signalMasterPath}};
   default:
-    return state
+    return state;
   }
 };
 

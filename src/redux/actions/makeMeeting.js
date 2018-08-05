@@ -7,12 +7,13 @@ export const changeRoomNameState = (roomName) => {
   return {
     type: MAKE_MEETING_INPUT_CHANGE,
     roomName: roomName
-  }
-}
+  };
+};
 
 export const joinRoom = (roomName) => {
+  console.log("room name:", roomName)
   return {
     type: JOIN_ROOM,
     roomName: roomName
-  }
-}
+  };
+};

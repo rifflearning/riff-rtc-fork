@@ -5,6 +5,7 @@ import Home from './Home';
 import SignUp from "./SignUp"
 import LogIn from "./LogIn"
 import Profile from "./Profile"
+import Chat from "./Chat"
 import NavBar from "./NavBar"
 import styled, { injectGlobal, keyframes } from 'styled-components';
 import store from '../redux/store'
@@ -51,6 +52,7 @@ class App extends React.Component {
             </NavBar>
             <Route path="/home" component={Home}/>
             <Route path="/room/:roomname" render={(props) => <WebRtc {...props} options={opts} id={localVideoId}/>}></Route>
+            <Route exact path="/room" component={Chat}/>
             <Route exact path="/signup" component={SignUp} />
             <Route exact path="/login" component={LogIn} />
             <Route exact path="/profile" component={Profile} />
