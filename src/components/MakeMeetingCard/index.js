@@ -13,7 +13,7 @@ const mapStateToProps = state => ({
   user: state.auth.user,
   joiningRoom: state.chat.joiningRoom,
   inRoom: state.chat.inRoom,
-  roomName: state.chat.roomName,
+  roomName: state.makeMeeting.roomName,
 })
 
 const mapDispatchToProps = dispatch => ({
@@ -22,6 +22,7 @@ const mapDispatchToProps = dispatch => ({
   },
 
   joinRoom: (roomName) => {
+    //console.log("event:", event);
     dispatch(joinRoom(roomName))
     dispatch(push("/room"))
   }

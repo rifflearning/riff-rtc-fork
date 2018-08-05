@@ -44,7 +44,7 @@ const MakeMeetingCardView = ({
             <input class="input" type="text" value={ roomName } onChange={ event => handleRoomNameChange(event.target.value) }/>
           </div>
           <div class="control">
-            <a class="button is-primary" onClick={ joinRoom(roomName) }>
+            <a class="button is-primary" onClick={ () => joinRoom(roomName) }>
               Go
             </a>
           </div>
