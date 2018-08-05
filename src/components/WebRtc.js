@@ -13,6 +13,7 @@ import Mediator from '../libs/charts';
 import MuteButton from './MuteButton';
 import {log} from '../libs/utils';
 import trackFace from '../libs/face'
+import { withRouter } from 'react-router'
 require('dotenv').config()
 
 
@@ -84,7 +85,7 @@ class WebRtc extends React.Component {
         log("current peers:", this.webrtc.getPeers())
         log("webrtc object:", this.webrtc)
         log("webrtc connection object:", this.webrtc.connection)
-    })
+    });
 
     // register our webrtc functions with the corresponding events
     this.webrtc.on('videoAdded', this.addVideo);
@@ -92,12 +93,21 @@ class WebRtc extends React.Component {
     this.webrtc.on('readyToCall', this.readyToCall);
 
     log("webrtc component mounted");
+
+  }
+
+  componentWillUnmount () {
+    log("Will unmount webRTC component");
+    this.webrtc.leaveRoom();
+    this.webrtc.stopLocalVideo();
+    this.socket.disconnect();
   }
 
   componentDidUpdate() {
     // we need to make sure meeting mediator updates when
     // our participants change
     // in the future this can be handled by state
+    log("webRTC Component updating");
     if (this.mm) {
       this.mm.update_users(this.getParticipants());
     }
@@ -301,4 +311,4 @@ class WebRtc extends React.Component {
   }
 }
 
-export default WebRtc
+export default withRouter(WebRtc)

@@ -10,3 +10,10 @@ client:
   dataServer:
     url: /
     path: /api/videodata
+  firebase:
+    apiKey: 
+    authDomain: 
+    databaseURL: 
+    projectId: 
+    storageBucket: 
+    messagingSenderId:

@@ -17,15 +17,14 @@ require('dotenv').config();
 const config = require('config');
 let serverConfig = config.get('server');
 let clientConfig = config.get('client');
-console.log('server config: ', serverConfig);
-console.log('client config: ', clientConfig);
+//console.log('server config: ', serverConfig);
+//console.log('client config: ', clientConfig);
 
 app.engine('html', hoganXpress);
 app.set('view engine', 'html');
 
 app.use(cookieParser());
 app.enable("trust proxy");
-
 
 // configure the app to use bodyParser()
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -63,14 +62,13 @@ function get_room(id, callback) {
 app.use(session({ secret: config.get('server.sessionSecret'), cookie: { maxAge: 60000 }}));
 app.use(serveStatic(__dirname + '/build', { index: false, redirect: false }));
 
-app.get('/chat', chat_route);
 app.post('/lti_launch', handle_launch, chat_route);
-
+app.get('*', chat_route);
 
 function chat_route(req, res) {
   let user_data = req.session.user_data ? JSON.stringify(req.session.user_data) : '{}';
   let client_config = JSON.stringify(config.get('client'));
-  console.log('INFO: chat_route: config=', config);
+//  console.log('INFO: chat_route: config=', config);
   res.render(`${__dirname}/build/index.html`, { client_config, user_data });
 }
 
