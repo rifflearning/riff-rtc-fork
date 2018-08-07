@@ -1,5 +1,5 @@
 # Args for FROM directives
-ARG NODE_VER=8
+ARG NODE_VER=10
 ARG RTC_BUILD_TAG=latest
 
 #
