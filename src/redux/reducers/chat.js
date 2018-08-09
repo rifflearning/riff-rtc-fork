@@ -1,11 +1,15 @@
 import {
   CHAT_SET_WEBRTC_CONFIG,
   JOIN_ROOM,
+  JOINED_ROOM,
   JOINING_ROOM,
   IN_ROOM,
   MUTE_AUDIO,
   MUTE_VIDEO,
-} from '../constants/ActionTypes'
+  ADD_PEER,
+  REMOVE_PEER,
+  READY_TO_CALL
+} from '../constants/ActionTypes';
 
 const initialState = {
   joiningRoom: false,
@@ -20,6 +24,8 @@ const initialState = {
     token: null,
     error: null
   },
+  webRtcPeers: [],
+  readyToCall: false,
   webRtc: {
     config: null,
     signalMasterPath: ''
@@ -37,6 +43,16 @@ const chat = (state = initialState, action) => {
   case(CHAT_SET_WEBRTC_CONFIG):
     return {...state, webRtc: {config: action.webRtcConfig,
                                signalMasterPath: action.signalMasterPath}};
+  case(ADD_PEER):
+    return {...state, webRtcPeers: [...state.webRtcPeers, action.peer]};
+  case(REMOVE_PEER):
+    const index = state.webRtcPeers.map(item => item.id).indexOf(action.peer.id);
+    return {...state, webRtcPeers: [...state.webRtcPeers.slice(0, index),
+                                    ...state.webRtcPeers.slice(index + 1)]};
+  case(READY_TO_CALL):
+    return {...state, readyToCall: true};
+  case(JOINED_ROOM):
+    return{...state, inRoom: true};
   default:
     return state;
   }

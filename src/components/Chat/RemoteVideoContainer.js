@@ -1,9 +1,10 @@
 import React from 'react';
-import {log} from '../libs/utils';
+import {log} from '../../libs/utils';
 
 class RemoteVideoContainer extends React.Component {
   constructor(props) {
     super(props);
+    console.log("remote video props:", props);
   }
 
 

@@ -17,15 +17,17 @@ const composeEnhancers = composeWithDevTools({
   // Specify custom devTools options
 });
 
-let reducer = persistReducer(persistConfig, rootReducer)
+let reducer = persistReducer(persistConfig, rootReducer);
 // Apply the middleware to the store
 let store = createStore(
   persistReducer(persistConfig, connectRouter(browserHistory)(rootReducer)), // new root reducer with router state, /* preloadedState, */
   composeEnhancers(
     applyMiddleware(thunk),
     applyMiddleware(routerMiddleware(browserHistory))
-));
+  ));
 
-let persistor = persistStore(store)
+console.log("hmmmm");
+
+let persistor = persistStore(store);
 
 export {store, persistor};
