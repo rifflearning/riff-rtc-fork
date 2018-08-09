@@ -32,7 +32,7 @@ help :
 	echo "- build     : build (webpack) the production client"                        ; \
 	echo "- build-dev : build (webpack) the development client"                       ; \
 	echo "- clean     : remove all files created by build"                            ; \
-	echo "- init      : run install, build; intended for initializing a fresh repo clone" ; \
+	echo "- init      : run install, build-dev; intended for initializing a fresh repo clone" ; \
 	echo "- install   : run npm install"                                              ; \
 	echo "------ the following are placeholder targets not yet implemented: -----"    ; \
 	echo "- all       : run lint, build, test"                                        ; \
@@ -44,9 +44,9 @@ help :
 
 all : lint build test
 
-init : install build
+init : install build-dev
 
-install:
+install :
 	npm install
 
 build : src/libs/mm.js
