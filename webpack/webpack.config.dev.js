@@ -91,7 +91,11 @@ module.exports = {
     ]
   },
   plugins: [
-    new BundleAnalyzerPlugin(),
+    new BundleAnalyzerPlugin({
+      analyzerMode: "static",
+      openAnalyzer: false,
+      reportFilename: "WebpackBundleReport.html"
+    }),
     new HtmlWebpackPlugin({
       inject: 'body',
       template: 'public/index.html'
