@@ -23,7 +23,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "node server.js",
-    "build:prod": "coffee -c src/libs/mm.coffee; webpack --mode production --config webpack/webpack.config.js",
+    "build:prod-broken": "coffee -c src/libs/mm.coffee; webpack --mode production --config webpack/webpack.config.js",
+    "build:prod": "npm run build:dev",
     "build:dev": "coffee -c src/libs/mm.coffee; webpack --mode development --config webpack/webpack.config.dev.js",
     "start:dev-server": "nodemon server.js",
     "start:dev-client": "webpack --watch --config webpack/webpack.config.dev.js",
