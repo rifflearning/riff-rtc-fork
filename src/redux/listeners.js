@@ -20,7 +20,7 @@ const addPeer = (peer) => {
   };
 };
 
-const removePeer = (video, peer) => {
+const removePeer = (peer) => {
   return {
     type: REMOVE_PEER,
     peer: peer
