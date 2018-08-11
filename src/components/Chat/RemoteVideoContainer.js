@@ -12,20 +12,20 @@ class RemoteVideoContainer extends React.Component {
     // there may be a more elegant way to do this
     // but i can't think of it in < 3 minutes
     let peerLen = this.props.peers.length;
-    let colVal;
-    if (peerLen <= 1) {
-      colVal = "s12 one-to-two-remote";
-    } else if (peerLen === 2) {
-      colVal = "s6 one-to-two-remote";
-    } else if (peerLen < 5) {
-      colVal = "s6 three-to-five-remote";
-    } else {
-      colVal = "s4 six-plus-remote";
-    }
+    let colVal = "column"
+    // if (peerLen <= 1) {
+    //   colVal = "s12 one-to-two-remote";
+    // } else if (peerLen === 2) {
+    //   colVal = "s6 one-to-two-remote";
+    // } else if (peerLen < 5) {
+    //   colVal = "s6 three-to-five-remote";
+    // } else {
+    //   colVal = "s4 six-plus-remote";
+    // }
 
     return this.props.peers.map(function(peer) {
       return (
-        <div key={peer.id} className = {"col videoContainer remotes " + colVal} id = {"container_" + peer.id}>
+        <div key={peer.id} className = {"videoContainer remotes " + colVal} id = {"container_" + peer.id}>
         </div>
       );
     });
@@ -84,7 +84,7 @@ class RemoteVideoContainer extends React.Component {
   render() {
     return (
       <div className = "remotes" id = "remoteVideos">
-        <div ref = "remotes" className = "row">
+        <div ref = "remotes" className = "columns">
           {this.videos()}
         </div>
       </div>

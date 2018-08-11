@@ -71,10 +71,10 @@ class Chat extends Component {
                    // this is necessary for thumos. yes, it is upsetting.
                    height = "225" width = "300"
                    ref = "local" >
+              <canvas id = "video-overlay"
+                      height = "225" width = "300">
+              </canvas>
             </video>
-            <canvas id = "video-overlay"
-                    height = "225" width = "300">
-            </canvas>
             <p class="menu-label">{this.props.user.email}</p>
           </aside>
           <div class="column">
