@@ -1,4 +1,5 @@
 import SimpleWebRTC from 'simplewebrtc';
+import sibilant from 'sibilant-webaudio';
 import { JOINING_ROOM,
          JOINED_ROOM,
          IN_ROOM,
@@ -6,7 +7,9 @@ import { JOINING_ROOM,
          REMOVE_PEER,
          CHAT_READY_TO_CALL,
          CHAT_SET_WEBRTC_CONFIG,
-         CHAT_START_WEBRTC
+         CHAT_START_WEBRTC,
+         CHAT_SHARE_STREAM,
+         CHAT_VOLUME_CHANGED
        } from './constants/ActionTypes';
 import ReactDOM from 'react-dom';
 
@@ -35,6 +38,20 @@ const readyToCall = (roomName) => {
   };
 };
 
+const shareStream = (stream) => {
+  return {
+    type: CHAT_SHARE_STREAM,
+    stream: stream
+  };
+};
+
+const volumeChanged = (vol) => {
+  return{
+    type: CHAT_VOLUME_CHANGED,
+    volume: vol
+  }
+}
+
 
 export default function (nick, localVideoNode, dispatch, chatState) {
   let signalmasterPath = window.client_config.signalMaster.path || '';
@@ -59,18 +76,24 @@ export default function (nick, localVideoNode, dispatch, chatState) {
   webrtc.on('videoAdded', function (video, peer) {
     dispatch(addPeer(peer));
   });
-
+  dispatch({type: JOINED_ROOM});
   webrtc.on('videoRemoved', function (video, peer) {
     dispatch(removePeer(peer));
   });
 
   webrtc.on('readyToCall', function (video, peer) {
-    console.log("READY TO CALL!!!");
     webrtc.joinRoom(chatState.roomName, function (err, rd) {
-      console.log("joined room");
-      dispatch({type: JOINED_ROOM});
       console.log(err, "---", rd);
     });
+    let stream = localVideoNode.captureStream ? localVideoNode.captureStream() : localVideoNode.mozCaptureStream();
+    var sib = new sibilant(stream);
+    console.log("sib:", sib);
+    // use this to show user volume to confirm audio/video working
+    sib.bind('volumeChange', function (data) {
+      dispatch(volumeChanged(data))
+    })
     dispatch(readyToCall(chatState.roomName));
+
+    dispatch(shareStream(webrtc.webrtc.localStreams[0]));
   });
 }

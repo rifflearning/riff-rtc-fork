@@ -1,6 +1,6 @@
 import { MAKE_MEETING_INPUT_CHANGE,
          JOIN_ROOM } from '../constants/ActionTypes';
-import app from "../../firebase"
+import app from "../../firebase";
 import { push } from 'connected-react-router';
 
 export const changeRoomNameState = (roomName) => {
@@ -11,7 +11,6 @@ export const changeRoomNameState = (roomName) => {
 };
 
 export const joinRoom = (roomName) => {
-  console.log("room name:", roomName)
   return {
     type: JOIN_ROOM,
     roomName: roomName

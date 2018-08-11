@@ -4,6 +4,7 @@ import { withRouter } from "react-router-dom";
 import { connect } from 'react-redux';
 import styled, { injectGlobal, keyframes } from 'styled-components';
 import auth from "../../firebase";
+import sibilant from 'sibilant-webaudio';
 import RemoteVideoContainer from "./RemoteVideoContainer";
 import {
   setWebRtcConfig,
@@ -19,16 +20,13 @@ const mapStateToProps = state => ({
   inRoom: state.chat.inRoom,
   roomName: state.chat.roomName,
   webRtc: state.chat.webRtc,
-  // hold-over until I figure out why this is failing
   // first element is often null, I don't know why
   webRtcPeers: state.chat.webRtcPeers[0] === null ? [] : state.chat.webRtcPeers,
+  volume: Math.ceil((80 + state.chat.volume)/20)*20,
   chat: state.chat
 });
 
 const mapDispatchToProps = dispatch => ({
-  // dispatchWebRtcConfig: (localVideoRef, email) => {
-  //   dispatch(setWebRtcConfig(localVideoRef, email));
-  // },
   joinWebRtc: (localVideoRef, nick) => {
     dispatch(joinWebRtc(localVideoRef, nick));
   },
@@ -40,13 +38,29 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => ({
   ...dispatchProps,
   ...ownProps,
   withRef: true
-})
+});
+
+
+const RenderVideos = ({inRoom, webRtcPeers}) => {
+  if (inRoom) {
+    return (
+      <div class="column">
+        <RemoteVideoContainer ref = "remote" peers = {webRtcPeers}/>
+      </div>
+    );
+  } else {
+    // not in room yet, we're doing our audio/video tests
+    return (
+      <div class="column">
+        <h1> Test your mic and video!</h1>
+      </div>
+    );
+  }
+}
 
 class Chat extends Component {
   constructor (props) {
     super(props);
-    console.log(props);
-    //this.contextTypes = { store: React.PropTypes.object };
   }
 
   componentDidMount() {
@@ -55,6 +69,7 @@ class Chat extends Component {
                        localVideo,
                        this.props.dispatch,
                        this.props.chat);
+    console.log("localVideo:", localVideo);
     //this.props.joinWebRtc(localVideo, this.props.user.email);
   }
 
@@ -76,13 +91,12 @@ class Chat extends Component {
               </canvas>
             </video>
             <p class="menu-label">{this.props.user.email}</p>
+            <progress class="progress is-success" value={this.props.volume} max="100"></progress>
           </aside>
-          <div class="column">
-            <RemoteVideoContainer ref = "remote" peers = {this.props.webRtcPeers}/>
-          </div>
+          <RenderVideos inRoom={this.props.inRoom} webRtcPeers={this.props.webRtcPeers}></RenderVideos>
         </div>
       </div>
-    )
+    );
   }
 }
 
