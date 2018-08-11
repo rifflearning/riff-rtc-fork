@@ -13,7 +13,7 @@ import ReactDOM from 'react-dom';
 
 console.log("Creating webrtc constant...");
 
-const addPeer = (video, peer) => {
+const addPeer = (peer) => {
   return {
     type: ADD_PEER,
     peer: peer

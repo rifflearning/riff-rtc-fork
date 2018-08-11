@@ -1,7 +1,7 @@
 import { MAKE_MEETING_INPUT_CHANGE,
          JOIN_ROOM } from '../constants/ActionTypes';
 import app from "../../firebase"
-import { push } from 'react-router-redux'
+import { push } from 'connected-react-router';
 
 export const changeRoomNameState = (roomName) => {
   return {

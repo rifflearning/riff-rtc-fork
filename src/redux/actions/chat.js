@@ -10,7 +10,7 @@ import { JOINING_ROOM,
 import SimpleWebRTC from 'simplewebrtc';
 import ReactDOM from 'react-dom';
 import app from "../../firebase";
-import { push } from 'react-router-redux';
+import { push } from 'connected-react-router';
 
 
 export const joinWebRtc = (localVideoRef, email) => dispatch => {

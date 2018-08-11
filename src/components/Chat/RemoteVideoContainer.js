@@ -25,7 +25,7 @@ class RemoteVideoContainer extends React.Component {
 
     return this.props.peers.map(function(peer) {
       return (
-        <div className = {"col videoContainer remotes " + colVal} id = {"container_" + peer.id}>
+        <div key={peer.id} className = {"col videoContainer remotes " + colVal} id = {"container_" + peer.id}>
         </div>
       );
     });
@@ -35,9 +35,11 @@ class RemoteVideoContainer extends React.Component {
   componentWillUpdate(nextProps, nextState) {
     // OK SO THIS IS GROSS BUT SIMPLEWEBRTC REQUIRES DOM MANIPULATION
     // convert to array of IDs for easier manipulation
+    console.log("peer list:", this.props.peers);
     let newPeerList = nextProps.peers.map((peer) => peer.id);
     let currentPeerList = this.props.peers.map((peer) => peer.id);
 
+    console.log("peer list:", nextProps.peers);
     log("CURRENT PEER LIST " + currentPeerList);
     log("NEW PEER LIST " + newPeerList);
 

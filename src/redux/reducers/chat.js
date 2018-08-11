@@ -8,7 +8,7 @@ import {
   MUTE_VIDEO,
   ADD_PEER,
   REMOVE_PEER,
-  READY_TO_CALL
+  CHAT_READY_TO_CALL
 } from '../constants/ActionTypes';
 
 const initialState = {
@@ -44,12 +44,14 @@ const chat = (state = initialState, action) => {
     return {...state, webRtc: {config: action.webRtcConfig,
                                signalMasterPath: action.signalMasterPath}};
   case(ADD_PEER):
-    return {...state, webRtcPeers: [...state.webRtcPeers, action.peer]};
+    // this removes any null peers
+    const peers = state.webRtcPeers.filter(n => !(n === null));
+    return {...state, webRtcPeers: [...peers, action.peer]};
   case(REMOVE_PEER):
     const index = state.webRtcPeers.map(item => item.id).indexOf(action.peer.id);
     return {...state, webRtcPeers: [...state.webRtcPeers.slice(0, index),
                                     ...state.webRtcPeers.slice(index + 1)]};
-  case(READY_TO_CALL):
+  case(CHAT_READY_TO_CALL):
     return {...state, readyToCall: true};
   case(JOINED_ROOM):
     return{...state, inRoom: true};

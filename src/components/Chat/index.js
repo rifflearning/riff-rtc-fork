@@ -12,6 +12,7 @@ from "../../redux/actions/chat";
 import { push } from 'connected-react-router';
 import addWebRtcListeners from "../../redux/listeners"
 
+
 const mapStateToProps = state => ({
   user: state.auth.user,
   joiningRoom: state.chat.joiningRoom,
@@ -19,14 +20,15 @@ const mapStateToProps = state => ({
   roomName: state.chat.roomName,
   webRtc: state.chat.webRtc,
   // hold-over until I figure out why this is failing
-  webRtcPeers: state.chat.webRtcPeers || [],
+  // first element is often null, I don't know why
+  webRtcPeers: state.chat.webRtcPeers[0] === null ? [] : state.chat.webRtcPeers,
   chat: state.chat
 });
 
 const mapDispatchToProps = dispatch => ({
-  dispatchWebRtcConfig: (localVideoRef, email) => {
-    dispatch(setWebRtcConfig(localVideoRef, email));
-  },
+  // dispatchWebRtcConfig: (localVideoRef, email) => {
+  //   dispatch(setWebRtcConfig(localVideoRef, email));
+  // },
   joinWebRtc: (localVideoRef, nick) => {
     dispatch(joinWebRtc(localVideoRef, nick));
   },
