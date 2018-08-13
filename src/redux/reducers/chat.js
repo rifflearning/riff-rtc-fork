@@ -5,6 +5,7 @@ import {
   JOINING_ROOM,
   IN_ROOM,
   MUTE_AUDIO,
+  UNMUTE_AUDIO,
   MUTE_VIDEO,
   ADD_PEER,
   REMOVE_PEER,
@@ -73,6 +74,10 @@ const chat = (state = initialState, action) => {
     return {...state, inRoom: false, getMediaError: true, webRtcPeers: [], readyToCall: false, displayName: ""};
   case(CHAT_VOLUME_CHANGED):
     return {...state, volume: action.volume};
+  case(MUTE_AUDIO):
+    return {...state, audioMuted: true};
+  case(UNMUTE_AUDIO):
+    return {...state, audioMuted: false};
   default:
     return state;
   }

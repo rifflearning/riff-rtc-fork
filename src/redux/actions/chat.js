@@ -3,6 +3,8 @@ import { JOINING_ROOM,
          IN_ROOM,
          ADD_PEER,
          REMOVE_PEER,
+         MUTE_AUDIO,
+         UNMUTE_AUDIO,
          CHAT_LEAVE_ROOM,
          CHAT_READY_TO_CALL,
          CHAT_SET_WEBRTC_CONFIG,
@@ -22,6 +24,15 @@ export const changeRoomName = (roomName) => {
 export const joinedRoom = (name) => {
   return {type: JOINED_ROOM,
           name: name};
+};
+
+export const muteAudio = () => {
+  console.log("muting audio");
+  return {type: MUTE_AUDIO};
+};
+
+export const unMuteAudio = () => {
+  return {type: UNMUTE_AUDIO};
 };
 
 export const leaveRoom = () => {

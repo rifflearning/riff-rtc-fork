@@ -12,6 +12,8 @@ import {
   joinWebRtc,
   joinedRoom,
   leaveRoom,
+  muteAudio,
+  unMuteAudio,
   changeRoomName}
 from "../../redux/actions/chat";
 import { push } from 'connected-react-router';
@@ -29,6 +31,7 @@ const mapStateToProps = state => ({
   displayName: state.chat.displayName,
   // first element is often null, I don't know why
   webRtcPeers: state.chat.webRtcPeers[0] === null ? [] : state.chat.webRtcPeers,
+  isAudioMuted: state.chat.audioMuted,
   volume: Math.ceil(((85 + state.chat.volume)+1)/20)*20,
   //volume: state.chat.inRoom ? 0 : Math.ceil((80 + state.chat.volume)/20)*20,
   chat: state.chat
@@ -48,6 +51,17 @@ const mapDispatchToProps = dispatch => ({
     event.preventDefault();
     console.log("Clicked Ready to Join");
     dispatch(joinedRoom(name));
+  },
+  handleMuteAudioClick: (event, muted, webrtc) => {
+    console.log(event, muted);
+    if (muted) {
+      dispatch(unMuteAudio());
+      webrtc.unmute();
+    } else {
+      dispatch(muteAudio());
+      webrtc.mute();
+    }
+
   },
   dispatch: dispatch,
 });
@@ -92,7 +106,6 @@ color: #fff;
 padding: 5px;
 `;
 
-//TODO: if state.chat.roomName is not defined, let the user know and ask them for a room name
 class Chat extends Component {
   constructor (props) {
     super(props);
@@ -102,14 +115,10 @@ class Chat extends Component {
 
   componentDidMount() {
     let localVideo = ReactDOM.findDOMNode(this.refs.local);
-    console.log(this.props);
-    console.log("ADDING WEBRTC LISTENER")
     this.webrtc = addWebRtcListeners(this.props.user.email,
                                      localVideo,
                                      this.props.dispatch,
                                      this.props.chat); 
-    console.log("localVideo:", localVideo);
-    //this.props.joinWebRtc(localVideo, this.props.user.email);
   }
 
   handleName(name) {
@@ -117,7 +126,6 @@ class Chat extends Component {
   }
 
   handleKeyPress(event) {
-    console.log("key press:", event)
     if (event.key == 'Enter') {
       this.props.handleReadyClick(event, this.name);
     }
@@ -158,6 +166,21 @@ class Chat extends Component {
                     </p>
                 </VideoPlaceholder>}
               <p class="menu-label">{this.props.user.email}</p>
+              {this.props.inRoom &&
+                <div class="has-text-centered">
+                    <div class="control">
+                        {this.props.isAudioMuted ?
+                          <a class="button is-rounded is-danger" onClick={event => this.props.handleMuteAudioClick(event, this.props.isAudioMuted, this.webrtc)}>
+                              <MaterialIcon icon="mic_off"/>
+                            </a>
+                          :
+                            <a class="button is-rounded" onClick={event => this.props.handleMuteAudioClick(event, this.props.isAudioMuted, this.webrtc)}>
+                                <MaterialIcon icon="mic"/>
+                              </a>  
+                          }
+                          </div>
+                  </div>
+              }
             {!this.props.inRoom &&
               <div class="has-text-centered">
                   <div class="level">

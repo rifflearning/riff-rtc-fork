@@ -21,6 +21,7 @@ export const JOINING_ROOM = 'CHAT::JOINING_ROOM';
 export const JOINED_ROOM = 'CHAT::JOINED_ROOM';
 export const IN_ROOM = 'CHAT::IN_ROOM';
 export const MUTE_AUDIO = 'CHAT::MUTE_AUDIO';
+export const UNMUTE_AUDIO = 'CHAT::UNMUTE_AUDIO';
 export const MUTE_VIDEO = 'CHAT::MUTE_VIDEO';
 export const ADD_PEER = 'CHAT::ADD_PEER';
 export const REMOVE_PEER = 'CHAT::REMOVE_PEER';
