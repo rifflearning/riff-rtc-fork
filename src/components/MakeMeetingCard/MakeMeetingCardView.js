@@ -28,6 +28,7 @@ margin-left: 1px;
 const MakeMeetingCardView = ({
   roomName,
   handleRoomNameChange,
+  handleKeyPress,
   joinRoom }) => (
     <GradientCard>
       <div class="card-content">
@@ -41,7 +42,10 @@ const MakeMeetingCardView = ({
             </TextInputStart>
           </p>
           <div class="control">
-            <input class="input" type="text" value={ roomName } onChange={ event => handleRoomNameChange(event.target.value) }/>
+            <input class="input" type="text"
+                   value={ roomName }
+                   onChange={ event => handleRoomNameChange(event.target.value)}
+              onKeyPress={ handleKeyPress }/>
           </div>
           <div class="control">
             <a class="button is-primary" onClick={ () => joinRoom(roomName) }>

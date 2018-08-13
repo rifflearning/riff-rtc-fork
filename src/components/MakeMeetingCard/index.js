@@ -21,6 +21,14 @@ const mapDispatchToProps = dispatch => ({
     dispatch(changeRoomNameState(roomName))
   },
 
+  handleKeyPress: event => {
+    if (event.key == 'Enter') {
+      console.log("whoooops")
+      dispatch(joinRoom(event.target.value));
+      dispatch(push("/room"));
+    }
+  },
+
   joinRoom: (roomName) => {
     //console.log("event:", event);
     dispatch(joinRoom(roomName))
