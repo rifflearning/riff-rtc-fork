@@ -11,7 +11,8 @@ import {
   setWebRtcConfig,
   joinWebRtc,
   joinedRoom,
-  leaveRoom}
+  leaveRoom,
+  changeRoomName}
 from "../../redux/actions/chat";
 import { push } from 'connected-react-router';
 import addWebRtcListeners from "../../redux/listeners";
@@ -36,6 +37,9 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => ({
   leaveRoom: () => {
     dispatch(leaveRoom());
+  },
+  handleRoomNameChange: (roomName) => {
+    dispatch(changeRoomName(roomName));
   },
   joinWebRtc: (localVideoRef, nick) => {
     dispatch(joinWebRtc(localVideoRef, nick));
@@ -65,7 +69,8 @@ const RenderVideos = ({inRoom, webRtcPeers}) => {
     );
   } else {
     return (
-      <div class="column">
+      <div class="column has-text-centered">
+        <h1>Waiting for you to be ready...</h1>
       </div>
     );
   }
@@ -133,9 +138,11 @@ class Chat extends Component {
             <p class="menu-label">
               Room: {this.props.roomName}
             </p>
+
             {this.props.inRoom &&
               <p class="menu-label">Name: {this.props.displayName}</p>
-            }
+              }
+
             <video className = "local-video"
                    id = 'local-video'
                    // this is necessary for thumos. yes, it is upsetting.
@@ -161,7 +168,17 @@ class Chat extends Component {
                             <progress class="progress is-success" value={this.props.volume} max="100"></progress>
                         </div>
                     </div>
-                      <div class="control">
+                    <div class="control">
+                        <p class="menu-label" >Room Name</p>
+                        <div class="control" style={{'margin-top': '10px'}}>
+                            <input class="input"
+                                     type="text"
+                                     name="name"
+                                     placeholder="Room Name"
+                                     value={this.props.roomName}
+                                     onChange={event => this.props.handleRoomNameChange(event.target.value)}/>
+                          </div>
+                          <p class="menu-label" >Display Name</p>
                           <input class="input"
                                    type="text"
                                    name="name"
@@ -172,7 +189,7 @@ class Chat extends Component {
                         </div>
                         <a class="button is-outlined is-primary"
                              style={{'margin-top': '10px'}}
-                             onClick={ event => this.props.handleReadyClick(event, this.name)}>Ready to Chat</a>
+                             onClick={ event => this.props.handleReadyClick(event, this.name)}>Join Room</a>
                 </div>
             }
           </aside>
@@ -182,7 +199,6 @@ class Chat extends Component {
     );
   }
 }
-
 
 
 export default withRouter(connect(mapStateToProps, mapDispatchToProps, mergeProps)(Chat));

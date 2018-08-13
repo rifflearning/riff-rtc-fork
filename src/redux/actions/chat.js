@@ -6,12 +6,18 @@ import { JOINING_ROOM,
          CHAT_LEAVE_ROOM,
          CHAT_READY_TO_CALL,
          CHAT_SET_WEBRTC_CONFIG,
-         CHAT_START_WEBRTC
+         CHAT_START_WEBRTC,
+         CHAT_CHANGE_ROOM_NAME
        } from '../constants/ActionTypes';
 import SimpleWebRTC from 'simplewebrtc';
 import ReactDOM from 'react-dom';
 import app from "../../firebase";
 import { push } from 'connected-react-router';
+
+export const changeRoomName = (roomName) => {
+  return {type: CHAT_CHANGE_ROOM_NAME,
+          roomName: roomName};
+};
 
 export const joinedRoom = (name) => {
   return {type: JOINED_ROOM,

@@ -12,7 +12,8 @@ import {
   CHAT_READY_TO_CALL,
   CHAT_SHARE_STREAM,
   CHAT_VOLUME_CHANGED,
-  CHAT_GET_MEDIA_ERROR
+  CHAT_GET_MEDIA_ERROR,
+  CHAT_CHANGE_ROOM_NAME
 } from '../constants/ActionTypes';
 
 const initialState = {
@@ -46,6 +47,8 @@ const chat = (state = initialState, action) => {
   switch (action.type) {
   case(JOIN_ROOM):
     return {...state, joiningRoom: true, roomName: action.roomName, inRoom: false};
+  case(CHAT_CHANGE_ROOM_NAME):
+    return {...state, roomName: action.roomName};
   case(CHAT_SET_WEBRTC_CONFIG):
     return {...state, webRtc: {config: action.webRtcConfig,
                                signalMasterPath: action.signalMasterPath}};
