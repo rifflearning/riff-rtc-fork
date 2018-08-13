@@ -15,8 +15,6 @@ import { JOINING_ROOM,
 import ReactDOM from 'react-dom';
 
 
-console.log("Creating webrtc constant...");
-
 const addPeer = (peer) => {
   return {
     type: ADD_PEER,
@@ -82,10 +80,12 @@ export default function (nick, localVideoNode, dispatch, chatState) {
   console.log("Creating webrtc constant...");
 
   webrtc.on('videoAdded', function (video, peer) {
+    console.log("added vidieo")
     dispatch(addPeer(peer));
   });
 
   webrtc.on('videoRemoved', function (video, peer) {
+    console.log("removed video")
     dispatch(removePeer(peer));
   });
 

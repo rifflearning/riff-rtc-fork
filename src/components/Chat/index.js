@@ -193,7 +193,7 @@ class Chat extends Component {
                     </div>
                     <div class="control">
                         <p class="menu-label" >Room Name</p>
-                        <div class="control" style={{'margin-top': '10px'}}>
+                        <div class="control" style={{'marginTop': '10px'}}>
                             <input class="input"
                                      type="text"
                                      name="name"
@@ -211,7 +211,7 @@ class Chat extends Component {
                                    onChange={event => this.handleName(event.target.value)}/>
                         </div>
                         <a class="button is-outlined is-primary"
-                             style={{'margin-top': '10px'}}
+                             style={{'marginTop': '10px'}}
                              onClick={ event => this.props.handleReadyClick(event, this.name)}>Join Room</a>
                 </div>
             }

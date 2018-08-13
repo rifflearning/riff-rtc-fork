@@ -5,14 +5,19 @@ import {
   LOG_OUT,
   LOGIN_USER_SUCCESS,
   LOGIN_USER_FAIL,
+  LOGIN_ANONYMOUS,
   INPUT_STATE_CHANGE
-} from '../constants/ActionTypes'
+} from '../constants/ActionTypes';
 
 const initialState = {
   loggingIn: false,
   loggedIn: false,
   signingIn: false,
   loggingOut: false,
+  anonymous: {
+    state: true,
+    uid: null
+  },
   user: {
     email: null,
     uid: null,
@@ -40,6 +45,11 @@ const auth = (state = initialState, action) => {
     return { ...state, loggedIn: false, error: action.error}
   case(CLEAR_ERROR):
     return { ...state, error: null}
+  case(LOGIN_ANONYMOUS):
+    return {...state, anonymous: {
+      state: true,
+      uid: action.uid
+    }}
   case(INPUT_STATE_CHANGE):
     return { ...state, input: {
       email: action.email || state.input.email,

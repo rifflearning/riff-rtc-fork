@@ -8,6 +8,7 @@ import Chat from "./Chat"
 import NavBar from "./NavBar"
 import styled, { injectGlobal, keyframes } from 'styled-components';
 import store from '../redux/store'
+import { connect } from 'react-redux'
 import { withRouter } from "react-router-dom"
 import {
   Router,
@@ -17,30 +18,46 @@ import {
   Redirect,
 } from 'react-router';
 
-import browserHistory from "../history"
+import browserHistory from "../history";
+import firebase from "../firebase";
+import addAuthListener from '../redux/authListener.js';
+import { attemptLoginAnonymous } from '../redux/actions/auth';
 
 const Footer = styled.footer.attrs({
   className: 'footer'
 })`
   background-color: #f6f0fb;
-`
+`;
+
+const mapStateToProps = state => ({
+  auth: state.auth
+});
+
+const mapDispatchToProps = dispatch => ({
+  logInAnonymously: () => {
+    attemptLoginAnonymous()
+  },
+  dispatch: dispatch
+});
 
 // App component
 class App extends React.Component {
 
   constructor(props) {
     super(props);
+    addAuthListener(this.props.dispatch,
+                    this.props.auth);
+  }
+
+  componentDidMount() {
+    console.log("App component loaded.");
+    if (!this.props.auth.user.uid) {
+      console.log("No user detected, creating anonymous ID");
+      this.props.logInAnonymously();
+    }
   }
 
   render() {
-    var opts = {
-      // this will be made specificiable
-      roomname : "roomname",
-      username: "username",
-      name: "a name",
-      email: "an email"
-    };
-
     var localVideoId = "local-video";
     return (
       <div>
@@ -61,4 +78,7 @@ class App extends React.Component {
   };
 }
 
-export default App;
+export default withRouter(connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(App));
