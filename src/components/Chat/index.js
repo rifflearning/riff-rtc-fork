@@ -10,10 +10,11 @@ import MaterialIcon from 'material-icons-react';
 import {
   setWebRtcConfig,
   joinWebRtc,
-  joinedRoom}
+  joinedRoom,
+  leaveRoom}
 from "../../redux/actions/chat";
 import { push } from 'connected-react-router';
-import addWebRtcListeners from "../../redux/listeners"
+import addWebRtcListeners from "../../redux/listeners";
 
 
 const mapStateToProps = state => ({
@@ -26,12 +27,15 @@ const mapStateToProps = state => ({
   webRtc: state.chat.webRtc,
   // first element is often null, I don't know why
   webRtcPeers: state.chat.webRtcPeers[0] === null ? [] : state.chat.webRtcPeers,
-  volume: Math.ceil((80 + state.chat.volume)/20)*20,
+  volume: Math.ceil(((85 + state.chat.volume)+1)/20)*20,
   //volume: state.chat.inRoom ? 0 : Math.ceil((80 + state.chat.volume)/20)*20,
   chat: state.chat
 });
 
 const mapDispatchToProps = dispatch => ({
+  leaveRoom: () => {
+    dispatch(leaveRoom());
+  },
   joinWebRtc: (localVideoRef, nick) => {
     dispatch(joinWebRtc(localVideoRef, nick));
   },
@@ -89,12 +93,20 @@ class Chat extends Component {
 
   componentDidMount() {
     let localVideo = ReactDOM.findDOMNode(this.refs.local);
-    addWebRtcListeners(this.props.user.email,
-                       localVideo,
-                       this.props.dispatch,
-                       this.props.chat);
+    console.log(this.props);
+    console.log("ADDING WEBRTC LISTENER")
+    this.webrtc = addWebRtcListeners(this.props.user.email,
+                                     localVideo,
+                                     this.props.dispatch,
+                                     this.props.chat); 
     console.log("localVideo:", localVideo);
     //this.props.joinWebRtc(localVideo, this.props.user.email);
+  }
+
+  componentWillUnmount() {
+    this.props.leaveRoom();
+    this.webrtc.stopLocalVideo();
+    this.webrtc.leaveRoom();
   }
 
   render () {
@@ -144,4 +156,4 @@ class Chat extends Component {
 
 
 
-export default connect(mapStateToProps, mapDispatchToProps, mergeProps)(Chat);
+export default withRouter(connect(mapStateToProps, mapDispatchToProps, mergeProps)(Chat));

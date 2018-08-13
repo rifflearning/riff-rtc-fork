@@ -3,6 +3,7 @@ import { JOINING_ROOM,
          IN_ROOM,
          ADD_PEER,
          REMOVE_PEER,
+         CHAT_LEAVE_ROOM,
          CHAT_READY_TO_CALL,
          CHAT_SET_WEBRTC_CONFIG,
          CHAT_START_WEBRTC
@@ -14,6 +15,10 @@ import { push } from 'connected-react-router';
 
 export const joinedRoom = () => {
   return {type: JOINED_ROOM};
+};
+
+export const leaveRoom = () => {
+  return {type: CHAT_LEAVE_ROOM};
 };
 
 export const joinWebRtc = (localVideoRef, email) => dispatch => {

@@ -110,4 +110,6 @@ export default function (nick, localVideoNode, dispatch, chatState) {
     dispatch(readyToCall(chatState.roomName));
 //    dispatch(shareStream(webrtc.webrtc.localStreams[0]));
   });
+
+  return webrtc;
 }

@@ -8,6 +8,7 @@ import {
   MUTE_VIDEO,
   ADD_PEER,
   REMOVE_PEER,
+  CHAT_LEAVE_ROOM,
   CHAT_READY_TO_CALL,
   CHAT_SHARE_STREAM,
   CHAT_VOLUME_CHANGED,
@@ -64,6 +65,8 @@ const chat = (state = initialState, action) => {
     return {...state, readyToCall: true, getMediaError: null};
   case(JOINED_ROOM):
     return{...state, inRoom: true};
+  case(CHAT_LEAVE_ROOM):
+    return {...state, inRoom: false, getMediaError: true, webRtcPeers: [], readyToCall: false}
   case(CHAT_VOLUME_CHANGED):
     return {...state, volume: action.volume};
   default:
