@@ -87,6 +87,7 @@ color: #fff;
 padding: 5px;
 `;
 
+//TODO: if state.chat.roomName is not defined, let the user know and ask them for a room name
 class Chat extends Component {
   constructor (props) {
     super(props);
@@ -121,6 +122,7 @@ class Chat extends Component {
     this.props.leaveRoom();
     this.webrtc.stopLocalVideo();
     this.webrtc.leaveRoom();
+    this.webrtc.stopSibilant();
   }
 
   render () {

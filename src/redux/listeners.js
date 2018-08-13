@@ -94,13 +94,14 @@ export default function (nick, localVideoNode, dispatch, chatState) {
     dispatch(getMediaError(event));
   });
 
+  // in the future, dispatch a sibilant action to start measuring maybe
+  let stream = localVideoNode.captureStream ? localVideoNode.captureStream() : localVideoNode.mozCaptureStream();
+  var sib = new sibilant(stream);
+
   webrtc.on('readyToCall', function (video, peer) {
     webrtc.joinRoom(chatState.roomName, function (err, rd) {
       console.log(err, "---", rd);
     });
-    // in the future, dispatch a sibilant action to start measuring maybe
-    let stream = localVideoNode.captureStream ? localVideoNode.captureStream() : localVideoNode.mozCaptureStream();
-    var sib = new sibilant(stream);
     console.log("sib:", sib);
     // use this to show user volume to confirm audio/video working
     sib.bind('volumeChange', function (data) {
@@ -110,6 +111,10 @@ export default function (nick, localVideoNode, dispatch, chatState) {
     dispatch(readyToCall(chatState.roomName));
 //    dispatch(shareStream(webrtc.webrtc.localStreams[0]));
   });
+
+  webrtc.stopSibilant = function () {
+    sib.unbind('volumeChange');
+  };
 
   return webrtc;
 }
