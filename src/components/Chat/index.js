@@ -25,6 +25,7 @@ const mapStateToProps = state => ({
   readyToCall: state.chat.readyToCall,
   mediaError: state.chat.getMediaError,
   webRtc: state.chat.webRtc,
+  displayName: state.chat.displayName,
   // first element is often null, I don't know why
   webRtcPeers: state.chat.webRtcPeers[0] === null ? [] : state.chat.webRtcPeers,
   volume: Math.ceil(((85 + state.chat.volume)+1)/20)*20,
@@ -39,10 +40,10 @@ const mapDispatchToProps = dispatch => ({
   joinWebRtc: (localVideoRef, nick) => {
     dispatch(joinWebRtc(localVideoRef, nick));
   },
-  handleReadyClick: (event) => {
+  handleReadyClick: (event, name) => {
     event.preventDefault();
     console.log("Clicked Ready to Join");
-    dispatch(joinedRoom());
+    dispatch(joinedRoom(name));
   },
   dispatch: dispatch,
 });
@@ -89,6 +90,8 @@ padding: 5px;
 class Chat extends Component {
   constructor (props) {
     super(props);
+    this.handleName = this.handleName.bind(this);
+    this.handleKeyPress = this.handleKeyPress.bind(this);
   }
 
   componentDidMount() {
@@ -103,6 +106,17 @@ class Chat extends Component {
     //this.props.joinWebRtc(localVideo, this.props.user.email);
   }
 
+  handleName(name) {
+    this.name = name;
+  }
+
+  handleKeyPress(event) {
+    console.log("key press:", event)
+    if (event.key == 'Enter') {
+      this.props.handleReadyClick(event, this.name);
+    }
+  }
+
   componentWillUnmount() {
     this.props.leaveRoom();
     this.webrtc.stopLocalVideo();
@@ -115,8 +129,11 @@ class Chat extends Component {
         <div class="columns">
           <aside class="menu">
             <p class="menu-label">
-              {this.props.roomName}
+              Room: {this.props.roomName}
             </p>
+            {this.props.inRoom &&
+              <p class="menu-label">Name: {this.props.displayName}</p>
+            }
             <video className = "local-video"
                    id = 'local-video'
                    // this is necessary for thumos. yes, it is upsetting.
@@ -131,7 +148,7 @@ class Chat extends Component {
                   <p> Can't see your video? Make sure your camera is enabled.
                     </p>
                 </VideoPlaceholder>}
-            <p class="menu-label">{this.props.user.email}</p>
+              <p class="menu-label">{this.props.user.email}</p>
             {!this.props.inRoom &&
               <div class="has-text-centered">
                   <div class="level">
@@ -140,10 +157,20 @@ class Chat extends Component {
                         </div>
                         <div class="level-item">
                             <progress class="progress is-success" value={this.props.volume} max="100"></progress>
-                          </div>
+                        </div>
                     </div>
-                    <a class="button is-outlined is-primary" onClick={this.props.handleReadyClick}>Ready to Chat</a>
-
+                      <div class="control">
+                          <input class="input"
+                                   type="text"
+                                   name="name"
+                                   placeholder="Display Name"
+                                   value={this.name}
+                                   onKeyPress={ this.handleKeyPress }
+                                   onChange={event => this.handleName(event.target.value)}/>
+                        </div>
+                        <a class="button is-outlined is-primary"
+                             style={{'margin-top': '10px'}}
+                             onClick={ event => this.props.handleReadyClick(event, this.name)}>Ready to Chat</a>
                 </div>
             }
           </aside>

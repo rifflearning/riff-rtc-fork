@@ -13,8 +13,9 @@ import ReactDOM from 'react-dom';
 import app from "../../firebase";
 import { push } from 'connected-react-router';
 
-export const joinedRoom = () => {
-  return {type: JOINED_ROOM};
+export const joinedRoom = (name) => {
+  return {type: JOINED_ROOM,
+          name: name};
 };
 
 export const leaveRoom = () => {
