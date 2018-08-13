@@ -8,6 +8,7 @@ import { JOINING_ROOM,
          CHAT_READY_TO_CALL,
          CHAT_SET_WEBRTC_CONFIG,
          CHAT_START_WEBRTC,
+         CHAT_GET_MEDIA_ERROR,
          CHAT_SHARE_STREAM,
          CHAT_VOLUME_CHANGED
        } from './constants/ActionTypes';
@@ -52,6 +53,13 @@ const volumeChanged = (vol) => {
   };
 };
 
+const getMediaError = (error) => {
+  return {
+    type: CHAT_GET_MEDIA_ERROR,
+    error: error
+  };
+};
+
 
 export default function (nick, localVideoNode, dispatch, chatState) {
   let signalmasterPath = window.client_config.signalMaster.path || '';
@@ -81,6 +89,11 @@ export default function (nick, localVideoNode, dispatch, chatState) {
     dispatch(removePeer(peer));
   });
 
+  webrtc.on('localStreamRequestFailed', function (event) {
+    console.log("failed request:", event);
+    dispatch(getMediaError(event));
+  });
+
   webrtc.on('readyToCall', function (video, peer) {
     webrtc.joinRoom(chatState.roomName, function (err, rd) {
       console.log(err, "---", rd);
@@ -95,6 +108,6 @@ export default function (nick, localVideoNode, dispatch, chatState) {
     });
 
     dispatch(readyToCall(chatState.roomName));
-    dispatch(shareStream(webrtc.webrtc.localStreams[0]));
+//    dispatch(shareStream(webrtc.webrtc.localStreams[0]));
   });
 }

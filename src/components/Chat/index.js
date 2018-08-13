@@ -21,6 +21,8 @@ const mapStateToProps = state => ({
   joiningRoom: state.chat.joiningRoom,
   inRoom: state.chat.inRoom,
   roomName: state.chat.roomName,
+  readyToCall: state.chat.readyToCall,
+  mediaError: state.chat.getMediaError,
   webRtc: state.chat.webRtc,
   // first element is often null, I don't know why
   webRtcPeers: state.chat.webRtcPeers[0] === null ? [] : state.chat.webRtcPeers,
@@ -57,19 +59,28 @@ const RenderVideos = ({inRoom, webRtcPeers}) => {
       </div>
     );
   } else {
-    // TODO: implement "testing" state.
-    // in this state (inRoom is false), we are letting the user test their setup.
-    // other people can't see them (yet) and the user can't see others.
-    // they see a progress bar, and have a button to let them continue on (changing inRoom to true)
-    // easy.
-    // manage this in state
-    // not in room yet, we're doing our audio/video tests
     return (
       <div class="column">
       </div>
     );
   }
 }
+
+const VideoPlaceholder = styled.div.attrs({
+  className: 'has-text-centered',
+  ref: 'local'
+})`
+background: linear-gradient(30deg, rgba(138,106,148,1) 12%, rgba(171,69,171,1) 87%);
+position: fixed;
+margin-top: -175px;
+width: 250px;
+height: 175px;
+border-radius: 5px;
+display: flex;
+align-items: center;
+color: #fff;
+padding: 5px;
+`;
 
 class Chat extends Component {
   constructor (props) {
@@ -97,12 +108,17 @@ class Chat extends Component {
             <video className = "local-video"
                    id = 'local-video'
                    // this is necessary for thumos. yes, it is upsetting.
-                   height = "125" width = "200"
+                   height = "175" width = "250"
                    ref = "local" >
               <canvas id = "video-overlay"
-                      height = "125" width = "200">
+                      height = "175" width = "250">
               </canvas>
             </video>
+            {this.props.mediaError &&
+              <VideoPlaceholder>
+                  <p> Can't see your video? Make sure your camera is enabled.
+                    </p>
+                </VideoPlaceholder>}
             <p class="menu-label">{this.props.user.email}</p>
             {!this.props.inRoom &&
               <div class="has-text-centered">

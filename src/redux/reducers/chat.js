@@ -10,13 +10,13 @@ import {
   REMOVE_PEER,
   CHAT_READY_TO_CALL,
   CHAT_SHARE_STREAM,
-  CHAT_VOLUME_CHANGED
+  CHAT_VOLUME_CHANGED,
+  CHAT_GET_MEDIA_ERROR
 } from '../constants/ActionTypes';
 
 const initialState = {
   joiningRoom: false,
-  testAudioState: null,
-  testVideoState: null,
+  getMediaError: true,
   inRoom: false,
   roomName: null,
   audioMuted: false,
@@ -55,11 +55,13 @@ const chat = (state = initialState, action) => {
     const index = state.webRtcPeers.map(item => item.id).indexOf(action.peer.id);
     return {...state, webRtcPeers: [...state.webRtcPeers.slice(0, index),
                                     ...state.webRtcPeers.slice(index + 1)]};
+  case(CHAT_GET_MEDIA_ERROR):
+    return{...state, getMediaError: action.error};
   case(CHAT_SHARE_STREAM):
     console.log("stream:", action.stream);
     return {...state, stream: action.stream};
   case(CHAT_READY_TO_CALL):
-    return {...state, readyToCall: true};
+    return {...state, readyToCall: true, getMediaError: null};
   case(JOINED_ROOM):
     return{...state, inRoom: true};
   case(CHAT_VOLUME_CHANGED):
