@@ -17,7 +17,7 @@ FROM base AS dependencies
 # copy the app project file
 COPY --chown=node:node package.json .
 # install node packages
-RUN npm install --only=production 
+RUN npm install --only=production
 # copy production node_modules aside
 RUN cp -R node_modules prod_node_modules
 # install ALL node_modules, including 'devDependencies'
@@ -58,13 +58,15 @@ ENV PORT=$PORT
 # expose port
 EXPOSE $PORT
 # allow all referenced environment variables to be overridden
+ARG FIREBASE_CONFIG
 ARG DATASERVER_EMAIL
 ARG DATASERVER_PASSWORD
 ARG SESSION_SECRET
 ARG CONSUMER_KEY
 ARG CONSUMER_SECRET
 # Set the environment variables w/ values passed in
-ENV DATASERVER_EMAIL=$DATASERVER_EMAIL \
+ENV FIREBASE_CONFIG=$FIREBASE_CONFIG \
+    DATASERVER_EMAIL=$DATASERVER_EMAIL \
     DATASERVER_PASSWORD=$DATASERVER_PASSWORD \
     SESSION_SECRET=$SESSION_SECRET \
     CONSUMER_KEY=$CONSUMER_KEY \

@@ -4,8 +4,11 @@ server:
   lti:
     consumerKey: CONSUMER_KEY
     consumerSecret: CONSUMER_SECRET
-  
+
 client:
   dataServer:
     email: DATASERVER_EMAIL
     password: DATASERVER_PASSWORD
+  firebase:
+    __name: FIREBASE_CONFIG
+    __format: json
