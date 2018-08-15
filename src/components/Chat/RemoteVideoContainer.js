@@ -45,14 +45,13 @@ class RemoteVideoContainer extends React.Component {
 
 
     //remove the missing stream(s) from the DOM
-    currentPeerList.forEach(function(peer) {
-      log("removing peer: " + peer + "from container container_" + peer);
-      let container = document.getElementById("container_" + peer);
-      // just in case, we iterate
-      while (container.firstChild) {
-        container.removeChild(container.firstChild);
-      }
-    });
+    // currentPeerList.forEach(function(peer) {
+    //   let container = document.getElementById("container_" + peer);
+    //   // just in case, we iterate
+    //   while (container.firstChild) {
+    //     container.removeChild(container.firstChild);
+    //   }
+    // });
 
   }
 
@@ -63,8 +62,11 @@ class RemoteVideoContainer extends React.Component {
     this.props.peers.map(function(peer) {
       // the container we added
       let container = document.getElementById('container_' + peer.id);
-      if (!container.hasChildNodes()) {
-        log("Adding peer: " + peer.id + "to container container_" + peer.id);
+      // console.log(container.childNodes)
+      // console.log(container.childNodes.length)
+      if (container.childNodes.length == 0) {
+        console.log("container does not have child nodes");
+        console.log("Adding peer: " + peer.id + "to container container_" + peer.id);
         let video = peer.videoEl;
         container.appendChild(video);
         video.load();

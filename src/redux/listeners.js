@@ -80,13 +80,15 @@ export default function (nick, localVideoNode, dispatch, chatState) {
   console.log("Creating webrtc constant...");
 
   webrtc.on('videoAdded', function (video, peer) {
-    console.log("added vidieo")
-    dispatch(addPeer(peer));
+    console.log("added video")
+      dispatch(addPeer({id: peer.id,
+                        videoEl: peer.videoEl}));
   });
 
   webrtc.on('videoRemoved', function (video, peer) {
     console.log("removed video")
-    dispatch(removePeer(peer));
+      dispatch(removePeer({id: peer.id,
+                           videoEl: peer.videoEl}));
   });
 
   webrtc.on('localStreamRequestFailed', function (event) {
