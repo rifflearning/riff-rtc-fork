@@ -22,6 +22,7 @@ import browserHistory from "../history";
 import firebase from "../firebase";
 import addAuthListener from '../redux/authListener.js';
 import { attemptLoginAnonymous } from '../redux/actions/auth';
+import { attemptRiffAuthenticate } from '../redux/actions/riff';
 
 const Footer = styled.footer.attrs({
   className: 'footer'
@@ -35,7 +36,11 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
   logInAnonymously: () => {
-    attemptLoginAnonymous()
+    attemptLoginAnonymous();
+  },
+  authenticateRiff: () => {
+    console.log("attempt riff auth");
+    dispatch(attemptRiffAuthenticate());
   },
   dispatch: dispatch
 });
@@ -55,6 +60,7 @@ class App extends React.Component {
       console.log("No user detected, creating anonymous ID");
       this.props.logInAnonymously();
     }
+    this.props.authenticateRiff();
   }
 
   render() {
