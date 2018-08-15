@@ -7,7 +7,8 @@ import io from 'socket.io-client';
 
 let dataserverPath = window.client_config.dataServer.path || '';
 dataserverPath += '/socket.io';
-const socket = io(window.client_config.dataServer.url, {
+
+export const socket = io(window.client_config.dataServer.url, {
   'path': dataserverPath,
   'transports': [
     'websocket',
@@ -18,6 +19,7 @@ const socket = io(window.client_config.dataServer.url, {
   ]
 });
 
-export default feathers()
+
+export var app = feathers()
   .configure(socketio(socket))
   .configure(auth({jwt: {}, local: {}}));

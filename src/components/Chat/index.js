@@ -18,6 +18,7 @@ import {
 from "../../redux/actions/chat";
 import { push } from 'connected-react-router';
 import addWebRtcListeners from "../../redux/listeners";
+import { riffAddUserToMeeting } from '../../redux/actions/riff';
 
 
 const mapStateToProps = state => ({
@@ -33,8 +34,10 @@ const mapStateToProps = state => ({
   webRtcPeers: state.chat.webRtcPeers[0] === null ? [] : state.chat.webRtcPeers,
   isAudioMuted: state.chat.audioMuted,
   volume: Math.ceil(((85 + state.chat.volume)+1)/20)*20,
-  //volume: state.chat.inRoom ? 0 : Math.ceil((80 + state.chat.volume)/20)*20,
-  chat: state.chat
+  chat: state.chat,
+  auth: state.auth,
+  riff: state.riff,
+  state: state
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -47,10 +50,19 @@ const mapDispatchToProps = dispatch => ({
   joinWebRtc: (localVideoRef, nick) => {
     dispatch(joinWebRtc(localVideoRef, nick));
   },
-  handleReadyClick: (event, name) => {
+  handleReadyClick: (event, name, chat, auth, riff, webrtc) => {
     event.preventDefault();
+    webrtc.stopVolumeCollection();
     console.log("Clicked Ready to Join");
     dispatch(joinedRoom(name));
+    riffAddUserToMeeting(auth.user.uid,
+                         auth.user.email ? auth.user.email : "",
+                         chat.roomName,
+                         chat.displayName,
+                         chat.roomName,
+                         chat.webRtcPeers,
+                         riff.authToken
+                        );
   },
   handleMuteAudioClick: (event, muted, webrtc) => {
     console.log(event, muted);
@@ -118,7 +130,7 @@ class Chat extends Component {
     this.webrtc = addWebRtcListeners(this.props.user.email,
                                      localVideo,
                                      this.props.dispatch,
-                                     this.props.chat); 
+                                     this.props.state);
   }
 
   handleName(name) {
@@ -127,7 +139,7 @@ class Chat extends Component {
 
   handleKeyPress(event) {
     if (event.key == 'Enter') {
-      this.props.handleReadyClick(event, this.name);
+      this.props.handleReadyClick(event, this.name, this.props.chat, this.props.auth, this.props.riff, this.webrtc);
     }
   }
 
@@ -212,7 +224,7 @@ class Chat extends Component {
                         </div>
                         <a class="button is-outlined is-primary"
                              style={{'marginTop': '10px'}}
-                             onClick={ event => this.props.handleReadyClick(event, this.name)}>Join Room</a>
+                             onClick={ event => this.props.handleReadyClick(event, this.name, this.props.chat, this.props.auth, this.props.riff, this.webrtc)}>Join Room</a>
                 </div>
             }
           </aside>

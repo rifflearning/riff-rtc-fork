@@ -44,7 +44,7 @@ const auth = (state = initialState, action) => {
   case(CLEAR_ERROR):
     return { ...state, error: null}
   case(LOGIN_ANONYMOUS):
-    return {...state, anonymous: true, uid: action.uid}
+    return {...state, anonymous: true, uid: action.uid, user: { ...state.user, uid: action.uid}}
   case(INPUT_STATE_CHANGE):
     return { ...state, input: {
       email: action.email || state.input.email,

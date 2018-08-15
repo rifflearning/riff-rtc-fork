@@ -12,54 +12,30 @@ import { JOINING_ROOM,
          CHAT_SHARE_STREAM,
          CHAT_VOLUME_CHANGED
        } from './constants/ActionTypes';
+import {
+  addPeer,
+  removePeer,
+  readyToCall,
+  shareStream,
+  volumeChanged,
+  getMediaError,
+  changeRoomName,
+  muteAudio,
+  unMuteAudio,
+  leaveRoom
+} from './actions/chat';
 import ReactDOM from 'react-dom';
 
-
-const addPeer = (peer) => {
-  return {
-    type: ADD_PEER,
-    peer: peer
-  };
-};
-
-const removePeer = (peer) => {
-  return {
-    type: REMOVE_PEER,
-    peer: peer
-  };
-};
+import { app, socket } from '../riff';
+import captureSpeaking from '../libs/audio';
 
 
-const readyToCall = (roomName) => {
-  return {
-    type: CHAT_READY_TO_CALL,
-    roomName: roomName
-  };
-};
-
-const shareStream = (stream) => {
-  return {
-    type: CHAT_SHARE_STREAM,
-    stream: stream
-  };
-};
-
-const volumeChanged = (vol) => {
-  return{
-    type: CHAT_VOLUME_CHANGED,
-    volume: vol
-  };
-};
-
-const getMediaError = (error) => {
-  return {
-    type: CHAT_GET_MEDIA_ERROR,
-    error: error
-  };
-};
 
 
-export default function (nick, localVideoNode, dispatch, chatState) {
+export default function (nick, localVideoNode, dispatch, state) {
+  let chatState = state.chat;
+  let authState = state.auth;
+  let riffState = state.riff;
   let signalmasterPath = window.client_config.signalMaster.path || '';
   signalmasterPath += '/socket.io';
   let webRtcConfig = {
@@ -104,18 +80,32 @@ export default function (nick, localVideoNode, dispatch, chatState) {
     webrtc.joinRoom(chatState.roomName, function (err, rd) {
       console.log(err, "---", rd);
     });
+
     console.log("sib:", sib);
     // use this to show user volume to confirm audio/video working
     sib.bind('volumeChange', function (data) {
-      dispatch(volumeChanged(data));
-    });
+      if (!chatState.inRoom) {
+          dispatch(volumeChanged(data));
+        }
+    }.bind(chatState));
+
+    sib.bind('stoppedSpeaking', captureSpeaking(app,
+                                                {
+                                                  username: authState.user.uid,
+                                                  roomName: chatState.roomName,
+                                                  token: riffState.token
+                                                }));
 
     dispatch(readyToCall(chatState.roomName));
-//    dispatch(shareStream(webrtc.webrtc.localStreams[0]));
   });
+
+  webrtc.stopVolumeCollection = function () {
+    sib.unbind('volumeChange');
+  };
 
   webrtc.stopSibilant = function () {
     sib.unbind('volumeChange');
+    sib.unbind('stoppedSpeaking');
   };
 
   return webrtc;
