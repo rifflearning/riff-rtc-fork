@@ -1,3 +1,6 @@
+# Local configuration files
+config/local*
+
 # Env variables
 .env
 

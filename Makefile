@@ -30,6 +30,10 @@ help :
 	@echo ""                                                                          ; \
 	echo "Useful targets in this riff-rtc Makefile:"                                  ; \
 	echo "- build     : build (webpack) the production client"                        ; \
+	echo "- build-dev : build (webpack) the development client"                       ; \
+	echo "- clean     : remove all files created by build"                            ; \
+	echo "- init      : run install, build-dev; intended for initializing a fresh repo clone" ; \
+	echo "- install   : run npm install"                                              ; \
 	echo "------ the following are placeholder targets not yet implemented: -----"    ; \
 	echo "- all       : run lint, build, test"                                        ; \
 	echo "- lint      : run lint over the sources & tests; display results to stdout" ; \
@@ -39,6 +43,11 @@ help :
 	echo ""
 
 all : lint build test
+
+init : install build-dev
+
+install :
+	npm install
 
 build : src/libs/mm.js
 	$(WEBPACK) --mode production --config webpack/webpack.config.js
