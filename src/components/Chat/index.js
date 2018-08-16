@@ -131,6 +131,14 @@ class Chat extends Component {
                                      localVideo,
                                      this.props.dispatch,
                                      this.props.state);
+    window.addEventListener("beforeunload", this.onUnload);
+  }
+
+  onUnload() {
+    this.props.leaveRoom();
+    this.webrtc.stopLocalVideo();
+    this.webrtc.leaveRoom();
+    this.webrtc.stopSibilant();
   }
 
   handleName(name) {
@@ -144,10 +152,8 @@ class Chat extends Component {
   }
 
   componentWillUnmount() {
-    this.props.leaveRoom();
-    this.webrtc.stopLocalVideo();
-    this.webrtc.leaveRoom();
-    this.webrtc.stopSibilant();
+    this.onUnload();
+    window.removeEventListener('beforeUnload', this.onUnload);
   }
 
   render () {

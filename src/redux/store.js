@@ -11,7 +11,8 @@ import browserHistory from "../history"
 const persistConfig = {
   key: 'root',
   storage,
-}
+  blacklist: ['router']
+};
 
 const composeEnhancers = composeWithDevTools({
   // Specify custom devTools options
