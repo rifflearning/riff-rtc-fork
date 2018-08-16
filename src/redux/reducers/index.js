@@ -2,12 +2,33 @@ import { combineReducers } from 'redux';
 import auth from './auth';
 import chat from './chat';
 import makeMeeting from './makeMeeting';
+import storage from 'redux-persist/lib/storage' // defaults to localStorage for web and AsyncStorage for react-native
+import { connectRouter } from 'connected-react-router'
+import { persistReducer } from 'redux-persist'
 import riff from './riff';
+import browserHistory from "../../history"
 
 
-export default combineReducers({
-  auth,
-  riff,
-  chat,
-  makeMeeting
-});
+const rootPersistConfig = {
+  key: 'root',
+  storage,
+  blacklist: ['router', 'chat']
+};
+
+// we want our webRTC peers to be populated by our server,
+// not state.
+const chatPersistConfig = {
+  key: 'chat',
+  storage: storage,
+  blacklist: ['webRtcPeers', 'volume']
+};
+
+export default persistReducer(
+  rootPersistConfig,
+  connectRouter(browserHistory)(
+    combineReducers({
+      auth: auth,
+      riff: riff,
+      chat: persistReducer(chatPersistConfig, chat),
+      makeMeeting: makeMeeting
+    })));

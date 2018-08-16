@@ -14,7 +14,8 @@ import {
   CHAT_SHARE_STREAM,
   CHAT_VOLUME_CHANGED,
   CHAT_GET_MEDIA_ERROR,
-  CHAT_CHANGE_ROOM_NAME
+  CHAT_CHANGE_ROOM_NAME,
+  CHAT_CHANGE_DISPLAY_NAME
 } from '../constants/ActionTypes';
 
 const initialState = {
@@ -50,24 +51,35 @@ const chat = (state = initialState, action) => {
     return {...state, joiningRoom: true, roomName: action.roomName, inRoom: false};
   case(CHAT_CHANGE_ROOM_NAME):
     return {...state, roomName: action.roomName};
+  case(CHAT_CHANGE_DISPLAY_NAME):
+    return {...state, displayName: action.displayName};
   case(CHAT_SET_WEBRTC_CONFIG):
     return {...state, webRtc: {config: action.webRtcConfig,
                                signalMasterPath: action.signalMasterPath}};
   case(ADD_PEER):
     // this removes any null peers
     const peers = state.webRtcPeers.filter(n => !(n === null));
-    return {...state, webRtcPeers: [...peers, action.peer]};
+    let peer_ids = state.webRtcPeers.map(p => p.id);
+    if (peer_ids.indexOf(action.peer.id) >= 1) {
+      console.log("not re-adding a peer...");
+      return state;
+    } else {
+      return {...state, webRtcPeers: [...peers, action.peer.peer]};
+    }
   case(REMOVE_PEER):
-    const index = state.webRtcPeers.map(item => item.id).indexOf(action.peer.id);
+    let peer = action.peer.peer;
+    const index = state.webRtcPeers.map(item => item.id).indexOf(peer.id);
+    console.log("peer to remove:", peer)
+    console.log("peers:", state.webRtcPeers)
+    console.log("index of peer:", index)
     return {...state, webRtcPeers: [...state.webRtcPeers.slice(0, index),
                                     ...state.webRtcPeers.slice(index + 1)]};
   case(CHAT_GET_MEDIA_ERROR):
     return{...state, getMediaError: action.error};
   case(CHAT_SHARE_STREAM):
-    console.log("stream:", action.stream);
     return {...state, stream: action.stream};
   case(CHAT_READY_TO_CALL):
-    return {...state, readyToCall: true, getMediaError: null};
+    return {...state, readyToCall: true, getMediaError: false};
   case(JOINED_ROOM):
     return{...state, inRoom: true, displayName: action.name, joiningRoom: false};
   case(CHAT_LEAVE_ROOM):

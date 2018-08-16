@@ -14,6 +14,7 @@ const mapStateToProps = state => ({
   joiningRoom: state.chat.joiningRoom,
   inRoom: state.chat.inRoom,
   roomName: state.makeMeeting.roomName,
+  isInvalid: state.makeMeeting.roomName == ''
 })
 
 const mapDispatchToProps = dispatch => ({

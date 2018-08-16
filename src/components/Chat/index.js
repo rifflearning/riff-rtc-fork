@@ -14,7 +14,8 @@ import {
   leaveRoom,
   muteAudio,
   unMuteAudio,
-  changeRoomName}
+  changeRoomName,
+  changeDisplayName}
 from "../../redux/actions/chat";
 import { push } from 'connected-react-router';
 import addWebRtcListeners from "../../redux/listeners";
@@ -37,7 +38,8 @@ const mapStateToProps = state => ({
   chat: state.chat,
   auth: state.auth,
   riff: state.riff,
-  state: state
+  state: state,
+  canJoinRoom: !(state.chat.roomName == '' || state.chat.displayName == '')
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -47,12 +49,18 @@ const mapDispatchToProps = dispatch => ({
   handleRoomNameChange: (roomName) => {
     dispatch(changeRoomName(roomName));
   },
+  handleDisplayNameChange: (displayName) => {
+    dispatch(changeDisplayName(displayName));
+  },
   joinWebRtc: (localVideoRef, nick) => {
     dispatch(joinWebRtc(localVideoRef, nick));
   },
   handleReadyClick: (event, name, chat, auth, riff, webrtc) => {
     event.preventDefault();
     webrtc.stopVolumeCollection();
+    webrtc.joinRoom(chat.roomName, function (err, rd) {
+      console.log(err, "---", rd);
+    });
     console.log("Clicked Ready to Join");
     dispatch(joinedRoom(name));
     riffAddUserToMeeting(auth.user.uid,
@@ -86,22 +94,6 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => ({
 });
 
 
-const RenderVideos = ({inRoom, webRtcPeers}) => {
-  if (inRoom) {
-    return (
-      <div class="column">
-        <RemoteVideoContainer ref = "remote" peers = {webRtcPeers}/>
-      </div>
-    );
-  } else {
-    return (
-      <div class="column has-text-centered">
-        <h1>Waiting for you to be ready...</h1>
-      </div>
-    );
-  }
-}
-
 const VideoPlaceholder = styled.div.attrs({
   className: 'has-text-centered',
   ref: 'local'
@@ -118,10 +110,28 @@ color: #fff;
 padding: 5px;
 `;
 
+
+const RenderVideos = ({inRoom, webRtcPeers}) => {
+  //console.log("webrtc peers:", webRtcPeers);
+  if (webRtcPeers.length > 0) {
+    return (
+      <div class="column">
+        <RemoteVideoContainer ref = "remote" peers = {webRtcPeers}/>
+      </div>
+    );
+  } else {
+    return (
+      <div class="column has-text-centered">
+        {!inRoom ? <h1>Waiting for you to be ready...</h1> : <h1>Nobody else here...</h1>}
+      </div>
+    );
+  }
+}
+
+
 class Chat extends Component {
   constructor (props) {
     super(props);
-    this.handleName = this.handleName.bind(this);
     this.handleKeyPress = this.handleKeyPress.bind(this);
   }
 
@@ -131,7 +141,8 @@ class Chat extends Component {
                                      localVideo,
                                      this.props.dispatch,
                                      this.props.state);
-    window.addEventListener("beforeunload", this.onUnload);
+    // leave chat when window unloads
+    window.addEventListener("beforeUnload", this.onUnload);
   }
 
   onUnload() {
@@ -141,12 +152,8 @@ class Chat extends Component {
     this.webrtc.stopSibilant();
   }
 
-  handleName(name) {
-    this.name = name;
-  }
-
   handleKeyPress(event) {
-    if (event.key == 'Enter') {
+    if (event.key == 'Enter' && this.props.canJoinRoom) {
       this.props.handleReadyClick(event, this.name, this.props.chat, this.props.auth, this.props.riff, this.webrtc);
     }
   }
@@ -188,7 +195,7 @@ class Chat extends Component {
                 <div class="has-text-centered">
                     <div class="control">
                         {this.props.isAudioMuted ?
-                          <a class="button is-rounded is-danger" onClick={event => this.props.handleMuteAudioClick(event, this.props.isAudioMuted, this.webrtc)}>
+                          <a class="button is-rounded is-danger"  onClick={event => this.props.handleMuteAudioClick(event, this.props.isAudioMuted, this.webrtc)}>
                               <MaterialIcon icon="mic_off"/>
                             </a>
                           :
@@ -226,7 +233,7 @@ class Chat extends Component {
                                    placeholder="Display Name"
                                    value={this.name}
                                    onKeyPress={ this.handleKeyPress }
-                                   onChange={event => this.handleName(event.target.value)}/>
+                                   onChange={event => this.props.handleDisplayNameChange(event.target.value)}/>
                         </div>
                         <a class="button is-outlined is-primary"
                              style={{'marginTop': '10px'}}

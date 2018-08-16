@@ -29,7 +29,8 @@ const MakeMeetingCardView = ({
   roomName,
   handleRoomNameChange,
   handleKeyPress,
-  joinRoom }) => (
+  joinRoom,
+  isInvalid}) => (
     <GradientCard>
       <div class="card-content">
         <p class="title">
@@ -48,7 +49,7 @@ const MakeMeetingCardView = ({
               onKeyPress={ handleKeyPress }/>
           </div>
           <div class="control">
-            <a class="button is-primary" onClick={ () => joinRoom(roomName) }>
+            <a class="button is-primary" disabled={isInvalid} onClick={ () => joinRoom(roomName) }>
               Go
             </a>
           </div>

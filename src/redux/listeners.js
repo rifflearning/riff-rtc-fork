@@ -56,15 +56,16 @@ export default function (nick, localVideoNode, dispatch, state) {
   console.log("Creating webrtc constant...");
 
   webrtc.on('videoAdded', function (video, peer) {
-    console.log("added video")
-      dispatch(addPeer({id: peer.id,
-                        videoEl: peer.videoEl}));
+    console.log("added video", peer, video);
+    dispatch(addPeer({peer: peer,
+                      videoEl: video}));
+    console.log("getPeers:", webrtc.getPeers());
   });
 
   webrtc.on('videoRemoved', function (video, peer) {
     console.log("removed video")
-      dispatch(removePeer({id: peer.id,
-                           videoEl: peer.videoEl}));
+    dispatch(removePeer({peer: peer,
+                         videoEl: video}));
   });
 
   webrtc.on('localStreamRequestFailed', function (event) {
@@ -77,10 +78,6 @@ export default function (nick, localVideoNode, dispatch, state) {
   var sib = new sibilant(stream);
 
   webrtc.on('readyToCall', function (video, peer) {
-    webrtc.joinRoom(chatState.roomName, function (err, rd) {
-      console.log(err, "---", rd);
-    });
-
     console.log("sib:", sib);
     // use this to show user volume to confirm audio/video working
     sib.bind('volumeChange', function (data) {
@@ -95,8 +92,10 @@ export default function (nick, localVideoNode, dispatch, state) {
                                                   roomName: chatState.roomName,
                                                   token: riffState.token
                                                 }));
-
-    dispatch(readyToCall(chatState.roomName));
+    dispatch(readyToCall());
+    // if (webrtc.testReadiness()) {
+      
+    // }
   });
 
   webrtc.stopVolumeCollection = function () {
