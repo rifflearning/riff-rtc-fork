@@ -12,6 +12,9 @@ import ReactDOM from 'react-dom';
 import app from "../../firebase";
 import { push } from 'connected-react-router';
 
+export const joinedRoom = () => {
+  return {type: JOINED_ROOM};
+};
 
 export const joinWebRtc = (localVideoRef, email) => dispatch => {
   console.log("trying to start....;;;;")
