@@ -29,6 +29,7 @@ export default persistReducer(
     combineReducers({
       auth: auth,
       riff: riff,
-      chat: persistReducer(chatPersistConfig, chat),
+      chat: chat,
+//      chat: persistReducer(chatPersistConfig, chat),
       makeMeeting: makeMeeting
     })));
