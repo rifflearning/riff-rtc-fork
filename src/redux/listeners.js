@@ -24,6 +24,9 @@ import {
   unMuteAudio,
   leaveRoom
 } from './actions/chat';
+import {
+  updateRiffMeetingId
+} from './actions/riff';
 import ReactDOM from 'react-dom';
 
 import { app, socket } from '../riff';
@@ -32,10 +35,8 @@ import captureSpeaking from '../libs/audio';
 
 
 
-export default function (nick, localVideoNode, dispatch, state) {
-  let chatState = state.chat;
-  let authState = state.auth;
-  let riffState = state.riff;
+export default function (nick, localVideoNode, dispatch, getState) {
+  console.log("getState:", getState);
   let signalmasterPath = window.client_config.signalMaster.path || '';
   signalmasterPath += '/socket.io';
   let webRtcConfig = {
@@ -81,21 +82,28 @@ export default function (nick, localVideoNode, dispatch, state) {
     console.log("sib:", sib);
     // use this to show user volume to confirm audio/video working
     sib.bind('volumeChange', function (data) {
-      if (!chatState.inRoom) {
+      let state = getState();
+      if (!state.chat.inRoom) {
           dispatch(volumeChanged(data));
         }
-    }.bind(chatState));
+    }.bind(getState));
 
-    sib.bind('stoppedSpeaking', captureSpeaking(app,
-                                                {
-                                                  username: authState.user.uid,
-                                                  roomName: chatState.roomName,
-                                                  token: riffState.token
-                                                }));
+
+    sib.bind('stoppedSpeaking', (data) => {
+      app.service('utterances').create({
+        participant: getState().auth.user.uid,
+        room: getState().chat.roomName,
+        startTime: data.start.toISOString(),
+        endTime: data.end.toISOString(),
+        token: getState().riff.authToken
+      }).then(function (res) {
+        //console.log("speaking event recorded:", res)
+        dispatch(updateRiffMeetingId(res.meeting));
+      }).catch(function (err) {
+        console.log("ERROR", err);
+      });
+    });
     dispatch(readyToCall());
-    // if (webrtc.testReadiness()) {
-      
-    // }
   });
 
   webrtc.stopVolumeCollection = function () {

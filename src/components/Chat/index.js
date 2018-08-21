@@ -17,9 +17,11 @@ import {
   changeRoomName,
   changeDisplayName}
 from "../../redux/actions/chat";
+import { participantLeaveRoom } from '../../redux/actions/riff';
 import { push } from 'connected-react-router';
 import addWebRtcListeners from "../../redux/listeners";
 import { riffAddUserToMeeting } from '../../redux/actions/riff';
+import { store, persistor } from '../../redux/store';
 
 
 const mapStateToProps = state => ({
@@ -45,6 +47,10 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => ({
   leaveRoom: () => {
     dispatch(leaveRoom());
+  },
+
+  leaveRiffRoom: (meetingId, uid) => {
+    participantLeaveRoom(meetingId, uid);
   },
   handleRoomNameChange: (roomName) => {
     dispatch(changeRoomName(roomName));
@@ -140,13 +146,15 @@ class Chat extends Component {
     this.webrtc = addWebRtcListeners(this.props.user.email,
                                      localVideo,
                                      this.props.dispatch,
-                                     this.props.state);
+                                     store.getState);
     // leave chat when window unloads
     window.addEventListener("beforeUnload", this.onUnload);
   }
 
   onUnload() {
     this.props.leaveRoom();
+    this.props.leaveRiffRoom(this.props.riff.meetingId,
+                             this.props.user.uid);
     this.webrtc.stopLocalVideo();
     this.webrtc.leaveRoom();
     this.webrtc.stopSibilant();

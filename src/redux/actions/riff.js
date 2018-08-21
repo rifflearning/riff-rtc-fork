@@ -1,6 +1,10 @@
 import {
   RIFF_AUTHENTICATE_SUCCESS,
-  RIFF_AUTHENTICATE_FAIL
+  RIFF_AUTHENTICATE_FAIL,
+  RIFF_PARTICIPANTS_CHANGED,
+  RIFF_TURN_UPDATE,
+  RIFF_JOIN_ROOM,
+  RIFF_MEETING_ID_UPDATE
 } from '../constants/ActionTypes';
 
 import { app, socket} from "../../riff";
@@ -13,6 +17,34 @@ export const riffAuthSuccess = (token) => {
 export const riffAuthFail = (err) => {
   return {type: RIFF_AUTHENTICATE_FAIL,
           error: err};
+};
+
+export const updateTurnData = (transitions, turns) => {
+  console.log("updating turn data:", transitions, turns);
+  return {type: RIFF_TURN_UPDATE,
+          transitions: transitions,
+          turns: turns};
+};
+
+export const updateMeetingParticipants = (participants) => {
+  console.log("updating riff meeting participants", participants);
+  return {type: RIFF_PARTICIPANTS_CHANGED,
+          participants: participants};
+};
+
+export const updateRiffMeetingId = (meetingId) => {
+  return {type: RIFF_MEETING_ID_UPDATE,
+          meetingId: meetingId};
+};
+
+export const participantLeaveRoom = (meetingId, participantId) => {
+  app.service('meetings').patch(meetingId, {
+    remove_participants: [participantId]
+  }).then(function (res) {
+    console.log("removed participant:", participantId, "from meeting ", meetingId);
+  }).catch(function (err) {
+    console.log("shit, caught an error:", err);
+  });
 };
 
 export const attemptRiffAuthenticate = () => dispatch => {
@@ -30,7 +62,7 @@ export const attemptRiffAuthenticate = () => dispatch => {
   });
   // we used to automatically join a meeting.
   // .then(function (result) {
-  //     log('meeting result:', result);
+  //    log('meeting result:', result);
   //     // we've confirmed auth & meeting join- start communication w/ server
   //     this.record();
   // }.bind(this));
