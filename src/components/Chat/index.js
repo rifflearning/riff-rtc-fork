@@ -16,7 +16,9 @@ import {
   muteAudio,
   unMuteAudio,
   changeRoomName,
-  changeDisplayName}
+  changeDisplayName,
+  joinRoomError,
+  clearJoinRoomError}
 from "../../redux/actions/chat";
 import { participantLeaveRoom } from '../../redux/actions/riff';
 import { push } from 'connected-react-router';
@@ -32,6 +34,7 @@ const mapStateToProps = state => ({
   roomName: state.chat.roomName,
   readyToCall: state.chat.readyToCall,
   mediaError: state.chat.getMediaError,
+  joinRoomError: state.chat.joinRoomError,
   webRtc: state.chat.webRtc,
   displayName: state.chat.displayName,
   // first element is often null, I don't know why
@@ -41,8 +44,7 @@ const mapStateToProps = state => ({
   chat: state.chat,
   auth: state.auth,
   riff: state.riff,
-  state: state,
-  canJoinRoom: !(state.chat.roomName == '' || state.chat.displayName == '')
+  state: state
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -52,6 +54,9 @@ const mapDispatchToProps = dispatch => ({
 
   leaveRiffRoom: (meetingId, uid) => {
     participantLeaveRoom(meetingId, uid);
+  },
+  clearJoinRoomError: () => {
+    dispatch(clearJoinRoomError());
   },
   handleRoomNameChange: (roomName) => {
     dispatch(changeRoomName(roomName));
@@ -63,21 +68,25 @@ const mapDispatchToProps = dispatch => ({
     dispatch(joinWebRtc(localVideoRef, nick));
   },
   handleReadyClick: (event, name, chat, auth, riff, webrtc) => {
-    event.preventDefault();
-    webrtc.stopVolumeCollection();
-    webrtc.joinRoom(chat.roomName, function (err, rd) {
-      console.log(err, "---", rd);
-    });
-    console.log("Clicked Ready to Join");
-    dispatch(joinedRoom(name));
-    riffAddUserToMeeting(auth.user.uid,
-                         auth.user.email ? auth.user.email : "",
-                         chat.roomName,
-                         chat.displayName,
-                         chat.roomName,
-                         chat.webRtcPeers,
-                         riff.authToken
-                        );
+    if ((chat.roomName == '' || chat.displayName == '')) {
+      dispatch(joinRoomError('You need to specify a room and a display name!'));
+    } else {
+      event.preventDefault();
+      webrtc.stopVolumeCollection();
+      webrtc.joinRoom(chat.roomName, function (err, rd) {
+        console.log(err, "---", rd);
+      });
+      console.log("Clicked Ready to Join");
+      dispatch(joinedRoom(name));
+      riffAddUserToMeeting(auth.user.uid,
+                           auth.user.email ? auth.user.email : "",
+                           chat.roomName,
+                           chat.displayName,
+                           chat.roomName,
+                           chat.webRtcPeers,
+                           riff.authToken
+                          );
+    }
   },
   handleMuteAudioClick: (event, muted, webrtc) => {
     console.log(event, muted);
@@ -117,6 +126,12 @@ color: #fff;
 padding: 5px;
 `;
 
+const ErrorNotification = styled.div.attrs({
+  className: 'notification is-warning'
+})`
+max-width: 15.5rem;
+margin-top: 10px;
+`;
 
 const RenderVideos = ({inRoom, webRtcPeers}) => {
   //console.log("webrtc peers:", webRtcPeers);
@@ -142,6 +157,13 @@ class Chat extends Component {
     this.handleKeyPress = this.handleKeyPress.bind(this);
   }
 
+  componentDidUpdate() {
+    console.log(this.props.joinRoomError);
+    // console.log(!(this.props.roomName == '' && this.props.chat.displayName == ''));
+    // console.log(this.props.roomName);
+    // console.log(this.props.chat.displayName);
+  }
+
   componentDidMount() {
     let localVideo = ReactDOM.findDOMNode(this.refs.local);
     this.webrtc = addWebRtcListeners(this.props.user.email,
@@ -162,7 +184,7 @@ class Chat extends Component {
   }
 
   handleKeyPress(event) {
-    if (event.key == 'Enter' && this.props.canJoinRoom) {
+    if (event.key == 'Enter') {
       this.props.handleReadyClick(event, this.name, this.props.chat, this.props.auth, this.props.riff, this.webrtc);
     }
   }
@@ -246,7 +268,16 @@ class Chat extends Component {
                         </div>
                         <a class="button is-outlined is-primary"
                              style={{'marginTop': '10px'}}
+                             disabled={(this.props.roomName == '' || this.props.displayName == '')}
                              onClick={ event => this.props.handleReadyClick(event, this.name, this.props.chat, this.props.auth, this.props.riff, this.webrtc)}>Join Room</a>
+                          <div>
+                              { this.props.joinRoomError &&
+                                <ErrorNotification>
+                                    <button class="delete" onClick={this.props.clearJoinRoomError}></button>
+                                      {this.props.joinRoomError}
+                                </ErrorNotification>
+                              }
+                          </div>
                 </div>
                 :
                 <MeetingMediator></MeetingMediator>

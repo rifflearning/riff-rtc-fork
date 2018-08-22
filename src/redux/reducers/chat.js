@@ -14,7 +14,9 @@ import {
   CHAT_VOLUME_CHANGED,
   CHAT_GET_MEDIA_ERROR,
   CHAT_CHANGE_ROOM_NAME,
-  CHAT_CHANGE_DISPLAY_NAME
+  CHAT_CHANGE_DISPLAY_NAME,
+  CHAT_JOIN_ROOM_ERROR,
+  CHAT_CLEAR_JOIN_ROOM_ERROR
 } from '../constants/ActionTypes';
 
 const initialState = {
@@ -25,6 +27,7 @@ const initialState = {
   audioMuted: false,
   videoMuted: false,
   displayName: "",
+  joinRoomError: null,
   rhythm: {
     authenticated: false,
     token: null,
@@ -76,6 +79,10 @@ const chat = (state = initialState, action) => {
             webRtcPeers: [], readyToCall: false, displayName: ""};
   case(CHAT_VOLUME_CHANGED):
     return {...state, volume: action.volume};
+  case(CHAT_JOIN_ROOM_ERROR):
+    return {...state, joinRoomError: action.msg};
+  case(CHAT_CLEAR_JOIN_ROOM_ERROR):
+    return {...state, joinRoomError: null};
   case(MUTE_AUDIO):
     return {...state, audioMuted: true};
   case(UNMUTE_AUDIO):

@@ -13,13 +13,27 @@ import { JOINING_ROOM,
          CHAT_CHANGE_DISPLAY_NAME,
          CHAT_GET_MEDIA_ERROR,
          CHAT_SHARE_STREAM,
-         CHAT_VOLUME_CHANGED
+         CHAT_VOLUME_CHANGED,
+         CHAT_JOIN_ROOM_ERROR,
+         CHAT_CLEAR_JOIN_ROOM_ERROR
        } from '../constants/ActionTypes';
 import SimpleWebRTC from 'simplewebrtc';
 import ReactDOM from 'react-dom';
 import app from "../../firebase";
 import { push } from 'connected-react-router';
 
+export const joinRoomError = (errMsg) => {
+  return {
+    type: CHAT_JOIN_ROOM_ERROR,
+    msg: errMsg
+  };
+};
+
+export const clearJoinRoomError = (errMsg) => {
+  return {
+    type: CHAT_CLEAR_JOIN_ROOM_ERROR,
+  };
+};
 
 export const addPeer = (peer) => {
   return {
