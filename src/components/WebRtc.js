@@ -199,7 +199,6 @@ class WebRtc extends React.Component {
     }.bind(this));
   }
 
-
   getParticipants() {
     // return an array of the participants' usernames
     let parts = this.state.peers.map(peer => peer.nick);
