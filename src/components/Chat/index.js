@@ -6,6 +6,7 @@ import styled, { injectGlobal, keyframes } from 'styled-components';
 import auth from "../../firebase";
 import sibilant from 'sibilant-webaudio';
 import RemoteVideoContainer from "./RemoteVideoContainer";
+import MeetingMediator from "./MeetingMediator";
 import MaterialIcon from 'material-icons-react';
 import {
   setWebRtcConfig,
@@ -214,7 +215,7 @@ class Chat extends Component {
                           </div>
                   </div>
               }
-            {!this.props.inRoom &&
+            {!this.props.inRoom ?
               <div class="has-text-centered">
                   <div class="level">
                       <div class="level-item">
@@ -247,6 +248,8 @@ class Chat extends Component {
                              style={{'marginTop': '10px'}}
                              onClick={ event => this.props.handleReadyClick(event, this.name, this.props.chat, this.props.auth, this.props.riff, this.webrtc)}>Join Room</a>
                 </div>
+                :
+                <MeetingMediator></MeetingMediator>
             }
           </aside>
           <RenderVideos inRoom={this.props.inRoom} webRtcPeers={this.props.webRtcPeers}></RenderVideos>

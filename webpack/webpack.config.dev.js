@@ -43,6 +43,10 @@ module.exports = {
         }
       },
       {
+        test: /\.coffee$/,
+        use: ['coffee-loader']
+      },
+      {
         test: /\.json$/,
         enforce: 'pre',
         exclude:'/node_modules/clmtrackr/',

@@ -1,5 +1,7 @@
 import {log} from './utils';
-const MM = require('./mm').MeetingMediator;
+import mediator from './mm.coffee';
+
+const MM = mediator.MeetingMediator;
 
 class Mediator {
 
@@ -105,7 +107,7 @@ class Mediator {
   }
 
   constructor(app, participants, user, roomName) {
-    log("INITIAL ROOMNAME", roomName);
+    log("initial state:", participants, user, roomName);
 
     this.mm = null;
     this.mm_width = 300;
@@ -116,10 +118,10 @@ class Mediator {
     this.roomName = roomName;
     this.roomUsers = participants;
 
-    if (!elementIsEmpty('#meeting-mediator')) {
-      log("not starting a second MM...");
-      return;
-    }
+    // if (!elementIsEmpty('#meeting-mediator')) {
+    //   log("not starting a second MM...");
+    //   return;
+    // }
 
     this.turns = this.app.service('turns');
     log('MM participants:', this.roomUsers);
