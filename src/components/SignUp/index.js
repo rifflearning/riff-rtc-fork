@@ -1,15 +1,15 @@
-import React, { Component } from "react"
-import { withRouter } from "react-router-dom"
-import { connect } from 'react-redux'
-import auth from "../../firebase"
+import React, { Component } from "react";
+import { withRouter } from "react-router-dom";
+import { connect } from 'react-redux';
+import auth from "../../firebase";
 import {
   attemptUserCreate,
   clearAuthError,
   changePasswordState,
   changeEmailState }
-from "../../redux/actions/auth"
-import { push } from 'connected-react-router'
-import SignUpView from "./SignUpView"
+from "../../redux/actions/auth";
+import { push } from 'connected-react-router';
+import SignUpView from "./SignUpView";
 
 
 const mapStateToProps = state => ({
