@@ -11,6 +11,7 @@ import { JOINING_ROOM,
          CHAT_START_WEBRTC,
          CHAT_CHANGE_ROOM_NAME,
          CHAT_CHANGE_DISPLAY_NAME,
+         CHAT_CHANGE_PEER_DISPLAY_NAME,
          CHAT_GET_MEDIA_ERROR,
          CHAT_SHARE_STREAM,
          CHAT_VOLUME_CHANGED,
@@ -87,6 +88,12 @@ export const changeDisplayName = (displayName) => {
   return {type: CHAT_CHANGE_DISPLAY_NAME,
           displayName: displayName};
 }
+
+export const changePeerDisplayName = (peer, displayName) => {
+  return {type: CHAT_CHANGE_PEER_DISPLAY_NAME,
+          peer: peer,
+          displayName: displayName};
+};
 
 export const joinedRoom = (name) => {
   return {type: JOINED_ROOM,

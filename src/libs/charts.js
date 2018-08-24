@@ -106,8 +106,8 @@ class Mediator {
     }.bind(this));
   }
 
-  constructor(app, participants, user, roomName) {
-    log("initial state:", participants, user, roomName);
+  constructor(app, participants, user, roomName, userName) {
+    log("initial state:", participants, user, roomName, userName);
 
     this.mm = null;
     this.mm_width = 300;
@@ -117,6 +117,7 @@ class Mediator {
     this.user = user;
     this.roomName = roomName;
     this.roomUsers = participants;
+    this.userName = userName;
 
     // if (!elementIsEmpty('#meeting-mediator')) {
     //   log("not starting a second MM...");
@@ -129,7 +130,7 @@ class Mediator {
     this.mm = new MM({participants: this.roomUsers,
       transitions: 0,
       turns: [],
-      names: []},
+      names: [this.userName]},
       [this.user],
       this.mm_width,
       this.mm_height);

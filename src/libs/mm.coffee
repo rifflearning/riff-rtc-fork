@@ -20,6 +20,7 @@
   # get array of participant nodes from data
   nodesFromData = (data) ->
     nodes = ({'participant': p, 'name': (data.names?[i] ? p)[0]} for p, i in data.participants)
+    console.log("nodes:", nodes);
     nodes.push({'participant': 'energy'}) # keep the energy ball in the list of nodes
     return nodes
 

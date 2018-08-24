@@ -22,7 +22,8 @@ import {
   changeRoomName,
   muteAudio,
   unMuteAudio,
-  leaveRoom
+  leaveRoom,
+  changePeerDisplayName
 } from './actions/chat';
 import {
   updateRiffMeetingId
@@ -74,12 +75,32 @@ export default function (nick, localVideoNode, dispatch, getState) {
     dispatch(getMediaError(event));
   });
 
-  // in the future, dispatch a sibilant action to start measuring maybe
-  let stream = localVideoNode.captureStream ? localVideoNode.captureStream() : localVideoNode.mozCaptureStream();
-  var sib = new sibilant(stream);
+  webrtc.on('channelMessage', function (peer, channelLabel, payload) {
+    console.log(">> webrtc got a message:", peer, channelLabel, payload);
+    switch(channelLabel) {
+    case('DISPLAY_NAME'):
+      console.log("changing display name for peer ", peer, payload, channelLabel);
+      dispatch(changePeerDisplayName(peer, payload.payload));
+    }
+  });
 
   webrtc.on('readyToCall', function (video, peer) {
     console.log("sib:", sib);
+    let stream = localVideoNode.captureStream ? localVideoNode.captureStream() : localVideoNode.mozCaptureStream();
+    var sib = new sibilant(stream);
+
+
+
+    webrtc.stopVolumeCollection = function () {
+      sib.unbind('volumeChange');
+    };
+
+    // bind stopSibilant
+    webrtc.stopSibilant = function () {
+      sib.unbind('volumeChange');
+      sib.unbind('stoppedSpeaking');
+    };
+
     // use this to show user volume to confirm audio/video working
     sib.bind('volumeChange', function (data) {
       let state = getState();
@@ -87,7 +108,6 @@ export default function (nick, localVideoNode, dispatch, getState) {
           dispatch(volumeChanged(data));
         }
     }.bind(getState));
-
 
     sib.bind('stoppedSpeaking', (data) => {
       app.service('utterances').create({
@@ -105,15 +125,6 @@ export default function (nick, localVideoNode, dispatch, getState) {
     });
     dispatch(readyToCall());
   });
-
-  webrtc.stopVolumeCollection = function () {
-    sib.unbind('volumeChange');
-  };
-
-  webrtc.stopSibilant = function () {
-    sib.unbind('volumeChange');
-    sib.unbind('stoppedSpeaking');
-  };
 
   return webrtc;
 }

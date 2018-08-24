@@ -78,6 +78,7 @@ const mapDispatchToProps = dispatch => ({
       });
       console.log("Clicked Ready to Join");
       dispatch(joinedRoom(name));
+      webrtc.sendDirectlyToAll('DISPLAY_NAME', 'string', chat.displayName);
       riffAddUserToMeeting(auth.user.uid,
                            auth.user.email ? auth.user.email : "",
                            chat.roomName,
@@ -95,7 +96,7 @@ const mapDispatchToProps = dispatch => ({
       webrtc.unmute();
     } else {
       dispatch(muteAudio());
-      webrtc.mute();
+      webrtc.mute();w
     }
 
   },

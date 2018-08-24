@@ -15,6 +15,7 @@ import {
   CHAT_GET_MEDIA_ERROR,
   CHAT_CHANGE_ROOM_NAME,
   CHAT_CHANGE_DISPLAY_NAME,
+  CHAT_CHANGE_PEER_DISPLAY_NAME,
   CHAT_JOIN_ROOM_ERROR,
   CHAT_CLEAR_JOIN_ROOM_ERROR
 } from '../constants/ActionTypes';
@@ -35,6 +36,7 @@ const initialState = {
   },
   volume: 0,
   webRtcPeers: [],
+  webRtcPeerDisplayNames: [],
   readyToCall: false,
   webRtc: {
     config: null,
@@ -61,13 +63,24 @@ const chat = (state = initialState, action) => {
       console.log("not re-adding a peer...");
       return state;
     } else {
-      return {...state, webRtcPeers: [...peers, action.peer.peer]};
+      return {...state,
+              webRtcPeers: [...peers, action.peer.peer],
+              webRtcPeerDisplayNames: [...state.webRtcPeerDisplayNames, ""]};
     }
   case(REMOVE_PEER):
     let peer = action.peer.peer;
     const index = state.webRtcPeers.map(item => item.id).indexOf(peer.id);
-    return {...state, webRtcPeers: [...state.webRtcPeers.slice(0, index),
-                                    ...state.webRtcPeers.slice(index + 1)]};
+    return {...state,
+            webRtcPeers: [...state.webRtcPeers.slice(0, index),
+                          ...state.webRtcPeers.slice(index + 1)],
+            webRtcPeerDisplayNames: [...state.webRtcPeerDisplayNames.slice(0, index),
+                                     ...state.webRtcPeerDisplayNames.slice(index + 1)]};
+  case(CHAT_CHANGE_PEER_DISPLAY_NAME):
+    let p = action.peer;
+    const idx = state.webRtcPeers.map(item => item.id).indexOf(p.id);
+    return {...state, webRtcPeerDisplayNames: [...state.webRtcPeerDisplayNames.slice(0, idx),
+                                    action.displayName,
+                                    ...state.webRtcPeerDisplayNames.slice(idx + 1)]};
   case(CHAT_GET_MEDIA_ERROR):
     return{...state, getMediaError: action.error};
   case(CHAT_READY_TO_CALL):
