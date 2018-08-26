@@ -10,9 +10,9 @@
                      require('d3-transition'),
                     )
 
-  NETWORK_RADIUS = 115
-  PARTICIPANT_NODE_RADIUS = 20
-  ENERGY_NODE_RADIUS = 30
+  NETWORK_RADIUS = 115 * 2/3
+  PARTICIPANT_NODE_RADIUS = 20 * 2/3
+  ENERGY_NODE_RADIUS = 30 * 2/3
 
   PARTICIPANT_NODE_COLOR_LOCAL = '#092070'
   PARTICIPANT_NODE_COLOR_OTHER = '#3AC4C5'
@@ -111,7 +111,7 @@
       @renderNodes()
       @renderLinks()
       # keeps user node at top
-      @graphG.transition().duration(250)
+      @graphG.transition()#.duration(250)
         .attr "transform", @constantRotation()
 
     # a little complicated, since we want to be able to put text
