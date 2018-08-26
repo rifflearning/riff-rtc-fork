@@ -275,9 +275,9 @@ class Chat extends Component {
 
   placeholderStyle() {
     if (!this.props.mediaError) {
-      return {'border-radius': '5px', 'display': 'none'};
+      return {'borderRadius': '5px', 'display': 'none'};
     } else {
-      return {'border-radius': '5px', 'display': 'inline-block'};
+      return {'borderRadius': '5px', 'display': 'inline-block'};
     }
   }
 
@@ -286,7 +286,6 @@ class Chat extends Component {
       <div class="section">
         <div class="columns">
           <Menu>
-            
             {!this.props.inRoom ?
               <MenuLabelCentered>
                   Check your media and add a room name and display name before joining.
@@ -325,7 +324,7 @@ class Chat extends Component {
                           :
                             <a class="button is-rounded" onClick={event => this.props.handleMuteAudioClick(event, this.props.isAudioMuted, this.webrtc)}>
                                 <MaterialIcon icon="mic"/>
-                              </a>  
+                              </a>
                           }
                           </div>
                   </div>
@@ -333,8 +332,8 @@ class Chat extends Component {
             {!this.props.inRoom ?
               <div class="has-text-centered">
                   <div class="level">
-                      <div class="level-item">
-                        <MaterialIcon icon="mic"></MaterialIcon>
+                      <div class="level-item" style={{'maxWidth': '20%'}}>
+                          <MaterialIcon icon="mic"></MaterialIcon>
                         </div>
                         <div class="level-item">
                             <progress style={{maxWidth: '100%'}} class="progress is-success" value={this.props.volume} max="100"></progress>

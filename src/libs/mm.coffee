@@ -297,7 +297,8 @@
         setTimeout((() =>
           @graphG.transition().duration(0)
             .attr "transform", @constantRotation()
-          )@renderLinks(), @nodeTransitionTime + 100)
+          )
+          @renderLinks(), @nodeTransitionTime + 100)
 
 
     # Function copied pretty much verbatim from stackoverflow for replacing use of

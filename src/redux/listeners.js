@@ -33,8 +33,6 @@ import { app, socket } from '../riff';
 import captureSpeaking from '../libs/audio';
 
 
-
-
 export default function (nick, localVideoNode, dispatch, getState) {
   let signalmasterPath = window.client_config.signalMaster.path || '';
   signalmasterPath += '/socket.io';
@@ -77,7 +75,10 @@ export default function (nick, localVideoNode, dispatch, getState) {
 
   webrtc.on('readyToCall', function (video, peer) {
     let stream = localVideoNode.captureStream ? localVideoNode.captureStream() : localVideoNode.mozCaptureStream();
-    var sib = new sibilant(stream);
+    console.log("videoNode:", localVideoNode)
+    console.log("video:", video);
+    console.log("stream:", stream)
+    var sib = new sibilant(localVideoNode);
 
     if (sib) {
       webrtc.stopVolumeCollection = function () {
