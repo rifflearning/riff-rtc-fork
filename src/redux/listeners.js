@@ -22,8 +22,7 @@ import {
   changeRoomName,
   muteAudio,
   unMuteAudio,
-  leaveRoom,
-  changePeerDisplayName
+  leaveRoom
 } from './actions/chat';
 import {
   updateRiffMeetingId
@@ -37,7 +36,6 @@ import captureSpeaking from '../libs/audio';
 
 
 export default function (nick, localVideoNode, dispatch, getState) {
-  console.log("getState:", getState);
   let signalmasterPath = window.client_config.signalMaster.path || '';
   signalmasterPath += '/socket.io';
   let webRtcConfig = {
@@ -61,69 +59,63 @@ export default function (nick, localVideoNode, dispatch, getState) {
     console.log("added video", peer, video);
     dispatch(addPeer({peer: peer,
                       videoEl: video}));
-    console.log("getPeers:", webrtc.getPeers());
   });
 
   webrtc.on('videoRemoved', function (video, peer) {
-    console.log("removed video")
     dispatch(removePeer({peer: peer,
                          videoEl: video}));
   });
 
   webrtc.on('localStreamRequestFailed', function (event) {
-    console.log("failed request:", event);
-    dispatch(getMediaError(event));
+      dispatch(getMediaError(event));
   });
 
-  webrtc.on('channelMessage', function (peer, channelLabel, payload) {
-    console.log(">> webrtc got a message:", peer, channelLabel, payload);
-    switch(channelLabel) {
-    case('DISPLAY_NAME'):
-      console.log("changing display name for peer ", peer, payload, channelLabel);
-      dispatch(changePeerDisplayName(peer, payload.payload));
-    }
-  });
+  webrtc.changeNick = function (nick) {
+    this.config.nick = nick;
+    this.webrtc.config.nick = nick;
+  };
 
   webrtc.on('readyToCall', function (video, peer) {
-    console.log("sib:", sib);
     let stream = localVideoNode.captureStream ? localVideoNode.captureStream() : localVideoNode.mozCaptureStream();
     var sib = new sibilant(stream);
 
+    if (sib) {
+      webrtc.stopVolumeCollection = function () {
+        sib.unbind('volumeChange');
+      };
 
+      // bind stopSibilant
+      webrtc.stopSibilant = function () {
+        sib.unbind('volumeChange');
+        sib.unbind('stoppedSpeaking');
+      };
 
-    webrtc.stopVolumeCollection = function () {
-      sib.unbind('volumeChange');
-    };
-
-    // bind stopSibilant
-    webrtc.stopSibilant = function () {
-      sib.unbind('volumeChange');
-      sib.unbind('stoppedSpeaking');
-    };
-
-    // use this to show user volume to confirm audio/video working
-    sib.bind('volumeChange', function (data) {
-      let state = getState();
-      if (!state.chat.inRoom) {
+      // use this to show user volume to confirm audio/video working
+      sib.bind('volumeChange', function (data) {
+        let state = getState();
+        if (!state.chat.inRoom) {
           dispatch(volumeChanged(data));
         }
-    }.bind(getState));
+      }.bind(getState));
 
-    sib.bind('stoppedSpeaking', (data) => {
-      app.service('utterances').create({
-        participant: getState().auth.user.uid,
-        room: getState().chat.roomName,
-        startTime: data.start.toISOString(),
-        endTime: data.end.toISOString(),
-        token: getState().riff.authToken
-      }).then(function (res) {
-        //console.log("speaking event recorded:", res)
-        dispatch(updateRiffMeetingId(res.meeting));
-      }).catch(function (err) {
-        console.log("ERROR", err);
+      sib.bind('stoppedSpeaking', (data) => {
+        app.service('utterances').create({
+          participant: getState().auth.user.uid,
+          room: getState().chat.roomName,
+          startTime: data.start.toISOString(),
+          endTime: data.end.toISOString(),
+          token: getState().riff.authToken
+        }).then(function (res) {
+          //console.log("speaking event recorded:", res)
+          dispatch(updateRiffMeetingId(res.meeting));
+        }).catch(function (err) {
+          console.log("ERROR", err);
+        });
       });
-    });
-    dispatch(readyToCall());
+      dispatch(readyToCall());      
+    }
+
+
   });
 
   return webrtc;

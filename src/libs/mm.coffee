@@ -157,7 +157,7 @@
             "#FFFFFF"
           else
             "#000000"
-        .text (d) -> d.name
+        #.text (d) -> d.name
 
       # all node groups
       @nodesG.selectAll(".node").transition().duration(500)

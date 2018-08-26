@@ -43,12 +43,11 @@ class Mediator {
     log("mm data turns:", data);
 
     if (data.room === this.roomName && this.mm.data.participants.length > 1) {
-      log("Updating meeting mediator")
       this.mm.updateData({participants: this.roomUsers,
         transitions: data.transitions,
         turns: this.transform_turns(this.roomUsers, data.turns)});
     } else {
-      log("not updating...participants and room: ", data.room, this.roomName, this.mm.data.participants.length)
+      // wrong room, or not enough participants
     }
   }
 
@@ -130,7 +129,7 @@ class Mediator {
     this.mm = new MM({participants: this.roomUsers,
       transitions: 0,
       turns: [],
-      names: [this.userName]},
+      names: []},
       [this.user],
       this.mm_width,
       this.mm_height);

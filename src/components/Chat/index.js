@@ -61,7 +61,8 @@ const mapDispatchToProps = dispatch => ({
   handleRoomNameChange: (roomName) => {
     dispatch(changeRoomName(roomName));
   },
-  handleDisplayNameChange: (displayName) => {
+  handleDisplayNameChange: (displayName, webrtc) => {
+    webrtc.changeNick(displayName);
     dispatch(changeDisplayName(displayName));
   },
   joinWebRtc: (localVideoRef, nick) => {
@@ -76,9 +77,10 @@ const mapDispatchToProps = dispatch => ({
       webrtc.joinRoom(chat.roomName, function (err, rd) {
         console.log(err, "---", rd);
       });
+
       console.log("Clicked Ready to Join");
+      console.log('webrtc object:', webrtc);
       dispatch(joinedRoom(name));
-      webrtc.sendDirectlyToAll('DISPLAY_NAME', 'string', chat.displayName);
       riffAddUserToMeeting(auth.user.uid,
                            auth.user.email ? auth.user.email : "",
                            chat.roomName,
@@ -96,7 +98,7 @@ const mapDispatchToProps = dispatch => ({
       webrtc.unmute();
     } else {
       dispatch(muteAudio());
-      webrtc.mute();w
+      webrtc.mute();
     }
 
   },
@@ -151,15 +153,15 @@ const RenderVideos = ({inRoom, webRtcPeers}) => {
   }
 }
 
-
 class Chat extends Component {
   constructor (props) {
     super(props);
     this.handleKeyPress = this.handleKeyPress.bind(this);
+    this.onUnload = this.onUnload.bind(this);
   }
 
   componentDidUpdate() {
-    console.log(this.props.joinRoomError);
+    //console.log(this.props.joinRoomError);
     // console.log(!(this.props.roomName == '' && this.props.chat.displayName == ''));
     // console.log(this.props.roomName);
     // console.log(this.props.chat.displayName);
@@ -171,17 +173,27 @@ class Chat extends Component {
                                      localVideo,
                                      this.props.dispatch,
                                      store.getState);
+
     // leave chat when window unloads
-    window.addEventListener("beforeUnload", this.onUnload);
+    window.addEventListener("beforeunload", this.onUnload);
   }
 
-  onUnload() {
-    this.props.leaveRoom();
+  onUnload(event) {
+    console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>UNLOADING!", event, this.props.riff.meetingId);
     this.props.leaveRiffRoom(this.props.riff.meetingId,
                              this.props.user.uid);
+    this.props.leaveRoom();
     this.webrtc.stopLocalVideo();
     this.webrtc.leaveRoom();
     this.webrtc.stopSibilant();
+    if (event) {
+      this.props.leaveRiffRoom(this.props.riff.meetingId,
+                               this.props.user.uid);
+      event.preventDefault()
+      console.log("event:", event)
+      event.returnValue = "If you leave, you'll have to re-join the room.";
+      return event.returnValue;
+    }
   }
 
   handleKeyPress(event) {
@@ -192,7 +204,7 @@ class Chat extends Component {
 
   componentWillUnmount() {
     this.onUnload();
-    window.removeEventListener('beforeUnload', this.onUnload);
+    window.removeEventListener('beforeunload', this.onUnload);
   }
 
   render () {
@@ -265,7 +277,7 @@ class Chat extends Component {
                                    placeholder="Display Name"
                                    value={this.name}
                                    onKeyPress={ this.handleKeyPress }
-                                   onChange={event => this.props.handleDisplayNameChange(event.target.value)}/>
+                                   onChange={event => this.props.handleDisplayNameChange(event.target.value, this.webrtc)}/>
                         </div>
                         <a class="button is-outlined is-primary"
                              style={{'marginTop': '10px'}}

@@ -24,7 +24,7 @@ const initialState = {
   joiningRoom: false,
   getMediaError: true,
   inRoom: false,
-  roomName: null,
+  roomName: "",
   audioMuted: false,
   videoMuted: false,
   displayName: "",
