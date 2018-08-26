@@ -93,6 +93,10 @@
         .attr "width", @width
         .attr "height", @height
 
+      # keeps user node at top
+      @graphG.transition()#.duration(250)
+        .attr "transform", @constantRotation()
+
       @outline = @chartBody.append "g"
         .attr "id", "outline"
         .append "circle"
@@ -110,9 +114,6 @@
 
       @renderNodes()
       @renderLinks()
-      # keeps user node at top
-      @graphG.transition()#.duration(250)
-        .attr "transform", @constantRotation()
 
     # a little complicated, since we want to be able to put text
     # and prettier stuff on nodes in the future (maybe).
@@ -294,10 +295,9 @@
         # After links, rotate entire graph so user is at top.
         @renderNodes()
         setTimeout((() =>
-          @renderLinks()
-          @graphG.transition().duration(100)
+          @graphG.transition().duration(0)
             .attr "transform", @constantRotation()
-          ), @nodeTransitionTime + 100)
+          )@renderLinks(), @nodeTransitionTime + 100)
 
 
     # Function copied pretty much verbatim from stackoverflow for replacing use of
