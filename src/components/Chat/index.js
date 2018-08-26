@@ -125,7 +125,7 @@ const VideoPlaceholder = styled.div.attrs({
 })`
 background: linear-gradient(30deg, rgba(138,106,148,1) 12%, rgba(171,69,171,1) 87%);
 height: 144px;
-width: 180px;
+width: 200px;
 border-radius: 5px;
 display: flex;
 align-items: center;
@@ -243,7 +243,9 @@ class Chat extends Component {
     this.props.leaveRoom();
     this.webrtc.stopLocalVideo();
     this.webrtc.leaveRoom();
-    this.webrtc.stopSibilant();
+    if (this.webrtc.stopSibilant) {
+      this.webrtc.stopSibilant();
+    }
     if (event) {
       this.props.leaveRiffRoom(this.props.riff.meetingId,
                                this.props.user.uid);
@@ -296,7 +298,10 @@ class Chat extends Component {
             }
             {this.props.inRoom &&
                   <MenuLabel>Name: <span style={{fontWeight: 'bold'}}>{this.props.displayName}</span></MenuLabel>
-              }
+                  }
+                  {this.props.inRoom &&
+                    <MenuLabel>Room: <span style={{fontWeight: 'bold'}}>{this.props.roomName}</span></MenuLabel>
+                    }
 
             <video className = "local-video"
                    id = 'local-video'
