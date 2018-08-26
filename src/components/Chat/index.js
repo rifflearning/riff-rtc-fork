@@ -25,6 +25,7 @@ import { push } from 'connected-react-router';
 import addWebRtcListeners from "../../redux/listeners";
 import { riffAddUserToMeeting } from '../../redux/actions/riff';
 import { store, persistor } from '../../redux/store';
+import LeaveRoomButton from './LeaveRoomButton';
 
 
 const mapStateToProps = state => ({
@@ -136,6 +137,23 @@ max-width: 15.5rem;
 margin-top: 10px;
 `;
 
+
+const MenuLabel = styled.div.attrs({
+  className: 'menu-label'
+})`
+font-size: 14px;
+text-transform: none;
+letter-spacing: 0em;
+`;
+
+const MenuLabelCentered = styled.div.attrs({
+  className: 'menu-label has-text-centered'
+})`
+text-transform: none;
+letter-spacing: 0em;
+`;
+
+
 const RenderVideos = ({inRoom, webRtcPeers}) => {
   //console.log("webrtc peers:", webRtcPeers);
   if (webRtcPeers.length > 0) {
@@ -212,9 +230,12 @@ class Chat extends Component {
       <div class="section">
         <div class="columns">
           <aside class="menu">
-            <p class="menu-label">
+            <MenuLabelCentered>
+              <LeaveRoomButton webrtc={this.webrtc} leaveRiffRoom={this.props.leaveRiffRoom} leaveRoom={this.props.leaveRoom}/>
+            </MenuLabelCentered>
+            <MenuLabel>
               Room: {this.props.roomName}
-            </p>
+            </MenuLabel>
 
             {this.props.inRoom &&
               <p class="menu-label">Name: {this.props.displayName}</p>
