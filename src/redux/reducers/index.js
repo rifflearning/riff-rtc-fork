@@ -12,7 +12,7 @@ import browserHistory from "../../history"
 const rootPersistConfig = {
   key: 'root',
   storage,
-  blacklist: ['router', 'chat']
+  blacklist: ['router', 'chat', 'riff']
 };
 
 // we want our webRTC peers to be populated by our server,

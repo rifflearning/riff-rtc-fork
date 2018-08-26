@@ -25,6 +25,7 @@ import { push } from 'connected-react-router';
 import addWebRtcListeners from "../../redux/listeners";
 import { riffAddUserToMeeting } from '../../redux/actions/riff';
 import { store, persistor } from '../../redux/store';
+import LeaveRoomButton from './LeaveRoomButton';
 
 
 const mapStateToProps = state => ({
@@ -61,7 +62,8 @@ const mapDispatchToProps = dispatch => ({
   handleRoomNameChange: (roomName) => {
     dispatch(changeRoomName(roomName));
   },
-  handleDisplayNameChange: (displayName) => {
+  handleDisplayNameChange: (displayName, webrtc) => {
+    webrtc.changeNick(displayName);
     dispatch(changeDisplayName(displayName));
   },
   joinWebRtc: (localVideoRef, nick) => {
@@ -76,7 +78,9 @@ const mapDispatchToProps = dispatch => ({
       webrtc.joinRoom(chat.roomName, function (err, rd) {
         console.log(err, "---", rd);
       });
+
       console.log("Clicked Ready to Join");
+      console.log('webrtc object:', webrtc);
       dispatch(joinedRoom(name));
       riffAddUserToMeeting(auth.user.uid,
                            auth.user.email ? auth.user.email : "",
@@ -133,6 +137,23 @@ max-width: 15.5rem;
 margin-top: 10px;
 `;
 
+
+const MenuLabel = styled.div.attrs({
+  className: 'menu-label'
+})`
+font-size: 14px;
+text-transform: none;
+letter-spacing: 0em;
+`;
+
+const MenuLabelCentered = styled.div.attrs({
+  className: 'menu-label has-text-centered'
+})`
+text-transform: none;
+letter-spacing: 0em;
+`;
+
+
 const RenderVideos = ({inRoom, webRtcPeers}) => {
   //console.log("webrtc peers:", webRtcPeers);
   if (webRtcPeers.length > 0) {
@@ -150,15 +171,15 @@ const RenderVideos = ({inRoom, webRtcPeers}) => {
   }
 }
 
-
 class Chat extends Component {
   constructor (props) {
     super(props);
     this.handleKeyPress = this.handleKeyPress.bind(this);
+    this.onUnload = this.onUnload.bind(this);
   }
 
   componentDidUpdate() {
-    console.log(this.props.joinRoomError);
+    //console.log(this.props.joinRoomError);
     // console.log(!(this.props.roomName == '' && this.props.chat.displayName == ''));
     // console.log(this.props.roomName);
     // console.log(this.props.chat.displayName);
@@ -170,17 +191,27 @@ class Chat extends Component {
                                      localVideo,
                                      this.props.dispatch,
                                      store.getState);
+
     // leave chat when window unloads
-    window.addEventListener("beforeUnload", this.onUnload);
+    window.addEventListener("beforeunload", this.onUnload);
   }
 
-  onUnload() {
-    this.props.leaveRoom();
+  onUnload(event) {
+    console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>UNLOADING!", event, this.props.riff.meetingId);
     this.props.leaveRiffRoom(this.props.riff.meetingId,
                              this.props.user.uid);
+    this.props.leaveRoom();
     this.webrtc.stopLocalVideo();
     this.webrtc.leaveRoom();
     this.webrtc.stopSibilant();
+    if (event) {
+      this.props.leaveRiffRoom(this.props.riff.meetingId,
+                               this.props.user.uid);
+      event.preventDefault()
+      console.log("event:", event)
+      event.returnValue = "If you leave, you'll have to re-join the room.";
+      return event.returnValue;
+    }
   }
 
   handleKeyPress(event) {
@@ -191,7 +222,7 @@ class Chat extends Component {
 
   componentWillUnmount() {
     this.onUnload();
-    window.removeEventListener('beforeUnload', this.onUnload);
+    window.removeEventListener('beforeunload', this.onUnload);
   }
 
   render () {
@@ -199,9 +230,12 @@ class Chat extends Component {
       <div class="section">
         <div class="columns">
           <aside class="menu">
-            <p class="menu-label">
+            <MenuLabelCentered>
+              <LeaveRoomButton webrtc={this.webrtc} leaveRiffRoom={this.props.leaveRiffRoom} leaveRoom={this.props.leaveRoom}/>
+            </MenuLabelCentered>
+            <MenuLabel>
               Room: {this.props.roomName}
-            </p>
+            </MenuLabel>
 
             {this.props.inRoom &&
               <p class="menu-label">Name: {this.props.displayName}</p>
@@ -264,7 +298,7 @@ class Chat extends Component {
                                    placeholder="Display Name"
                                    value={this.name}
                                    onKeyPress={ this.handleKeyPress }
-                                   onChange={event => this.props.handleDisplayNameChange(event.target.value)}/>
+                                   onChange={event => this.props.handleDisplayNameChange(event.target.value, this.webrtc)}/>
                         </div>
                         <a class="button is-outlined is-primary"
                              style={{'marginTop': '10px'}}

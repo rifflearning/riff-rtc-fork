@@ -49,4 +49,4 @@ ENV FIREBASE_CONFIG=$FIREBASE_CONFIG \
 # directory must be bound at /app and all dependent packages installed for this
 # command to correctly start the riff-server
 VOLUME ["/app"]
-CMD ["npm", "start"]
+CMD ["npm", "run", "start:dev"]

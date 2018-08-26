@@ -43,12 +43,11 @@ class Mediator {
     log("mm data turns:", data);
 
     if (data.room === this.roomName && this.mm.data.participants.length > 1) {
-      log("Updating meeting mediator")
       this.mm.updateData({participants: this.roomUsers,
         transitions: data.transitions,
         turns: this.transform_turns(this.roomUsers, data.turns)});
     } else {
-      log("not updating...participants and room: ", data.room, this.roomName, this.mm.data.participants.length)
+      // wrong room, or not enough participants
     }
   }
 
@@ -106,8 +105,8 @@ class Mediator {
     }.bind(this));
   }
 
-  constructor(app, participants, user, roomName) {
-    log("initial state:", participants, user, roomName);
+  constructor(app, participants, user, roomName, userName) {
+    log("initial state:", participants, user, roomName, userName);
 
     this.mm = null;
     this.mm_width = 300;
@@ -117,6 +116,7 @@ class Mediator {
     this.user = user;
     this.roomName = roomName;
     this.roomUsers = participants;
+    this.userName = userName;
 
     // if (!elementIsEmpty('#meeting-mediator')) {
     //   log("not starting a second MM...");

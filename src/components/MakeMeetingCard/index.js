@@ -1,13 +1,13 @@
-import React, { Component } from "react"
-import { withRouter } from "react-router-dom"
-import { connect } from 'react-redux'
-import auth from "../../firebase"
+import React, { Component } from "react";
+import { withRouter } from "react-router-dom";
+import { connect } from 'react-redux';
+import auth from "../../firebase";
 import {
   changeRoomNameState,
   joinRoom}
-from "../../redux/actions/makeMeeting"
-import { push } from 'connected-react-router'
-import MakeMeetingCardView from './MakeMeetingCardView'
+from "../../redux/actions/makeMeeting";
+import { push } from 'connected-react-router';
+import MakeMeetingCardView from './MakeMeetingCardView';
 
 const mapStateToProps = state => ({
   user: state.auth.user,
