@@ -64,8 +64,10 @@ export default function (nick, localVideoNode, dispatch, getState) {
     let state = getState();
     dispatch(removePeer({peer: peer,
                          videoEl: video}));
-    console.log("riff removing participant: ", peer.nick, "from meeting", state.riff.meetingId);
-    participantLeaveRoom(state.riff.meetingId, peer.nick);
+    if (state.chat.inRoom) {
+      console.log("riff removing participant: ", peer.nick, "from meeting", state.riff.meetingId);
+      participantLeaveRoom(state.riff.meetingId, peer.nick);
+    }
   });
 
   webrtc.on('localStreamRequestFailed', function (event) {
