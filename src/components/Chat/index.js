@@ -167,23 +167,49 @@ border-right: 1px solid rgba(171,69,171,1);
 `;
 
 const RoomNameEntry = styled.input.attrs({
-  className: 'is-size-2'
+  className: 'is-size-4'
 })`
-background: linear-gradient(30deg, rgba(138,106,148,1) 12%, rgba(171,69,171,1) 87%);
-border-radius: 2px;
+//background: linear-gradient(30deg, rgba(138,106,148,1) 12%, rgba(171,69,171,1) 87%);
+background: #f6f0fb;
+//border-radius: 2px;
 border: none;
-margin-top: 15px;
-text-align: center;
+box-shadow: none;
+border-bottom: 5px solid rgba(171,69,171,1);
+text-align: left;
 padding-top: 2px;
 padding-bottom: 2px;
-color: #fff;
-&:focus: {
+color: rgba(171,69,171,1);
+:focus: {
 outline-width: 0;
+box-shadow: none;
+border-bottom: 5px solid rgba(171,69,171,1);
+}
+.textarea {
+color: rgba(171,69,171,1);
+}
+::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+    color: rgba(171,69,171,1);;
+    opacity: 0.5; /* Firefox */
+}
+
+:-ms-input-placeholder {
+    color: rgba(171,69,171,1);
+    opacity: 0.5; /* Firefox */
+}
+
+::-ms-input-placeholder { /* Microsoft Edge */
+    color: rgba(171,69,171,1);
+opacity: 0.5;
 }
 `;
 
 
-const RenderVideos = ({inRoom, webRtcPeers, roomName, handleRoomNameChange}) => {
+const RenderVideos = ({inRoom, webRtcPeers, roomName, displayName,
+                       handleKeyPress, handleDisplayNameChange, handleRoomNameChange,
+                       handleReadyClick,
+                       clearJoinRoomError,
+                       joinRoomError,
+                       joinButtonDisabled}) => {
   //console.log("webrtc peers:", webRtcPeers);
   if (webRtcPeers.length > 0) {
     return (
@@ -193,20 +219,59 @@ const RenderVideos = ({inRoom, webRtcPeers, roomName, handleRoomNameChange}) => 
     );
   } else {
     return (
-      <div class="column has-text-centered">
+      <div class="column">
+      <div class="columns has-text-centered is-centered">
         {!inRoom ?
           <div>
-            <div class='has-text-centered'>
-                <h2 class="is-size-4">You're joining room </h2>
-                  <RoomNameEntry
-                      type="text"
-                      name="name"
-                      value={roomName}
-                      onChange={event => handleRoomNameChange(event.target.value)}/>
-              </div>
+          <div class='has-text-centered column is-half' style={{whiteSpace: 'nowrap'}}>
+              <div class="columns">
+                  <div class="column">
+                      <h2 class="is-size-4">Joining room</h2>
+                    </div>
+                    <div class="column">
+                      <RoomNameEntry
+                          type="text"
+                          name="name"
+                          placeholder="my-room-name"
+                          value={roomName}
+                          onChange={event => handleRoomNameChange(event.target.value)}/>
+                      </div>
                 </div>
+            </div>
+            <div class='has-text-centered column is-half' style={{whiteSpace: 'nowrap'}}>
+                <div class="columns">
+                    <div class="column">
+                        <h2 class="is-size-4">With display name </h2>
+                      </div>
+                      <div class="column">
+                          <RoomNameEntry
+                              type="text"
+                              name="name"
+                              placeholder="Your Name"
+                              value={displayName}
+                              onKeyPress={ handleKeyPress }
+                              onChange={event => handleDisplayNameChange(event.target.value)}/>
+                        </div>
+                  </div>
+              </div>
+              <div class='has-text-centered column' >
+              <a class="button is-outlined is-primary"
+                   style={{'marginTop': '10px'}}
+                   disabled={joinButtonDisabled}
+                   onClick={handleReadyClick}>Join Room</a>
+                <div>
+                    { joinRoomError &&
+                      <ErrorNotification>
+                          <button class="delete" onClick={clearJoinRoomError}></button>
+                            {joinRoomError}
+                        </ErrorNotification>
+                        }
+                  </div>
+                </div>
+            </div>
           :
           <h1>Nobody else here...</h1>}
+         </div>
       </div>
     );
   }
@@ -356,37 +421,25 @@ class Chat extends Component {
                             <progress style={{maxWidth: '100%'}} class="progress is-success" value={this.props.volume} max="100"></progress>
                         </div>
                     </div>
-                    <div class="control">                        
-                          <p class="menu-label" >Display Name</p>
-                          <input class="input"
-                                   type="text"
-                                   name="name"
-                                   placeholder="Display Name"
-                                   value={this.props.displayName}
-                                   onKeyPress={ this.handleKeyPress }
-                                   onChange={event => this.props.handleDisplayNameChange(event.target.value, this.webrtc)}/>
-                        </div>
-                        <a class="button is-outlined is-primary"
-                             style={{'marginTop': '10px'}}
-                             disabled={(this.props.roomName == '' || this.props.displayName == '')}
-                             onClick={ event => this.props.handleReadyClick(event, this.name, this.props.chat, this.props.auth, this.props.riff, this.webrtc)}>Join Room</a>
-                          <div>
-                              { this.props.joinRoomError &&
-                                <ErrorNotification>
-                                    <button class="delete" onClick={this.props.clearJoinRoomError}></button>
-                                      {this.props.joinRoomError}
-                                </ErrorNotification>
-                              }
-                          </div>
-                </div>
+                    </div>
                 :
                 <MeetingMediator></MeetingMediator>
             }
           </Menu>
           <RenderVideos inRoom={this.props.inRoom}
                         roomName={this.props.roomName}
+                        displayName={this.props.displayName}
+                        handleKeyPress={this.handleKeyPress}
+                        handleDisplayNameChange={this.props.handleDisplayNameChange}
                         webRtcPeers={this.props.webRtcPeers}
-                        handleRoomNameChange={this.props.handleRoomNameChange}></RenderVideos>
+                        handleRoomNameChange={this.props.handleRoomNameChange}
+                        handleReadyClick={(event) => this.props.handleReadyClick(event, this.name, this.props.chat, this.props.auth, this.props.riff, this.webrtc)}
+            joinButtonDisabled={(this.props.roomName == '' || this.props.displayName == '')}
+            clearJoinRoomError={this.props.clearJoinRoomError}
+            joinRoomError={this.props.joinRoomError}
+
+            >
+          </RenderVideos>
         </div>
       </div>
     );
