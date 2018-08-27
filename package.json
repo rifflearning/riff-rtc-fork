@@ -43,6 +43,7 @@
     "hogan-xpress": "^1.0.8",
     "ims-lti": "^3.0.2",
     "js-yaml": "^3.12.0",
+    "react-pure-lifecycle": "^3.0.0",
     "redis": "^2.8.0",
     "request": "^2.87.0",
     "serve-static": "^1.13.2",
