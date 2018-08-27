@@ -274,6 +274,7 @@ class Chat extends Component {
   }
 
   componentWillUnmount() {
+    this.webrtc.stopLocalVideo();
     this.onUnload();
     window.removeEventListener('beforeunload', this.onUnload);
   }
