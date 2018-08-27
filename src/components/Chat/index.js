@@ -137,7 +137,6 @@ padding: 5px;
 const ErrorNotification = styled.div.attrs({
   className: 'notification is-warning has-text-centered'
 })`
-max-width: 11rem;
 margin-top: 10px;
 `;
 
@@ -254,19 +253,17 @@ const RenderVideos = ({inRoom, webRtcPeers, roomName, displayName,
                         </div>
                   </div>
               </div>
-              <div class='has-text-centered column' >
+              <div class='has-text-centered is-centered column' >
               <a class="button is-outlined is-primary"
                    style={{'marginTop': '10px'}}
                    disabled={joinButtonDisabled}
                    onClick={handleReadyClick}>Join Room</a>
-                <div>
                     { joinRoomError &&
                       <ErrorNotification>
                           <button class="delete" onClick={clearJoinRoomError}></button>
                             {joinRoomError}
                         </ErrorNotification>
                         }
-                  </div>
                 </div>
             </div>
           :
@@ -419,8 +416,9 @@ class Chat extends Component {
                         </div>
                         <div class="level-item">
                             <progress style={{maxWidth: '100%'}} class="progress is-success" value={this.props.volume} max="100"></progress>
-                        </div>
+                          </div>
                     </div>
+                    <p>Having trouble? <a href="/room">refresh the page</a> and allow access to your camera and mic.</p>
                     </div>
                 :
                 <MeetingMediator></MeetingMediator>
