@@ -10,7 +10,7 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
-  redirectHome: () => {
+  redirect: () => {
     dispatch(push("/room"));
   }
 });
@@ -23,10 +23,9 @@ const mapMergeProps = (stateProps, dispatchProps, ownProps) => ({
     event.preventDefault();
     ownProps.leaveRiffRoom(stateProps.meetingId, stateProps.uid);
     ownProps.leaveRoom();
-    ownProps.webrtc.stopLocalVideo();
     ownProps.webrtc.leaveRoom();
     ownProps.webrtc.stopSibilant();
-    dispatchProps.redirectHome();
+    dispatchProps.redirect();
   }
 });
 

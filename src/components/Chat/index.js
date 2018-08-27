@@ -52,9 +52,8 @@ const mapDispatchToProps = dispatch => ({
   leaveRoom: () => {
     dispatch(leaveRoom());
   },
-
   leaveRiffRoom: (meetingId, uid) => {
-    participantLeaveRoom(meetingId, uid);
+    return participantLeaveRoom(meetingId, uid);
   },
   clearJoinRoomError: () => {
     dispatch(clearJoinRoomError());
@@ -63,7 +62,7 @@ const mapDispatchToProps = dispatch => ({
     dispatch(changeRoomName(roomName));
   },
   handleDisplayNameChange: (displayName, webrtc) => {
-    webrtc.changeNick(displayName);
+    //    webrtc.changeNick(displayName);
     dispatch(changeDisplayName(displayName));
   },
   joinWebRtc: (localVideoRef, nick) => {
@@ -92,6 +91,8 @@ const mapDispatchToProps = dispatch => ({
                            chat.webRtcPeers,
                            riff.authToken
                           );
+      // use nick property to share riff IDs with all users
+      webrtc.changeNick(auth.user.uid);
     }
   },
   handleMuteAudioClick: (event, muted, webrtc) => {
@@ -238,22 +239,28 @@ class Chat extends Component {
 
   onUnload(event) {
     console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>UNLOADING!", event, this.props.riff.meetingId);
-    this.props.leaveRiffRoom(this.props.riff.meetingId,
-                             this.props.user.uid);
-    this.props.leaveRoom();
-    this.webrtc.stopLocalVideo();
-    this.webrtc.leaveRoom();
-    if (this.webrtc.stopSibilant) {
-      this.webrtc.stopSibilant();
-    }
     if (event) {
-      this.props.leaveRiffRoom(this.props.riff.meetingId,
-                               this.props.user.uid);
-      event.preventDefault()
-      console.log("event:", event)
-      event.returnValue = "If you leave, you'll have to re-join the room.";
-      return event.returnValue;
+      event.preventDefault();
     }
+
+    console.log(this.props);
+    console.log(this.props.leaveRiffRoom)
+    if (event) {
+      console.log(event);
+      event.returnValue = "If you leave, you'll have to re-join the room.";
+      return true;
+    }
+    this.props.leaveRiffRoom(
+      this.props.riff.meetingId,
+      this.props.user.uid).then(function (res) {
+
+        console.log("remove participant:", res);
+        this.props.leaveRoom();
+        this.webrtc.leaveRoom();
+        if (this.webrtc.stopSibilant) {
+          this.webrtc.stopSibilant();
+        }
+      }.bind(this));
   };
 
   handleKeyPress(event) {
@@ -350,7 +357,7 @@ class Chat extends Component {
                                    type="text"
                                    name="name"
                                    placeholder="Display Name"
-                                   value={this.name}
+                                   value={this.props.displayName}
                                    onKeyPress={ this.handleKeyPress }
                                    onChange={event => this.props.handleDisplayNameChange(event.target.value, this.webrtc)}/>
                         </div>

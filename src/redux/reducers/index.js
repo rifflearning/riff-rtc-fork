@@ -21,7 +21,7 @@ const rootPersistConfig = {
 const chatPersistConfig = {
   key: 'chat',
   storage: storage,
-  blacklist: ['webRtcPeers', 'volume']
+  blacklist: ['webRtcPeers', 'volume', 'roomName', 'inRoom', 'joiningRoom', 'getMediaError']
 };
 
 export default persistReducer(
@@ -30,8 +30,7 @@ export default persistReducer(
     combineReducers({
       auth: auth,
       riff: riff,
-      chat: chat,
       menu: menu,
-//      chat: persistReducer(chatPersistConfig, chat),
+      chat: persistReducer(chatPersistConfig, chat),
       makeMeeting: makeMeeting
     })));

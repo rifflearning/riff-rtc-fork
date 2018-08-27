@@ -88,8 +88,8 @@ const chat = (state = initialState, action) => {
   case(JOINED_ROOM):
     return{...state, inRoom: true, joiningRoom: false};
   case(CHAT_LEAVE_ROOM):
-    return {...state, roomName: null, inRoom: false, getMediaError: true,
-            webRtcPeers: [], readyToCall: false, displayName: ""};
+    return {...state, roomName: null, inRoom: false,
+            webRtcPeers: []};
   case(CHAT_VOLUME_CHANGED):
     return {...state, volume: action.volume};
   case(CHAT_JOIN_ROOM_ERROR):
