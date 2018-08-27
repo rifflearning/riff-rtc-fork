@@ -109,8 +109,8 @@ class Mediator {
     log("initial state:", participants, user, roomName, userName);
 
     this.mm = null;
-    this.mm_width = 300;
-    this.mm_height = 300;
+    this.mm_width = 200;
+    this.mm_height = 200;
     log('>> Starting meeting mediator...');
     this.app = app;
     this.user = user;

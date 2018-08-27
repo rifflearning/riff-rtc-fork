@@ -33,88 +33,64 @@ overflow-y: scroll;
 `
 
 const SignUpView = ({handleSignUp,
-  handleEmail,
-  handlePassword,
-  clearError,
-  error,
-  email,
-  password,
-  isInvalid}) => (
-
-    <div class="section">
-      <div class="columns">
-        <GradientCol>
-          <FixedCard>
-            <p class="title">
-              Sign Up
-            </p>
-            <form onSubmit={handleSignUp}>
-              <div class="field">
-                <label class="label">email</label>
-                <div class="control">
-                  <input class="input"
-                    type="text"
-                    name="email"
-                    placeholder="example@riff.com"
-                    onChange={event => handleEmail(event.target.value)}/>
-                  </div>
-                </div>
-                <div class="field">
-                  <label class="label">password</label>
-                  <div class="control">
-                    <input class="input"
-                      type="password"
-                      name="password"
-                      placeholder="something unique and long"
-                      onChange={event => handlePassword(event.target.value)}/>
-                    </div>
-                  </div>
-                  <div class="field">
-                    <div class="control">
-                      <button class="button is-link" type="submit" disabled={isInvalid}>Submit</button>
-                    </div>
-                  </div>
-                  { error && <div class="notification is-warning">
-                    <button class="delete" onClick={clearError}></button>
-                    {error.message}</div>}
-                  </form>
-                </FixedCard>
-              </GradientCol>
-              <div class="column">
-                <SignInContent>
-                  <h1> Sign up to reserve rooms and see data about your conversations. </h1>
-                  <p>Sign up to reserve rooms and see data about your conversations.
-                    Sign up to reserve rooms and see data about your conversations.
-                    Sign up to reserve rooms and see data about your conversations.
-                    Sign up to reserve rooms and see data about your conversations.
-                    Sign up to reserve rooms and see data about your conversations.
-                    Sign up to reserve rooms and see data about your conversations. Sign up to reserve rooms and see data about your conversations.
-                    Sign up to reserve rooms and see data about your conversations.</p>
-                <p>Sign up to reserve rooms and see data about your conversations.
-                      Sign up to reserve rooms and see data about your conversations.
-                      Sign up to reserve rooms and see data about your conversations.
-                      Sign up to reserve rooms and see data about your conversations.
-                      Sign up to reserve rooms and see data about your conversations.
-                      Sign up to reserve rooms and see data about your conversations. Sign up to reserve rooms and see data about your conversations.
-                      Sign up to reserve rooms and see data about your conversations.</p>
-                <p>Sign up to reserve rooms and see data about your conversations.
-                        Sign up to reserve rooms and see data about your conversations.
-                        Sign up to reserve rooms and see data about your conversations.
-                        Sign up to reserve rooms and see data about your conversations.
-                        Sign up to reserve rooms and see data about your conversations.
-                        Sign up to reserve rooms and see data about your conversations. Sign up to reserve rooms and see data about your conversations.
-                        Sign up to reserve rooms and see data about your conversations.</p>
-                <p>Sign up to reserve rooms and see data about your conversations.
-                          Sign up to reserve rooms and see data about your conversations.
-                          Sign up to reserve rooms and see data about your conversations.
-                          Sign up to reserve rooms and see data about your conversations.
-                          Sign up to reserve rooms and see data about your conversations.
-                          Sign up to reserve rooms and see data about your conversations. Sign up to reserve rooms and see data about your conversations.
-                          Sign up to reserve rooms and see data about your conversations.</p>
-
-                </SignInContent>
+                     handleEmail,
+                     handlePassword,
+                     clearError,
+                     error,
+                     email,
+                     password,
+                     isInvalid}) => (
+  <div class="section">
+    <div class="columns">
+      <GradientCol>
+        <FixedCard>
+          <p class="title">
+            Sign Up
+          </p>
+          <form onSubmit={handleSignUp}>
+            <div class="field">
+              <label class="label">email</label>
+              <div class="control">
+                <input class="input"
+                  type="text"
+                  name="email"
+                  placeholder="example@riff.com"
+                  onChange={event => handleEmail(event.target.value)}/>
               </div>
             </div>
-          </div>
-        )
+            <div class="field">
+              <label class="label">password</label>
+              <div class="control">
+                <input class="input"
+                  type="password"
+                  name="password"
+                  placeholder="something unique and long"
+                  onChange={event => handlePassword(event.target.value)}/>
+              </div>
+            </div>
+            <div class="field">
+              <div class="control">
+                <button class="button is-link" type="submit" disabled={isInvalid}>Submit</button>
+              </div>
+            </div>
+            { error && <div class="notification is-warning">
+              <button class="delete" onClick={clearError}></button>
+              {error.message}</div> }
+          </form>
+        </FixedCard>
+      </GradientCol>
+      <div class="column">
+        <SignInContent>
+          <h1> Sign up to see data about your conversations. </h1>
+          <p>
+            Creating a profile helps you get the most out of Riff. A profile gives
+            you access to all your historical video chat data, and all new insights
+            as we add them to the product.
+          </p>
+        </SignInContent>
+      </div>
+    </div>
+  </div>
+)
+
 export default SignUpView;

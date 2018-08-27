@@ -38,11 +38,13 @@ export const updateRiffMeetingId = (meetingId) => {
 };
 
 export const participantLeaveRoom = (meetingId, participantId) => {
-  app.service('meetings').patch(meetingId, {
+  return app.service('meetings').patch(meetingId, {
     remove_participants: [participantId]
   }).then(function (res) {
     console.log("removed participant:", participantId, "from meeting ", meetingId);
+    return true;
   }).catch(function (err) {
+    return false;
     console.log("shit, caught an error:", err);
   });
 };

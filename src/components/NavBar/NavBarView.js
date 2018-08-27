@@ -25,28 +25,28 @@ const ProfileLinks = (props) => {
       <div class="navbar-end">
         <Link className='navbar-item' to="/signup">Sign Up</Link>
         <Link className='navbar-item' to="/login">Login</Link>
-      </div>)
+      </div>);
   } else {
     return <div class="navbar-end">
       <Link className='navbar-item' to="/profile">Profile</Link>
       <Link className='navbar-item' to="/home" onClick={ props.handleLogOut }>Log Out</Link>
-    </div>
+      </div>;
   }
 }
 
-const NavBarView = ({loggedIn, handleLogOut}) => (
+const NavBarView = ({loggedIn, menuOpen, handleLogOut, handleBurgerClick}) => (
   <NavBar role="navigation" aria-label="main navigation">
     <div class="navbar-brand">
       <a class="navbar-item" href="/home">
       <Brandimg src={require('../../../assets/rifflogo.jpeg')}/>
     </a>
-    <div class="navbar-burger burger">
+      <div className={menuOpen ? 'navbar-burger burger is-active' : 'navbar-burger burger'} onClick={event => handleBurgerClick(event)}>
       <span></span>
       <span></span>
       <span></span>
     </div>
   </div>
-  <div class="navbar-menu">
+    <div className={menuOpen ? 'navbar-menu is-active' : 'navbar-menu'}>
     <div class="navbar-start">
       <Link className='navbar-item' to="/home">Home</Link>
       <Link className='navbar-item' to="/room">Chat</Link>
@@ -54,6 +54,6 @@ const NavBarView = ({loggedIn, handleLogOut}) => (
     <ProfileLinks loggedIn={loggedIn} handleLogOut={handleLogOut}></ProfileLinks>
   </div>
 </NavBar>
-)
+);
 
 export default withRouter(NavBarView);

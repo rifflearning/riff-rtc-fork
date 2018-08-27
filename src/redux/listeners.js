@@ -25,14 +25,13 @@ import {
   leaveRoom
 } from './actions/chat';
 import {
-  updateRiffMeetingId
+  updateRiffMeetingId,
+  participantLeaveRoom
 } from './actions/riff';
 import ReactDOM from 'react-dom';
 
 import { app, socket } from '../riff';
 import captureSpeaking from '../libs/audio';
-
-
 
 
 export default function (nick, localVideoNode, dispatch, getState) {
@@ -62,12 +61,23 @@ export default function (nick, localVideoNode, dispatch, getState) {
   });
 
   webrtc.on('videoRemoved', function (video, peer) {
+    let state = getState();
     dispatch(removePeer({peer: peer,
                          videoEl: video}));
+    if (state.chat.inRoom) {
+      console.log("riff removing participant: ", peer.nick, "from meeting", state.riff.meetingId);
+      participantLeaveRoom(state.riff.meetingId, peer.nick);
+    }
   });
 
   webrtc.on('localStreamRequestFailed', function (event) {
       dispatch(getMediaError(event));
+  });
+
+  webrtc.on('localStream', function (event) {
+    if (event.active) {
+      dispatch(getMediaError(false));  
+    }
   });
 
   webrtc.changeNick = function (nick) {
@@ -77,7 +87,11 @@ export default function (nick, localVideoNode, dispatch, getState) {
 
   webrtc.on('readyToCall', function (video, peer) {
     let stream = localVideoNode.captureStream ? localVideoNode.captureStream() : localVideoNode.mozCaptureStream();
-    var sib = new sibilant(stream);
+    console.log("videoNode:", localVideoNode)
+    console.log("video:", video);
+    console.log("stream:", stream)
+    dispatch(getMediaError(false));
+    var sib = new sibilant(localVideoNode);
 
     if (sib) {
       webrtc.stopVolumeCollection = function () {

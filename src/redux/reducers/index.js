@@ -1,6 +1,7 @@
 import { combineReducers } from 'redux';
 import auth from './auth';
 import chat from './chat';
+import menu from './menu';
 import makeMeeting from './makeMeeting';
 import storage from 'redux-persist/lib/storage' // defaults to localStorage for web and AsyncStorage for react-native
 import { connectRouter } from 'connected-react-router'
@@ -20,7 +21,7 @@ const rootPersistConfig = {
 const chatPersistConfig = {
   key: 'chat',
   storage: storage,
-  blacklist: ['webRtcPeers', 'volume']
+  blacklist: ['webRtcPeers', 'volume', 'roomName', 'inRoom', 'joiningRoom', 'getMediaError']
 };
 
 export default persistReducer(
@@ -29,7 +30,7 @@ export default persistReducer(
     combineReducers({
       auth: auth,
       riff: riff,
-      chat: chat,
-//      chat: persistReducer(chatPersistConfig, chat),
+      menu: menu,
+      chat: persistReducer(chatPersistConfig, chat),
       makeMeeting: makeMeeting
     })));
