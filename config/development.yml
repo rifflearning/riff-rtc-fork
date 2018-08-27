@@ -3,8 +3,8 @@ client:
   webrtc_debug: true
   # the docker container reverse proxy will forward websocket connections
   signalMaster:
-    url: https://rhythm-rtc-signaling.herokuapp.com/
-    path: 
+    url: /
+    path: /api/signalmaster
 
   # the docker container reverse proxy will forward REST and websocket connections
   dataServer:
@@ -17,4 +17,3 @@ client:
     projectId:
     storageBucket:
     messagingSenderId:
-    
