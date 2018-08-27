@@ -95,22 +95,32 @@ export default function (nick, localVideoNode, dispatch, getState) {
 
     if (sib) {
       webrtc.stopVolumeCollection = function () {
-        sib.unbind('volumeChange');
+        //sib.unbind('volumeChange');
+      };
+
+      webrtc.startVolumeCollection = function () {
+        sib.bind('volumeChange', function (data) {
+          let state = getState();
+          if (!state.chat.inRoom) {
+            dispatch(volumeChanged(data));
+          }
+        }.bind(getState));
       };
 
       // bind stopSibilant
       webrtc.stopSibilant = function () {
-        sib.unbind('volumeChange');
+        //sib.unbind('volumeChange');
         sib.unbind('stoppedSpeaking');
       };
 
       // use this to show user volume to confirm audio/video working
-      sib.bind('volumeChange', function (data) {
-        let state = getState();
-        if (!state.chat.inRoom) {
-          dispatch(volumeChanged(data));
-        }
-      }.bind(getState));
+      webrtc.startVolumeCollection();
+      // sib.bind('volumeChange', function (data) {
+      //   let state = getState();
+      //   if (!state.chat.inRoom) {
+      //     dispatch(volumeChanged(data));
+      //   }
+      // }.bind(getState));
 
       sib.bind('stoppedSpeaking', (data) => {
         app.service('utterances').create({

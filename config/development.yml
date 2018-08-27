@@ -11,9 +11,10 @@ client:
     url: /
     path: /api/videodata
   firebase:
-    apiKey:
-    authDomain:
-    databaseURL:
-    projectId:
-    storageBucket:
-    messagingSenderId:
+    apiKey: AIzaSyAbnjLKuAmTPTWnsLRNZ3V8i6D455ZReNk
+    authDomain: riff-1e882.firebaseapp.com
+    databaseURL: https://riff-1e882.firebaseio.com
+    projectId: riff-1e882
+    storageBucket: riff-1e882.appspot.com
+    messagingSenderId: 876860777687
+
