@@ -74,8 +74,10 @@ export default function (nick, localVideoNode, dispatch, getState) {
       dispatch(getMediaError(event));
   });
 
-  webrtc.on('localStreamRequested', function (event) {
-    dispatch(getMediaError(false));
+  webrtc.on('localStream', function (event) {
+    if (event.active) {
+      dispatch(getMediaError(false));  
+    }
   });
 
   webrtc.changeNick = function (nick) {
