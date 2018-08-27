@@ -2,6 +2,7 @@ import { combineReducers } from 'redux';
 import auth from './auth';
 import chat from './chat';
 import menu from './menu';
+import dashboard from './dashboard';
 import makeMeeting from './makeMeeting';
 import storage from 'redux-persist/lib/storage' // defaults to localStorage for web and AsyncStorage for react-native
 import { connectRouter } from 'connected-react-router'
@@ -31,6 +32,7 @@ export default persistReducer(
       auth: auth,
       riff: riff,
       menu: menu,
+      dashboard: dashboard,
       chat: persistReducer(chatPersistConfig, chat),
       makeMeeting: makeMeeting
     })));

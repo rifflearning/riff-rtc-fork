@@ -48,7 +48,7 @@ const NavBarView = ({loggedIn, menuOpen, handleLogOut, handleBurgerClick}) => (
   </div>
     <div className={menuOpen ? 'navbar-menu is-active' : 'navbar-menu'}>
     <div class="navbar-start">
-      <Link className='navbar-item' to="/home">Home</Link>
+      <Link className='navbar-item' to="/riffs">My Riffs</Link>
       <Link className='navbar-item' to="/room">Chat</Link>
     </div>
     <ProfileLinks loggedIn={loggedIn} handleLogOut={handleLogOut}></ProfileLinks>
