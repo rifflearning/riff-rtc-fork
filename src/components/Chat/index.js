@@ -239,6 +239,10 @@ class Chat extends Component {
 
   onUnload(event) {
     console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>UNLOADING!", event, this.props.riff.meetingId);
+    if (!this.props.inRoom) {
+      return undefined;
+    }
+
     if (event) {
       event.preventDefault();
     }
