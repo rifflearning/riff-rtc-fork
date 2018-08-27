@@ -13,7 +13,12 @@ import DashboardView from './DashboardView';
 const mapStateToProps = state => ({
   user: state.auth.user,
   riff: state.riff,
-  riffAuthToken: state.riff.authToken
+  riffAuthToken: state.riff.authToken,
+  meetings: state.dashboard.meetings,
+  numMeetings: state.dashboard.numMeetings,
+  fetchMeetingStatus: state.dashboard.fetchMeetingStatus,
+  lastFetched: state.dashboard.lastFetched,
+  shouldFetch: state.dashboard.shouldFetch
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -23,15 +28,23 @@ const mapDispatchToProps = dispatch => ({
 });
 
 const componentDidUpdate = (props) => {
-  console.log("component updating...", props.riffAuthToken)
-  if (props.riffAuthToken) {
+  console.log("component updating...", props.riffAuthToken);
+  if (props.riffAuthToken && props.shouldFetch) {
     console.log("going to load recent meetings");
     props.loadRecentMeetings(props.user.uid);
   }
 }
 
+const componentDidMount = (props) => {
+  if (props.riffAuthToken && props.shouldFetch) {
+    console.log("going to load recent meetings");
+    props.loadRecentMeetings(props.user.uid);
+  }
+};
+
 const methods = {
-  componentDidUpdate
+  componentDidUpdate,
+  componentDidMount
 };
 
 const Dashboard = lifecycle(methods)(DashboardView);
