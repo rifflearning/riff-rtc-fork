@@ -37,9 +37,9 @@ const ProfileLinks = (props) => {
 const NavBarView = ({loggedIn, menuOpen, handleLogOut, handleBurgerClick}) => (
   <NavBar role="navigation" aria-label="main navigation">
     <div class="navbar-brand">
-      <a class="navbar-item" href="/home">
+      <Link className="navbar-item" to="/home">
       <Brandimg src={require('../../../assets/rifflogo.jpeg')}/>
-    </a>
+    </Link>
       <div className={menuOpen ? 'navbar-burger burger is-active' : 'navbar-burger burger'} onClick={event => handleBurgerClick(event)}>
       <span></span>
       <span></span>

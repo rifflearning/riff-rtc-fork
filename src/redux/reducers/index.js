@@ -25,6 +25,12 @@ const chatPersistConfig = {
   blacklist: ['webRtcPeers', 'volume', 'roomName', 'inRoom', 'joiningRoom', 'getMediaError']
 };
 
+const dashPersistConfig = {
+  key: 'dashboard',
+  storage: storage,
+  blacklist: ['shouldFetch']
+};
+
 export default persistReducer(
   rootPersistConfig,
   connectRouter(browserHistory)(
@@ -32,7 +38,7 @@ export default persistReducer(
       auth: auth,
       riff: riff,
       menu: menu,
-      dashboard: dashboard,
+      dashboard: persistReducer(dashPersistConfig, dashboard),
       chat: persistReducer(chatPersistConfig, chat),
       makeMeeting: makeMeeting
     })));
