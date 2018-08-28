@@ -4,6 +4,7 @@ import styled, { injectGlobal, keyframes } from 'styled-components';
 import { Link } from 'react-router-dom';
 import ReactChartkick, { ColumnChart, PieChart } from 'react-chartkick';
 import {ScaleLoader} from 'react-spinners';
+import MaterialIcon from 'material-icons-react';
 import Chart from 'chart.js';
 import moment from 'moment';
 
@@ -80,7 +81,8 @@ const MeetingList = ({fetchMeetingsStatus, fetchMeetingsMessage, meetings, handl
 const DashboardView = ({user, riffAuthToken, meetings,
                         fetchMeetingsStatus, fetchMeetingsMessage, numMeetings,
                         handleMeetingClick, selectedMeeting,
-                        processedUtterances, statsStatus}) =>
+                        processedUtterances, statsStatus,
+                        handleRefreshClick, selectedMeetingDuration}) =>
       {
         console.log("fetch meetings status (view)", fetchMeetingsStatus);
 
@@ -103,6 +105,14 @@ const DashboardView = ({user, riffAuthToken, meetings,
           );
         } else {
           return (
+            <div>
+              <div class="columns">
+                <div class="column is-one-fifth has-text-centered">
+                  <a class="button is-rounded"  onClick={event => handleRefreshClick(event, user.uid)}>
+                    <MaterialIcon icon="refresh"/>
+                  </a>
+                </div>
+              </div>
             <div class="columns has-text-centered">
               <div class="column is-one-quarter">
                 <MeetingList meetings={meetings} fetchMeetingsStatus={fetchMeetingsStatus}
@@ -112,18 +122,18 @@ const DashboardView = ({user, riffAuthToken, meetings,
               <div class="column">
                 {statsStatus == 'loading' ?
                   <div>
-                  <p class="is-size-4 is-primary">Select a meeting to see details about speaking time and more.</p>
-                    <ScaleLoader color={"#8A6A94"}/>
+                  <ScaleLoader color={"#8A6A94"}/>
                   </div>
                     :
-                    <div>
-                        <p>Meeting content goes here.</p>
-                          <p>Showing content for meeting {selectedMeeting._id}</p>
-                            <p>like, that it has {processedUtterances.length > 0 ? processedUtterances[0].numUtterances : "N/A"} utterances.</p>
-                              <TurnChart processedUtterances={processedUtterances} participantId={user.uid}/>
+                    <div class="has-text-left">
+                        <p class="is-size-4 is-primary">Room: {selectedMeeting.room} </p>
+                        <p class="is-size-5 is-primary">{processedUtterances.length} Attendees </p>
+                        <p class="is-size-5 is-primary">{selectedMeetingDuration} </p>
+                        <TurnChart processedUtterances={processedUtterances} participantId={user.uid}/>
                       </div>
                     }
               </div>
+            </div>
             </div>
           );
         }
