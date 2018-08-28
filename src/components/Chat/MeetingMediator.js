@@ -1,5 +1,4 @@
 import util from 'util';
-import * as d3 from 'd3';
 import React, { Component } from "react";
 import { withRouter } from "react-router-dom";
 import { connect } from 'react-redux';
