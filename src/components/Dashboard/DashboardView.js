@@ -2,7 +2,7 @@ import React, { Component } from "react";
 import { withRouter } from 'react-router-dom';
 import styled, { injectGlobal, keyframes } from 'styled-components';
 import { Link } from 'react-router-dom';
-import ReactChartkick, { ColumnChart } from 'react-chartkick';
+import ReactChartkick, { ColumnChart, PieChart } from 'react-chartkick';
 import Chart from 'chart.js';
 import {XYPlot, XAxis, YAxis,
         VerticalBarSeries,
@@ -26,20 +26,33 @@ margin-left: 0
 }
 `;
 
-const formatChartData = (processedUtterances) => {
+const formatChartData = (processedUtterances, participantId) => {
   console.log("formatting:", processedUtterances);
-  return _.map(processedUtterances, (p) => {
-    return [p.participantId, p.lengthUtterances];
-    // return {x: p.participantId,
-    //         y: p.numUtterances};
+
+  let ids = _.uniq(_.map(processedUtterances, (p) => { return p.participantId}));
+
+  let data = _.map(processedUtterances, (p, idx) => {
+    let label = (p.participantId == participantId ? 'You' : "User " + idx);
+    //console.log(p)
+    // use our display name from firebase if we've got it.
+    label = p.displayName ? p.displayName : label;
+    return [label, p.lengthUtterances];
   });
+  let colors = _.map(processedUtterances, (p) => {
+    if (p.participantId == participantId) {
+      return "#ab45ab";
+    } else {
+      return "#bdc3c7";
+    }
+  });
+  return {data: data, colors: colors};
 };
 
-const TurnChart = ({processedUtterances}) => {
-  let data = formatChartData(processedUtterances);
-  console.log("data for chart:", data);
+const TurnChart = ({processedUtterances, participantId}) => {
+  let r = formatChartData(processedUtterances, participantId);
+  console.log("data for chart:", r.data);
   return (
-    <ColumnChart height="500px" width="800px" data={data} title="Seconds spoken" colors={["#ab45ab"]}/>
+    <PieChart donut={true} height="500px" width="800px" data={r.data} title="Seconds spoken" colors={r.colors}/>
   );
 };
 
@@ -60,7 +73,6 @@ const TurnChart = ({processedUtterances}) => {
 // };
 
 const MeetingView = ({meeting, handleMeetingClick}) => {
-  console.log("rendering meeting:", meeting);
   let m = moment(meeting.startTime).format("ha MMM Do");
   return (
     <li><a onClick = {(event) => handleMeetingClick(event, meeting)}>
@@ -102,7 +114,7 @@ const DashboardView = ({user, riffAuthToken, meetings,
             <p>Meeting content goes here.</p>
             <p>Showing content for meeting {selectedMeeting._id}</p>
               <p>like, that it has {processedUtterances.length > 0 ? processedUtterances[0].numUtterances : "N/A"} utterances.</p>
-                <TurnChart processedUtterances={processedUtterances}/>
+                <TurnChart processedUtterances={processedUtterances} participantId={user.uid}/>
           </div>
       }
     </div>

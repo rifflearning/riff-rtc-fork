@@ -5,8 +5,10 @@ import {
   DASHBOARD_FETCH_MEETING_STATS
 } from '../constants/ActionTypes';
 import _ from 'underscore';
-
 import { app, socket} from "../../riff";
+import fs from '../../firebase';
+
+let db = fs.firestore();
 
 export const updateMeetingList = (meetings) => {
   return {type: DASHBOARD_FETCH_MEETINGS,
@@ -29,6 +31,11 @@ export const loadRecentMeetings = (uid) => dispatch => {
   }).then((meetingIds) => {
     return app.service('meetings').find({query: {_id: meetingIds}});
   }).then((meetingObjects) => {
+    meetingObjects = _.filter(meetingObjects, (m, idx) => {
+      let durationSecs = (new Date(m.endTime).getTime() - new Date(m.startTime).getTime()) / 1000;
+      //console.log("duration secs:", durationSecs)
+      return durationSecs > 2*60;
+    });
     dispatch(updateMeetingList(meetingObjects));
     console.log("got meeting objects:", meetingObjects);
   }).catch((err) => {
@@ -36,7 +43,7 @@ export const loadRecentMeetings = (uid) => dispatch => {
   });
 };
 
-let processUtterances = (utterances) => {
+let processUtterances = (utterances, meetingId) => {
   console.log("processing utterances:", utterances);
   // {'participant': [utteranceObject, ...]}
   var participantUtterances = _.groupBy(utterances, 'participant');
@@ -69,8 +76,18 @@ let processUtterances = (utterances) => {
       meanLengthUtterances: participantId in meanLengthUtterances ? meanLengthUtterances[participantId] : 0
     };
   });
-  console.log("data returned:", visualizationData);
-  return visualizationData;
+
+  let promises = _.map(visualizationData, (v) => {
+    let docId = v.participantId + "_" + meetingId;
+    let docRef = db.collection('meetings').doc(docId);
+    return docRef.get().then((doc) => {
+      return Object.assign(v, {displayName: doc.displayName,
+                               meetingId: meetingId});
+    });
+  });
+  return Promise.all(promises);
+  //console.log("data returned:", visualizationData);
+  //return visualizationData;
 };
 
 export const loadMeetingData = (meetingId) => dispatch => {
@@ -78,7 +95,9 @@ export const loadMeetingData = (meetingId) => dispatch => {
   console.log("finding utterances for meeting", meetingId);
   return app.service('utterances').find({query: {meeting: meetingId, $limit: 1000}})
     .then((utterances) => {
-      return processUtterances(utterances);
+      // console.log("utterances", utterances);
+      // console.log("processed:", processUtterances(utterances, meetingId));
+      return processUtterances(utterances, meetingId);
     }).then(processedUtterances => {
       dispatch({type: DASHBOARD_FETCH_MEETING_STATS,
                 status: 'loaded',

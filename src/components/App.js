@@ -55,6 +55,14 @@ class App extends React.Component {
                     this.props.auth);
   }
 
+  // componentWillUpdate() {
+  //   console.log("updating...", this.props.auth.user.uid, this.props.auth.uid);
+  //   if (!this.props.auth.user.uid && !this.props.auth.uid) {
+  //     console.log("No user detected, creating anonymous ID");
+  //     this.props.logInAnonymously();
+  //   }
+  // }
+
   componentWillMount() {
     if (!this.props.auth.user.uid && !this.props.auth.uid) {
       console.log("No user detected, creating anonymous ID");
