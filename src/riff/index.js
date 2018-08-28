@@ -9,6 +9,7 @@ let dataserverPath = window.client_config.dataServer.path || '';
 dataserverPath += '/socket.io';
 
 export const socket = io(window.client_config.dataServer.url, {
+  'timeout': 20000,
   'path': dataserverPath,
   'transports': [
     'websocket',

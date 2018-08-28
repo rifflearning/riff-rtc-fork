@@ -3,7 +3,9 @@ import { withRouter } from "react-router-dom";
 import { connect } from 'react-redux';
 import auth from "../../firebase";
 import {
-  loadRecentMeetings }
+  loadRecentMeetings,
+  selectMeeting,
+  loadMeetingData}
 from "../../redux/actions/dashboard";
 import { push } from 'connected-react-router';
 import { riffAddUserToMeeting } from '../../redux/actions/riff';
@@ -18,12 +20,21 @@ const mapStateToProps = state => ({
   numMeetings: state.dashboard.numMeetings,
   fetchMeetingStatus: state.dashboard.fetchMeetingStatus,
   lastFetched: state.dashboard.lastFetched,
-  shouldFetch: state.dashboard.shouldFetch
+  shouldFetch: state.dashboard.shouldFetch,
+  selectedMeeting: state.dashboard.selectedMeeting,
+  processedUtterances: state.dashboard.processedUtterances,
+  statsStatus: state.dashboard.statsStatus
 });
 
 const mapDispatchToProps = dispatch => ({
   loadRecentMeetings: (uid) => {
     dispatch(loadRecentMeetings(uid));
+  },
+  handleMeetingClick: (event, meeting) => {
+    event.preventDefault();
+    console.log("selected meeting", meeting._id);
+    dispatch(selectMeeting(meeting));
+    dispatch(loadMeetingData(meeting._id));
   }
 });
 
