@@ -35,7 +35,7 @@ const mapDispatchToProps = dispatch => ({
     console.log("selected meeting", meeting._id);
     dispatch(selectMeeting(meeting));
     dispatch(loadMeetingData(meeting._id));
-  }
+  },
 });
 
 const componentDidUpdate = (props) => {
@@ -47,7 +47,7 @@ const componentDidUpdate = (props) => {
 }
 
 const componentDidMount = (props) => {
-  if (props.riffAuthToken && props.shouldFetch) {
+  if (props.riffAuthToken) {
     console.log("going to load recent meetings");
     props.loadRecentMeetings(props.user.uid);
   }

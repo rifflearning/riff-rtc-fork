@@ -9,7 +9,7 @@ const initialState = {
   fetchMeetingsStatus: 'loading',
   meetings: [],
   lastFetched: new Date('January 1, 2000 00:01:00'),
-  shouldFetch: false,
+  shouldFetch: true,
   numMeetings: 0,
   selectedMeeting: null,
   processedUtterances: [],

@@ -44,6 +44,12 @@ let processUtterances = (utterances) => {
   var numUtterances = _.mapObject(participantUtterances, (val, key) => {
     return val.length;
   });
+  var lengthUtterances = _.mapObject(participantUtterances, (val,key) => {
+    var lengthsUtterances = val.map((utteranceObject) => {
+      return (new Date(utteranceObject.endTime).getTime() - new Date(utteranceObject.startTime).getTime()) / 1000;
+    });
+    return lengthsUtterances.reduce((previous, current) => current + previous, 0);
+  });
   // {'participant': mean length of utterances in seconds}
   var meanLengthUtterances = _.mapObject(participantUtterances, (val, key) => {
     var lengthsUtterances = val.map((utteranceObject) => {
@@ -58,6 +64,7 @@ let processUtterances = (utterances) => {
     return {
       //    name: participant['name'],
       participantId: participantId,
+      lengthUtterances: participantId in lengthUtterances ? lengthUtterances[participantId] : 0,
       numUtterances: participantId in numUtterances ? numUtterances[participantId] : 0,
       meanLengthUtterances: participantId in meanLengthUtterances ? meanLengthUtterances[participantId] : 0
     };
