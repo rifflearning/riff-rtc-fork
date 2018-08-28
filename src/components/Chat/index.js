@@ -26,6 +26,8 @@ import addWebRtcListeners from "../../redux/listeners";
 import { riffAddUserToMeeting } from '../../redux/actions/riff';
 import { store, persistor } from '../../redux/store';
 import LeaveRoomButton from './LeaveRoomButton';
+import app from '../../firebase';
+let db = app.firestore();
 
 
 const mapStateToProps = state => ({
@@ -279,6 +281,20 @@ class Chat extends Component {
     super(props);
     this.handleKeyPress = this.handleKeyPress.bind(this);
     this.onUnload = this.onUnload.bind(this);
+    this.didSendFirebaseData = false;
+  }
+
+  saveDisplayName() {
+    if (this.props.riff.meetingId && !this.didSendFirebaseData) {
+      let docId = this.props.auth.user.uid + "_" + this.props.riff.meetingId;
+      let docRef = db.collection('meetings').doc(docId);
+      docRef.set({
+        user: this.props.auth.user.uid,
+        meeting: this.props.riff.meetingId,
+        displayName: this.props.chat.displayName
+      }, {merge: true});
+      this.didSendFirebaseData = true;
+    }
   }
 
   componentDidUpdate() {
@@ -286,6 +302,7 @@ class Chat extends Component {
     // console.log(!(this.props.roomName == '' && this.props.chat.displayName == ''));
     // console.log(this.props.roomName);
     // console.log(this.props.chat.displayName);
+    this.saveDisplayName();
   }
 
   componentDidMount() {
@@ -294,7 +311,7 @@ class Chat extends Component {
                                      localVideo,
                                      this.props.dispatch,
                                      store.getState);
-
+    this.saveDisplayName();
     // leave chat when window unloads
     window.addEventListener("beforeunload", this.onUnload);
   }

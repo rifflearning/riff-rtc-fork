@@ -63,10 +63,14 @@ export const clearAuthError = () => {
   };
 };
 
-export const logOutUser = () => {
-  return {
-    type: LOG_OUT
-  };
+export const logOutUser = () => dispatch => {
+  return firebase.auth().signOut().then((res) => {
+    console.log("signed out?", res)
+  }).then((res) => {
+    dispatch({
+      type: LOG_OUT
+    });
+  });
 };
 
 export const changePasswordState = (pass) => {
@@ -87,7 +91,7 @@ export const loginAnonymously = (uid) => {
 };
 
 export const attemptLoginAnonymous = () => {
-  firebase.auth().signInAnonymously().catch(function(error) {
+  return firebase.auth().signInAnonymously().catch(function(error) {
     // Handle Errors here.
     var errorCode = error.code;
     var errorMessage = error.message;
