@@ -1,7 +1,8 @@
 import {
   DASHBOARD_FETCH_MEETINGS,
   DASHBOARD_SELECT_MEETING,
-  DASHBOARD_FETCH_MEETING_STATS
+  DASHBOARD_FETCH_MEETING_STATS,
+  LOG_OUT
 } from '../constants/ActionTypes';
 
 const initialState = {
@@ -11,13 +12,16 @@ const initialState = {
   lastFetched: new Date('January 1, 2000 00:01:00'),
   shouldFetch: true,
   numMeetings: 0,
-  selectedMeeting: null,
+  selectedMeeting: "",
   processedUtterances: [],
   statsStatus: 'loading'
 };
 
 const dashboard = (state=initialState, action) => {
   switch(action.type) {
+  case(LOG_OUT):
+    console.log("log out in dashboard");
+    return initialState;
   case(DASHBOARD_FETCH_MEETINGS):
     console.log("time diff:", (((new Date()).getTime() - new Date(state.lastFetched).getTime())/1000) > 5)
     return {...state, fetchMeetingsStatus: action.status,
