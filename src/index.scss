@@ -31,9 +31,6 @@ a:hover {
 // Update Bulma's global variables
 $family-sans-serif: "Nunito", sans-serif;
 
-// include react vis
-@import "node_modules/react-vis/dist/style";
-
 // Import only what you need from Bulma
 @import "node_modules/bulma/sass/utilities/_all.sass";
 @import "node_modules/bulma/sass/base/_all.sass";

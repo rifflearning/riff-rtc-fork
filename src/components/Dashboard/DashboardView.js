@@ -3,11 +3,8 @@ import { withRouter } from 'react-router-dom';
 import styled, { injectGlobal, keyframes } from 'styled-components';
 import { Link } from 'react-router-dom';
 import ReactChartkick, { ColumnChart, PieChart } from 'react-chartkick';
+import {ScaleLoader} from 'react-spinners';
 import Chart from 'chart.js';
-import {XYPlot, XAxis, YAxis,
-        VerticalBarSeries,
-        HorizontalGridLines,
-        LineSeries} from 'react-vis';
 import moment from 'moment';
 
 ReactChartkick.addAdapter(Chart);
@@ -56,22 +53,6 @@ const TurnChart = ({processedUtterances, participantId}) => {
   );
 };
 
-// const TurnChart = ({processedUtterances}) => {
-//   let data = formatChartData(processedUtterances);
-//   console.log("data for chart:", data);
-//   return (
-//     <XYPlot
-//   width={500}
-//   height={300}>
-//     <HorizontalGridLines />
-//     <VerticalBarSeries
-//       data={data}
-//       xType="ordinal"/>
-//     <XAxis />
-//     <YAxis />
-//     </XYPlot>);
-// };
-
 const MeetingView = ({meeting, handleMeetingClick}) => {
   let m = moment(meeting.startTime).format("ha MMM Do");
   return (
@@ -81,44 +62,71 @@ const MeetingView = ({meeting, handleMeetingClick}) => {
   );
 };
 
-const MeetingList = ({fetchMeetingStatus, meetings, handleMeetingClick}) => {
+const MeetingList = ({fetchMeetingsStatus, fetchMeetingsMessage, meetings, handleMeetingClick}) => {
   let meetingTiles = meetings.map((meeting) => {
     return (<MeetingView key={meeting._id} meeting={meeting} handleMeetingClick={handleMeetingClick}/>);
   });
-  if (fetchMeetingStatus == 'loading') {
-    return (<p> Loading...</p>);
-  } else {
-    return (
-      <MeetingTabs>
-        <ul>
-          {meetingTiles}
-        </ul>
-      </MeetingTabs>
-    );
-  }
+  console.log("fetchmeetingstatus:", fetchMeetingsStatus);
+  console.log("rendering meeting list");
+  return (
+    <MeetingTabs>
+      <ul>
+        {meetingTiles}
+      </ul>
+    </MeetingTabs>
+  );
 };
 
 const DashboardView = ({user, riffAuthToken, meetings,
-                        fetchMeetingStatus, numMeetings,
+                        fetchMeetingsStatus, fetchMeetingsMessage, numMeetings,
                         handleMeetingClick, selectedMeeting,
-                        processedUtterances, statsStatus}) => (
-  <div class="columns has-text-centered">
-    <div class="column is-one-quarter">
-      <MeetingList meetings={meetings} fetchMeetingStatus={fetchMeetingStatus} handleMeetingClick={handleMeetingClick}/>
-    </div>
-    <div class="column">
-      {statsStatus == 'loading' ?
-        <p> Loading...</p>
-          :
-          <div>
-            <p>Meeting content goes here.</p>
-            <p>Showing content for meeting {selectedMeeting._id}</p>
-              <p>like, that it has {processedUtterances.length > 0 ? processedUtterances[0].numUtterances : "N/A"} utterances.</p>
-                <TurnChart processedUtterances={processedUtterances} participantId={user.uid}/>
-          </div>
-      }
-    </div>
-  </div>
-);
+                        processedUtterances, statsStatus}) =>
+      {
+        console.log("fetch meetings status (view)", fetchMeetingsStatus);
+
+        if (fetchMeetingsStatus == 'loading') {
+          return (
+            <div class="columns is-centered has-text-centered">
+              <div class="column">
+                <ScaleLoader color={"#8A6A94"}/>
+              </div>
+            </div>
+          );
+        } else if (fetchMeetingsStatus == 'error') {
+          return (
+            <div class="columns is-centered has-text-centered is-vcentered" style={{height: '90vh'}}>
+              <div class="column is-vcentered" style={{alignItems: 'center'}}>
+                <p class="is-size-4 is-primary">{fetchMeetingsMessage}</p>
+                <ScaleLoader color={"#8A6A94"}/>
+              </div>
+            </div>
+          );
+        } else {
+          return (
+            <div class="columns has-text-centered">
+              <div class="column is-one-quarter">
+                <MeetingList meetings={meetings} fetchMeetingsStatus={fetchMeetingsStatus}
+                             fetchMeetingsMessage={fetchMeetingsMessage}
+                             handleMeetingClick={handleMeetingClick}/>
+              </div>
+              <div class="column">
+                {statsStatus == 'loading' ?
+                  <div>
+                  <p class="is-size-4 is-primary">Select a meeting to see details about speaking time and more.</p>
+                    <ScaleLoader color={"#8A6A94"}/>
+                  </div>
+                    :
+                    <div>
+                        <p>Meeting content goes here.</p>
+                          <p>Showing content for meeting {selectedMeeting._id}</p>
+                            <p>like, that it has {processedUtterances.length > 0 ? processedUtterances[0].numUtterances : "N/A"} utterances.</p>
+                              <TurnChart processedUtterances={processedUtterances} participantId={user.uid}/>
+                      </div>
+                    }
+              </div>
+            </div>
+          );
+        }
+      };
 
 export default DashboardView;

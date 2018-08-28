@@ -24,6 +24,10 @@ export const selectMeeting = (meeting) => {
 export const loadRecentMeetings = (uid) => dispatch => {
   dispatch({type: DASHBOARD_FETCH_MEETINGS, status: 'loading'});
   return app.service('participants').find({query: {_id: uid}}).then((res) => {
+    if (res.data.length == 0) {
+      // no found participants. Throw an error to break out early.
+      throw new Error("no participant");
+    }
     console.log(">>fetched participant:", res);
     return res.data[0];
   }).then((participant) => {
@@ -36,9 +40,21 @@ export const loadRecentMeetings = (uid) => dispatch => {
       //console.log("duration secs:", durationSecs)
       return durationSecs > 2*60;
     });
+    if (meetingObjects.length == 0) {
+      throw new Error("no meetings after filter");
+    }
     dispatch(updateMeetingList(meetingObjects));
     console.log("got meeting objects:", meetingObjects);
   }).catch((err) => {
+    if (err.message == 'no participant') {
+      dispatch({type: DASHBOARD_FETCH_MEETINGS,
+                status: 'error',
+                message: "No meetings found. Meetings that last for over two minutes will show up here."});
+    } else if (err.message == 'no meetings after filter') {
+      dispatch({type: DASHBOARD_FETCH_MEETINGS,
+                status: 'error',
+                message: "We'll only show meetings that lasted for over two minutes. Go have a riff!"});
+    }
     console.log("Couldn't retrieve meetings", err);
   });
 };

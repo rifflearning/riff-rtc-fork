@@ -8,6 +8,7 @@ import {
 const initialState = {
   numMeetings: 0,
   fetchMeetingsStatus: 'loading',
+  fetchMeetingsMessage: 'loading',
   meetings: [],
   lastFetched: new Date('January 1, 2000 00:01:00'),
   shouldFetch: true,
@@ -23,8 +24,9 @@ const dashboard = (state=initialState, action) => {
     console.log("log out in dashboard");
     return initialState;
   case(DASHBOARD_FETCH_MEETINGS):
-    console.log("time diff:", (((new Date()).getTime() - new Date(state.lastFetched).getTime())/1000) > 5)
+    //console.log("time diff:", (((new Date()).getTime() - new Date(state.lastFetched).getTime())/1000) > 5)
     return {...state, fetchMeetingsStatus: action.status,
+            fetchMeetingsMessage: action.message,
             meetings: action.meetings ? action.meetings : state.meetings,
             numMeetings: action.meetings ? action.meetings.length : state.meetings.length,
             lastFetched: new Date(),
