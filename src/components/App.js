@@ -4,6 +4,7 @@ import Home from './Home';
 import SignUp from "./SignUp"
 import LogIn from "./LogIn"
 import Profile from "./Profile"
+import Dashboard from "./Dashboard"
 import Chat from "./Chat"
 import NavBar from "./NavBar"
 import styled, { injectGlobal, keyframes } from 'styled-components';
@@ -54,13 +55,24 @@ class App extends React.Component {
                     this.props.auth);
   }
 
-  componentDidMount() {
-    console.log("App component loaded.");
+  // componentWillUpdate() {
+  //   console.log("updating...", this.props.auth.user.uid, this.props.auth.uid);
+  //   if (!this.props.auth.user.uid && !this.props.auth.uid) {
+  //     console.log("No user detected, creating anonymous ID");
+  //     this.props.logInAnonymously();
+  //   }
+  // }
+
+  componentWillMount() {
     if (!this.props.auth.user.uid && !this.props.auth.uid) {
       console.log("No user detected, creating anonymous ID");
       this.props.logInAnonymously();
     }
     this.props.authenticateRiff();
+  }
+
+  componentDidMount() {
+    console.log("App component loaded.");
   }
 
   render() {
@@ -77,6 +89,7 @@ class App extends React.Component {
             <Route exact path="/signup" component={SignUp} />
             <Route exact path="/login" component={LogIn} />
             <Route exact path="/profile" component={Profile} />
+            <Route exact path="/riffs" component={Dashboard} />
           </div>
         </Router>
       </div>
