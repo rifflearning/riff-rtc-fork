@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import { withRouter } from "react-router-dom";
 import { connect } from 'react-redux';
 import auth from "../../firebase";
+import moment from 'moment';
 import {
   loadRecentMeetings,
   selectMeeting,
@@ -24,11 +25,14 @@ const mapStateToProps = state => ({
   shouldFetch: state.dashboard.shouldFetch,
   selectedMeeting: state.dashboard.selectedMeeting || "",
   processedUtterances: state.dashboard.processedUtterances,
-  statsStatus: state.dashboard.statsStatus
+  statsStatus: state.dashboard.statsStatus,
 });
 
 const mapDispatchToProps = dispatch => ({
   loadRecentMeetings: (uid) => {
+    dispatch(loadRecentMeetings(uid));
+  },
+  handleRefreshClick: (event, uid) => {
     dispatch(loadRecentMeetings(uid));
   },
   handleMeetingClick: (event, meeting) => {
@@ -37,6 +41,19 @@ const mapDispatchToProps = dispatch => ({
     dispatch(selectMeeting(meeting));
     dispatch(loadMeetingData(meeting._id));
   },
+});
+
+
+const formatMeetingDuration = (meeting) => {
+  let diff = moment(new Date(meeting.endTime)).diff(moment(new Date(meeting.startTime)), 'minutes');
+  return diff + " minutes";
+}
+
+const mapMergeProps = (stateProps, dispatchProps, ownProps) => ({
+  ...stateProps,
+  ...dispatchProps,
+  ...ownProps,
+  selectedMeetingDuration: formatMeetingDuration(stateProps.selectedMeeting)
 });
 
 const componentDidUpdate = (props) => {
@@ -63,4 +80,5 @@ const Dashboard = lifecycle(methods)(DashboardView);
 
 export default withRouter(
   connect(mapStateToProps,
-          mapDispatchToProps)(Dashboard));
+          mapDispatchToProps,
+          mapMergeProps)(Dashboard));
