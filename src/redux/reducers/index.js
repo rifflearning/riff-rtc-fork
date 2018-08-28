@@ -38,7 +38,7 @@ export default persistReducer(
       auth: auth,
       riff: riff,
       menu: menu,
-      dashboard: persistReducer(dashPersistConfig, dashboard),
+      dashboard: dashboard,
       chat: persistReducer(chatPersistConfig, chat),
       makeMeeting: makeMeeting
     })));

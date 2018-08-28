@@ -52,6 +52,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
   leaveRoom: () => {
+    dispatch(push('/riffs'));
     dispatch(leaveRoom());
   },
   leaveRiffRoom: (meetingId, uid) => {

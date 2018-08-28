@@ -21,7 +21,7 @@ const mapStateToProps = state => ({
   fetchMeetingStatus: state.dashboard.fetchMeetingStatus,
   lastFetched: state.dashboard.lastFetched,
   shouldFetch: state.dashboard.shouldFetch,
-  selectedMeeting: state.dashboard.selectedMeeting,
+  selectedMeeting: state.dashboard.selectedMeeting || "",
   processedUtterances: state.dashboard.processedUtterances,
   statsStatus: state.dashboard.statsStatus
 });
