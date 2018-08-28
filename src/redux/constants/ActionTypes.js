@@ -8,6 +8,9 @@ export const CLEAR_ERROR = 'CLEAR_ERROR';
 export const INPUT_STATE_CHANGE = 'INPUT_STATE_CHANGE';
 export const LOG_OUT = 'LOG_OUT';
 
+export const OPEN_NAV_MENU = 'OPEN_NAV_MENU';
+export const CLOSE_NAV_MENU = 'CLOSE_NAV_MENU';
+
 export const MAKE_MEETING_INPUT_CHANGE = 'CHAT::MAKE_MTG_INPUT_CHANGE';
 export const JOIN_ROOM = 'CHAT::JOIN_ROOM';
 
