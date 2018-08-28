@@ -28,7 +28,7 @@ const chatPersistConfig = {
 const dashPersistConfig = {
   key: 'dashboard',
   storage: storage,
-  blacklist: ['shouldFetch']
+  blacklist: ['shouldFetch', 'fetchMeetingStatus', 'statsStatus']
 };
 
 export default persistReducer(
