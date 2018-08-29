@@ -3,6 +3,7 @@ import auth from './auth';
 import chat from './chat';
 import menu from './menu';
 import dashboard from './dashboard';
+import profile from './profile';
 import makeMeeting from './makeMeeting';
 import storage from 'redux-persist/lib/storage' // defaults to localStorage for web and AsyncStorage for react-native
 import { connectRouter } from 'connected-react-router'
@@ -14,7 +15,7 @@ import browserHistory from "../../history"
 const rootPersistConfig = {
   key: 'root',
   storage,
-  blacklist: ['router', 'chat', 'riff']
+  blacklist: ['router', 'chat', 'riff', 'dashboard']
 };
 
 // we want our webRTC peers to be populated by our server,
@@ -31,6 +32,12 @@ const dashPersistConfig = {
   blacklist: ['shouldFetch', 'fetchMeetingStatus', 'statsStatus']
 };
 
+const profilePersistConfig = {
+  key: 'profile',
+  storage: storage,
+  blacklist: ['changeEmailStatus', 'changeEmailMessage', 'emailInput']
+};
+
 export default persistReducer(
   rootPersistConfig,
   connectRouter(browserHistory)(
@@ -40,5 +47,6 @@ export default persistReducer(
       menu: menu,
       dashboard: dashboard,
       chat: persistReducer(chatPersistConfig, chat),
+      profile: persistReducer(profilePersistConfig, profile),
       makeMeeting: makeMeeting
     })));

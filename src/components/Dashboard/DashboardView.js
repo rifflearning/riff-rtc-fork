@@ -84,7 +84,7 @@ const DashboardView = ({user, riffAuthToken, meetings,
                         processedUtterances, statsStatus,
                         handleRefreshClick, selectedMeetingDuration}) =>
       {
-        console.log("fetch meetings status (view)", fetchMeetingsStatus);
+        console.log("fetch meetings status (view)", fetchMeetingsStatus, meetings);
 
         if (fetchMeetingsStatus == 'loading') {
           return (
