@@ -22,7 +22,7 @@ const mapStateToProps = state => ({
   user: state.auth.user,
   emailMessage: processEmailMessage(state.profile.changeEmailMessage),
   emailStatus: state.profile.changeEmailStatus,
-  emailInput: (state.profile.emailInput == "" ? state.auth.user.email : state.profile.emailInput)
+  emailInput: (state.profile.emailInput == "" || !state.profile.emailInput ? state.auth.user.email : state.profile.emailInput)
 });
 
 const mapDispatchToProps = dispatch => ({
