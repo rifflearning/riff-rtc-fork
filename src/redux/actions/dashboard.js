@@ -35,20 +35,25 @@ export const loadRecentMeetings = (uid) => dispatch => {
   }).then((meetingIds) => {
     return app.service('meetings').find({query: {_id: meetingIds}});
   }).then((meetingObjects) => {
+    console.log("raw meeting objects received:", meetingObjects);
     meetingObjects = _.filter(meetingObjects, (m, idx) => {
+      if (!m.endTime) {
+        return true;
+      }
       let durationSecs = (new Date(m.endTime).getTime() - new Date(m.startTime).getTime()) / 1000;
       //console.log("duration secs:", durationSecs)
       return durationSecs > 2*60;
     });
     if (meetingObjects.length == 0) {
+      console.log("no meetings over 2 minutes", );
       throw new Error("no meetings after filter");
     }
+    console.log("meeting objs after duration filter:", meetingObjects);
     return meetingObjects;
     //dispatch(updateMeetingList(meetingObjects));
-    console.log("got meeting objects:", meetingObjects);
   }).then(meetingObjects => {
     let pEvents = _.map(meetingObjects, (m) => {
-      return app.service('participantEvents').find({query: {meeting: m._id}})
+      return app.service('participantEvents').find({query: {meeting: m._id, $limit: 500}})
     });
     return Promise.all(pEvents)
       .then(function (vals) {
@@ -56,13 +61,18 @@ export const loadRecentMeetings = (uid) => dispatch => {
         return {meetings: meetingObjects, pEvents: vals};
       });
   }).then(({meetings, pEvents}) => {
-    console.log("got prevents:", pEvents);
+    console.log("got pevents:", pEvents);
+    console.log("got meetings:", meetings);
     // only return meetings that have over 1 participant.
     let numParticipants = _.map(pEvents, pe => {
       return _.uniq(_.flatten(_.map(pe.data, (p) => { return p.participants}))).length;
     });
-    console.log("num participants:", numParticipants);
-    meetings = _.filter(meetings, (m, idx) => {return numParticipants[idx] > 1});
+    // TODO: this will include meetings where someone joins but does not speak.
+    // because we use the utterance data to inform our shit, the # of attendees will also be wrong.
+    // right thing to do here is to try and create a service on the server that will reliably give
+    // us # of attendees
+    console.log("num participants:", numParticipants, meetings);
+    meetings = _.filter(meetings, (m, idx) => {return numParticipants[idx] >= 2});
     console.log("kept meetings:", meetings);
     if (meetings.length == 0) {
       throw new Error("no meetings after nparticipants filter");
@@ -82,8 +92,11 @@ export const loadRecentMeetings = (uid) => dispatch => {
       dispatch({type: DASHBOARD_FETCH_MEETINGS,
                 status: 'error',
                 message: "Only had meetings by yourself? Come back after some meetings with others to explore some insights."});
+    } else {
+      // infinite loop?
+      console.log("Couldn't retrieve meetings", err);
+      dispatch(loadRecentMeetings(uid));
     }
-    console.log("Couldn't retrieve meetings", err);
   });
 };
 
@@ -137,7 +150,7 @@ let processUtterances = (utterances, meetingId) => {
 export const loadMeetingData = (meetingId) => dispatch => {
   dispatch({type: DASHBOARD_FETCH_MEETING_STATS, status: 'loading'});
   console.log("finding utterances for meeting", meetingId);
-  return app.service('utterances').find({query: {meeting: meetingId, $limit: 1000}})
+  return app.service('utterances').find({query: {meeting: meetingId, $limit: 10000}})
     .then((utterances) => {
       // console.log("utterances", utterances);
       // console.log("processed:", processUtterances(utterances, meetingId));

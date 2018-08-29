@@ -7,11 +7,10 @@ import { CREATE_USER_SUCCESS,
          CLEAR_ERROR,
          LOG_OUT} from '../constants/ActionTypes';
 import firebase from "firebase";
-import app from "../../firebase"
-import { push } from 'connected-react-router'
+import app from "../../firebase";
+import { push } from 'connected-react-router';
 
 export const createUserSuccess = (resp) => {
-  console.log("create user success...", resp)
   let user  = {
     email: resp.user.email,
     uid: resp.user.uid,
