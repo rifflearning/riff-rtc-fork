@@ -1,16 +1,17 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import Home from './Home';
-import SignUp from "./SignUp"
-import LogIn from "./LogIn"
-import Profile from "./Profile"
-import Dashboard from "./Dashboard"
-import Chat from "./Chat"
-import NavBar from "./NavBar"
+import SignUp from "./SignUp";
+import LogIn from "./LogIn";
+import Profile from "./Profile";
+import Dashboard from "./Dashboard";
+import Chat from "./Chat";
+import NavBar from "./NavBar";
+import PrivateRoute from './PrivateRoute';
 import styled, { injectGlobal, keyframes } from 'styled-components';
-import store from '../redux/store'
-import { connect } from 'react-redux'
-import { withRouter } from "react-router-dom"
+import store from '../redux/store';
+import { connect } from 'react-redux';
+import { withRouter } from "react-router-dom";
 import {
   Router,
   Route,
@@ -53,15 +54,8 @@ class App extends React.Component {
     super(props);
     addAuthListener(this.props.dispatch,
                     this.props.auth);
+    console.log("app props:", props)
   }
-
-  // componentWillUpdate() {
-  //   console.log("updating...", this.props.auth.user.uid, this.props.auth.uid);
-  //   if (!this.props.auth.user.uid && !this.props.auth.uid) {
-  //     console.log("No user detected, creating anonymous ID");
-  //     this.props.logInAnonymously();
-  //   }
-  // }
 
   componentWillMount() {
     if (!this.props.auth.user.uid && !this.props.auth.uid) {
@@ -88,7 +82,7 @@ class App extends React.Component {
             <Route exact path="/room" component={Chat}/>
             <Route exact path="/signup" component={SignUp} />
             <Route exact path="/login" component={LogIn} />
-            <Route exact path="/profile" component={Profile} />
+            <PrivateRoute exact path="/profile" auth={this.props.auth} component={Profile}/>
             <Route exact path="/riffs" component={Dashboard} />
           </div>
         </Router>
