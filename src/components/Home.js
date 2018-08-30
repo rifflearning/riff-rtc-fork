@@ -71,7 +71,7 @@ class Home extends React.Component {
                      paddingBottom: "2rem",
              background: "linear-gradient(30deg, rgba(138,106,148,1) 12%, rgba(171,69,171,1) 87%)"}}>
           <div class="column is-one-quarter">
-            <div class="card" style={{maxHheight: '20rem', objectFit: 'contain'}}>
+            <div class="card" style={{maxHeight: '20rem', objectFit: 'contain'}}>
               <figure class="image is-square">
                 <img  style={{maxHeight: '20rem', objectFit: 'contain'}} src={require('../../assets/camera.png')}/>
               </figure>
