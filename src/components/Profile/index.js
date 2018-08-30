@@ -1,14 +1,14 @@
-import React, { Component } from "react"
-import { withRouter } from "react-router-dom"
-import { connect } from 'react-redux'
-import auth from "../../firebase"
+import React, { Component } from "react";
+import { withRouter } from "react-router-dom";
+import { connect } from 'react-redux';
+import auth from "../../firebase";
 import {
   handleChangeEmail,
   handleEmailInput,
   clearEmailError}
-from "../../redux/actions/profile"
-import { push } from 'connected-react-router'
-import ProfileView from './ProfileView'
+from "../../redux/actions/profile";
+import { push } from 'connected-react-router';
+import ProfileView from './ProfileView';
 
 const processEmailMessage = (msg) => {
   if (msg.indexOf('This operation') > -1) {
