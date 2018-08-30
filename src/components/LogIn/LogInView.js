@@ -42,52 +42,51 @@ const LogInView = ({handleLogIn,
                     password,
                     isInvalid}) => (
 
-                       <div class="section">
-                         <div class="columns">
-                           <GradientCol>
-                             <FixedCard>
-                               <p class="title">
-                                 Log In
-                               </p>
-                               <form onSubmit={handleLogIn}>
-                                 <div class="field">
-                                   <label class="label">email</label>
-                                   <div class="control">
-                                     <input class="input"
-                                            type="text"
-                                            name="email"
-                                            placeholder="example@riff.com"
-                                            onChange={event => handleEmail(event.target.value)}/>
-                                   </div>
-                                 </div>
-                                 <div class="field">
-                                   <label class="label">password</label>
-                                   <div class="control">
-                                     <input class="input"
-                                            type="password"
-                                            name="password"
-                                            placeholder="something unique and long"
-                                            onChange={event => handlePassword(event.target.value)}/>
-                                   </div>
-                                 </div>
-                                 <div class="field">
-                                   <div class="control">
-                                     <button class="button is-link" type="submit" disabled={isInvalid}>Submit</button>
-                                   </div>
-                                 </div>
-                                 { error && <div class="notification is-warning">
-                                     <button class="delete" onClick={clearError}></button>
-                                     {error.message}</div>}
-                               </form>
-                             </FixedCard>
-                           </GradientCol>
-                           <div class="column">
-                             <LogInContent>
-                               <h1> Sign up to reserve rooms and see data about your conversations. </h1>
-                             </LogInContent>
-                           </div>
-                         </div>
-                       </div>
-                     )
-
+                      <div class="section">
+                        <div class="columns">
+                          <GradientCol>
+                            <FixedCard>
+                              <p class="title">
+                                Log In
+                              </p>
+                              <form onSubmit={handleLogIn}>
+                                <div class="field">
+                                  <label class="label">email</label>
+                                  <div class="control">
+                                    <input class="input"
+                                           type="text"
+                                           name="email"
+                                           placeholder="example@riff.com"
+                                           onChange={event => handleEmail(event.target.value)}/>
+                                  </div>
+                                </div>
+                                <div class="field">
+                                  <label class="label">password</label>
+                                  <div class="control">
+                                    <input class="input"
+                                           type="password"
+                                           name="password"
+                                           placeholder="something unique and long"
+                                           onChange={event => handlePassword(event.target.value)}/>
+                                  </div>
+                                </div>
+                                <div class="field">
+                                  <div class="control">
+                                    <button class="button is-link" type="submit" disabled={isInvalid}>Submit</button>
+                                  </div>
+                                </div>
+                                { error && <div class="notification is-warning">
+                                    <button class="delete" onClick={clearError}></button>
+                                    {error.message}</div>}
+                              </form>
+                            </FixedCard>
+                          </GradientCol>
+                          <div class="column">
+                            <LogInContent>
+                              <h1> Log in to access your meeting history!</h1>
+                            </LogInContent>
+                          </div>
+                        </div>
+                      </div>
+                    );
 export default LogInView;
