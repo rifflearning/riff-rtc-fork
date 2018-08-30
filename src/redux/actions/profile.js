@@ -24,7 +24,7 @@ export const clearEmailError = () => {
 
 export const handleEmailInput = (email) => {
   return {type: CHANGE_EMAIL_INPUT, 'email': email};
-}
+};
 
 export const handleChangeEmail = (email) => dispatch => {
   dispatch(changeEmailLoading());
@@ -36,7 +36,3 @@ export const handleChangeEmail = (email) => dispatch => {
     dispatch(changeEmailError(err.message));
   });
 };
-
-export const handleEmailInput = (email) => {
-  return {type: CHANGE_EMAIL_INPUT, 'email': email};
-}
