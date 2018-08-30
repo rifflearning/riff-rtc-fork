@@ -45,6 +45,9 @@ const mapDispatchToProps = dispatch => ({
 
 
 const formatMeetingDuration = (meeting) => {
+  if (!meeting.endTime) {
+    meeting = { ...meeting, endTime: new Date()  };
+  };
   let diff = moment(new Date(meeting.endTime)).diff(moment(new Date(meeting.startTime)), 'minutes');
   return diff + " minutes";
 }
