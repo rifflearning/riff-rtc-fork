@@ -11,7 +11,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = (dispatch, ownProps) => ({
   redirect: () => {
-    dispatch(push("/room"));
+    dispatch(push("/riffs"));
   }
 });
 
