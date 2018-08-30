@@ -56,7 +56,6 @@ const ProfileView = ({user, emailStatus, emailMessage, emailInput, clearEmailErr
             { emailStatus == 'error' && <div class="notification is-warning">
                 <button class="delete" onClick={clearEmailError}></button>
                 {emailMessage}</div> }
-            <p>Email: {user.email}</p>
           </div>
         </div>
       </div>
