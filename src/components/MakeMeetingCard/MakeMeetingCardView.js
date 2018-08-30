@@ -37,14 +37,10 @@ const MakeMeetingCardView = ({
           Start a room to make your meetings actually engaging.
         </p>
         <div class="field has-addons">
-          <p class="control">
-            <TextInputStart>
-              riff.com/
-            </TextInputStart>
-          </p>
           <div class="control">
             <input class="input" type="text"
                    value={ roomName }
+                   placeholder="your-next-great-meeting"
                    onChange={ event => handleRoomNameChange(event.target.value)}
               onKeyPress={ handleKeyPress }/>
           </div>
