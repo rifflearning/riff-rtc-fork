@@ -40,14 +40,12 @@ class Home extends React.Component {
         <div class="columns">
           <div class="column">
             <div class="content">
-              <h1> Riff is a new way to talk online. </h1>
+              <h1 class="is-size-1"> Riff is a new way to talk online. </h1>
               <p>
                 Riff teaches you how to make your conversations better by measuring how
                 you interact with others and giving you feedback about what happened.
                 <span> <a href="">Learn more</a></span> (jump to blurb below)
               </p>
-
-              <div>[Chat box and how-to infographic]</div>
 
               <h2> Why Riff? </h2>
               <p>
@@ -57,8 +55,47 @@ class Home extends React.Component {
                 work with others. Riff’s measurements can predict the engagement,
                 satisfaction and performance on shared tasks.
               </p>
-
-              <h2> Our Beta has three features </h2>
+            </div>
+          </div>
+          <div class="column">
+            <MakeMeetingCard>
+            </MakeMeetingCard>
+          </div>
+        </div>
+        <div class="columns has-text-centered is-centered"
+             style={{marginLeft: "-1.5rem",
+                     marginRight: "-1.5rem",
+                     marginTop: "2rem",
+                     marginBottom: "2rem",
+                     paddingTop: "2rem",
+                     paddingBottom: "2rem",
+             background: "linear-gradient(30deg, rgba(138,106,148,1) 12%, rgba(171,69,171,1) 87%)"}}>
+          <div class="column is-one-quarter">
+            <div class="card" style={{maxHheight: '20rem', objectFit: 'contain'}}>
+              <figure class="image is-square">
+                <img  style={{maxHeight: '20rem', objectFit: 'contain'}} src={require('../../assets/camera.png')}/>
+              </figure>
+            </div>
+          </div>
+          <div class="column is-one-quarter">
+            <div class="card" style={{maxHeight: '20rem', objectFit: 'contain'}}>
+              <figure class="image is-square">
+                <img  style={{maxHeight: '20rem', objectFit: 'contain'}} src={require('../../assets/invite.png')}/>
+              </figure>
+            </div>
+          </div>
+          <div class="column is-one-quarter">
+            <div class="card" style={{maxHeight: '20rem', objectFit: 'contain'}}>
+              <figure class="image is-square">
+                <img  style={{maxHeight: '20rem', objectFit: 'contain'}} src={require('../../assets/data.png')}/>
+              </figure>
+            </div>
+          </div>
+        </div>
+        <div class="columns">
+          <div class="column">
+            <div class="content">
+              <h1 class="is-size-2"> Our Beta has three features </h1>
               <ul>
                 <li>
                   Instrumented video chat — our proprietary WebRTC video chat application
@@ -93,10 +130,6 @@ class Home extends React.Component {
                 at <a href="https://www.rifflearning.com">www.rifflearning.com.</a>
               </p>
             </div>
-          </div>
-          <div class="column">
-            <MakeMeetingCard>
-            </MakeMeetingCard>
           </div>
         </div>
       </HomeSection>
