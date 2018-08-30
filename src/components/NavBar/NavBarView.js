@@ -50,6 +50,7 @@ const NavBarView = ({loggedIn, menuOpen, handleLogOut, handleBurgerClick}) => (
     <div class="navbar-start">
       <Link className='navbar-item' to="/riffs">My Riffs</Link>
       <Link className='navbar-item' to="/room">Chat</Link>
+      <a className='navbar-item' href="https://rifflearning.com">Learn More</a>
     </div>
     <ProfileLinks loggedIn={loggedIn} handleLogOut={handleLogOut}></ProfileLinks>
   </div>
