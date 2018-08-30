@@ -23,6 +23,7 @@ const ProfileView = ({user, emailStatus, emailMessage, emailInput, clearEmailErr
         <div class="columns">
           <div class="column">
             <h1 class='is-size-3'>Profile</h1>
+            <p class='is-size-5'>Here you can change your email and your default display name. More coming soon! </p>
           </div>
         </div>
         <div class="columns is-centered has-text-centered">
