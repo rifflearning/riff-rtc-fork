@@ -64,11 +64,12 @@ export const clearAuthError = () => {
 
 export const logOutUser = () => dispatch => {
   return firebase.auth().signOut().then((res) => {
-    console.log("signed out?", res)
+    console.log("signed out?", res);
   }).then((res) => {
     dispatch({
       type: LOG_OUT
     });
+    dispatch(push("/login"));
   });
 };
 
@@ -118,7 +119,7 @@ export const attemptUserSignIn = (email, pass) => dispatch => {
     .then((resp) => {
       dispatch(loginUserSuccess(resp));
     }).then(() => {
-      dispatch(push("/profile"));
+      dispatch(push("/riffs"));
     })
     .catch((error) => dispatch(loginUserFail(error)));
 }
