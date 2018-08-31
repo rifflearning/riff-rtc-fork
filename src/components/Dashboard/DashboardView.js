@@ -35,17 +35,15 @@ const formatChartData = (processedUtterances, participantId) => {
   let colors = [];
 
   processedUtterances.forEach(p => {
-    /// TODO: modifying the data to change how it is displayed is wrong. Figure out how to format the tooltip and fix this! -mjl
-    let talkingTime = Math.round(p.lengthUtterances);
     // our display name from firebase if we've got it.
     let label = p.displayName;
 
     if (p.participantId === participantId) {
-      data.unshift([ label || 'You', talkingTime]);
+      data.unshift([ label || 'You', p.lengthUtterances]);
       colors.unshift(colorYou);
     }
     else {
-      data.push([ label || `User ${nextOtherUser++}`, talkingTime]);
+      data.push([ label || `User ${nextOtherUser++}`, p.lengthUtterances]);
       colors.push(colorOther);
     }
   });
@@ -56,8 +54,27 @@ const formatChartData = (processedUtterances, participantId) => {
 const TurnChart = ({processedUtterances, participantId}) => {
   let r = formatChartData(processedUtterances, participantId);
   console.log("data for chart:", r.data);
+
+  const chartOptions = {
+    tooltips: {
+      callbacks: {
+        label: function (tooltipItem, data) {
+          let label = data.labels[tooltipItem.index] || '';
+          let seconds = data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index] || -1;
+          let minutes = Math.trunc(seconds / 60);
+          seconds = Math.round(seconds % 60);
+
+          let tooltip = `${label}${label ? ': ' : ''}${minutes}m ${seconds}s`;
+          return tooltip;
+        }
+      }
+    }
+  };
+
   return (
-    <PieChart donut={true} height="500px" width="800px" data={r.data} title="Seconds spoken" colors={r.colors}/>
+    <PieChart donut={true} library={chartOptions}
+              data={r.data} colors={r.colors}
+              height="500px" width="800px" title="Time spoken"/>
   );
 };
 
