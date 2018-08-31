@@ -27,30 +27,54 @@ margin-left: 0
 const formatChartData = (processedUtterances, participantId) => {
   console.log("formatting:", processedUtterances);
 
-  let ids = _.uniq(_.map(processedUtterances, (p) => { return p.participantId}));
+  const colorYou = '#ab45ab';
+  const colorOther = '#bdc3c7';
+  let nextOtherUser = 1;
 
-  let data = _.map(processedUtterances, (p, idx) => {
-    let label = (p.participantId == participantId ? 'You' : "User " + idx);
-    //console.log(p)
-    // use our display name from firebase if we've got it.
-    label = p.displayName ? p.displayName : label;
-    return [label, p.lengthUtterances];
-  });
-  let colors = _.map(processedUtterances, (p) => {
-    if (p.participantId == participantId) {
-      return "#ab45ab";
-    } else {
-      return "#bdc3c7";
+  let data = [];
+  let colors = [];
+
+  processedUtterances.forEach(p => {
+    // our display name from firebase if we've got it.
+    let label = p.displayName;
+
+    if (p.participantId === participantId) {
+      data.unshift([ label || 'You', p.lengthUtterances]);
+      colors.unshift(colorYou);
+    }
+    else {
+      data.push([ label || `User ${nextOtherUser++}`, p.lengthUtterances]);
+      colors.push(colorOther);
     }
   });
-  return {data: data, colors: colors};
+
+  return { data: data, colors: colors };
 };
 
 const TurnChart = ({processedUtterances, participantId}) => {
   let r = formatChartData(processedUtterances, participantId);
   console.log("data for chart:", r.data);
+
+  const chartOptions = {
+    tooltips: {
+      callbacks: {
+        label: function (tooltipItem, data) {
+          let label = data.labels[tooltipItem.index] || '';
+          let seconds = data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index] || -1;
+          let minutes = Math.trunc(seconds / 60);
+          seconds = Math.round(seconds % 60);
+
+          let tooltip = `${label}${label ? ': ' : ''}${minutes}m ${seconds}s`;
+          return tooltip;
+        }
+      }
+    }
+  };
+
   return (
-    <PieChart donut={true} height="500px" width="800px" data={r.data} title="Seconds spoken" colors={r.colors}/>
+    <PieChart donut={true} library={chartOptions}
+              data={r.data} colors={r.colors}
+              height="500px" width="800px" title="Time spoken"/>
   );
 };
 
@@ -86,7 +110,7 @@ const DashboardView = ({user, riffAuthToken, meetings,
       {
         console.log("fetch meetings status (view)", fetchMeetingsStatus, meetings);
 
-        if (fetchMeetingsStatus == 'loading') {
+        if (fetchMeetingsStatus === 'loading') {
           return (
             <div class="columns is-centered has-text-centered">
               <div class="column">
@@ -94,7 +118,7 @@ const DashboardView = ({user, riffAuthToken, meetings,
               </div>
             </div>
           );
-        } else if (fetchMeetingsStatus == 'error') {
+        } else if (fetchMeetingsStatus === 'error') {
           return (
             <div class="columns is-centered has-text-centered is-vcentered" style={{height: '90vh'}}>
               <div class="column is-vcentered" style={{alignItems: 'center'}}>
@@ -120,7 +144,7 @@ const DashboardView = ({user, riffAuthToken, meetings,
                              handleMeetingClick={handleMeetingClick}/>
               </div>
               <div class="column">
-                {statsStatus == 'loading' ?
+                {statsStatus === 'loading' ?
                   <div>
                   <ScaleLoader color={"#8A6A94"}/>
                   </div>
