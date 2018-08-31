@@ -44,7 +44,6 @@ class Home extends React.Component {
               <p>
                 Riff teaches you how to make your conversations better by measuring how
                 you interact with others and giving you feedback about what happened.
-                <span> <a href="">Learn more</a></span> (jump to blurb below)
               </p>
             </div>
           </div>
