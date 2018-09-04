@@ -11,7 +11,7 @@ import { JOINING_ROOM,
          CHAT_GET_MEDIA_ERROR,
          CHAT_SHARE_STREAM,
          CHAT_VOLUME_CHANGED
-       } from './constants/ActionTypes';
+       } from '../constants/ActionTypes';
 import {
   addPeer,
   removePeer,
@@ -23,15 +23,15 @@ import {
   muteAudio,
   unMuteAudio,
   leaveRoom
-} from './actions/chat';
+} from '../actions/chat';
 import {
   updateRiffMeetingId,
   participantLeaveRoom
-} from './actions/riff';
+} from '../actions/riff';
 import ReactDOM from 'react-dom';
 
-import { app, socket } from '../riff';
-import captureSpeaking from '../libs/audio';
+import { app, socket } from '../../riff';
+import captureSpeaking from '../../libs/audio';
 
 
 export default function (nick, localVideoNode, dispatch, getState) {

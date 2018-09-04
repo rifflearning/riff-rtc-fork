@@ -61,13 +61,9 @@ export const attemptRiffAuthenticate = () => dispatch => {
   }.bind(this)).catch(function (err) {
     console.log('auth ERROR:', err);
     dispatch(riffAuthFail(err));
+    console.log("trying to authenticate again...");
+    dispatch(attemptRiffAuthenticate());
   });
-  // we used to automatically join a meeting.
-  // .then(function (result) {
-  //    log('meeting result:', result);
-  //     // we've confirmed auth & meeting join- start communication w/ server
-  //     this.record();
-  // }.bind(this));
 };
 
 export const riffAddUserToMeeting = (uid, email, roomName, nickName,

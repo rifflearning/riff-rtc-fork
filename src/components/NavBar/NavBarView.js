@@ -23,11 +23,13 @@ const ProfileLinks = (props) => {
   if (!props.loggedIn) {
     return (
       <div class="navbar-end">
+        <a className="navbar-item" href="mailto:beta@rifflearning.com">Send Feedback</a>
         <Link className='navbar-item' to="/signup">Sign Up</Link>
         <Link className='navbar-item' to="/login">Login</Link>
       </div>);
   } else {
     return <div class="navbar-end">
+      <a className='navbar-item' href="mailto:beta@rifflearning.com">Send Feedback</a>
       <Link className='navbar-item' to="/profile">Profile</Link>
       <Link className='navbar-item' to="/home" onClick={ props.handleLogOut }>Log Out</Link>
       </div>;

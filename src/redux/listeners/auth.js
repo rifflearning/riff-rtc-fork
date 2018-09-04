@@ -1,5 +1,5 @@
-import app from '../firebase';
-import { loginAnonymously } from './actions/auth.js';
+import app from '../../firebase';
+import { loginAnonymously } from '../actions/auth.js';
 
 
 export default function (dispatch, authState) {
