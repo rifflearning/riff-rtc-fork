@@ -47,8 +47,8 @@ const LoadingView = () => {
 const mapStateToProps = state => ({
   auth: state.auth,
   riff: state.riff,
-  isLoaded: false,
-//  isLoaded: ((state.auth.user.uid || state.auth.uid) && state.riff.authToken)
+//  isLoaded: false,
+  isLoaded: ((state.auth.user.uid || state.auth.uid) && state.riff.authToken)
 });
 
 const mapDispatchToProps = dispatch => ({

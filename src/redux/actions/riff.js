@@ -61,6 +61,8 @@ export const attemptRiffAuthenticate = () => dispatch => {
   }.bind(this)).catch(function (err) {
     console.log('auth ERROR:', err);
     dispatch(riffAuthFail(err));
+    console.log("trying to authenticate again...");
+    dispatch(attemptRiffAuthenticate());
   });
 };
 
