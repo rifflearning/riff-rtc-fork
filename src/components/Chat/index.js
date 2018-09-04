@@ -22,7 +22,7 @@ import {
 from "../../redux/actions/chat";
 import { participantLeaveRoom } from '../../redux/actions/riff';
 import { push } from 'connected-react-router';
-import addWebRtcListeners from "../../redux/listeners";
+import addWebRtcListeners from "../../redux/listeners/webrtc";
 import { riffAddUserToMeeting } from '../../redux/actions/riff';
 import { store, persistor } from '../../redux/store';
 import LeaveRoomButton from './LeaveRoomButton';

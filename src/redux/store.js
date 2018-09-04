@@ -7,9 +7,7 @@ import storage from 'redux-persist/lib/storage'; // defaults to localStorage for
 import thunk from 'redux-thunk';
 import browserHistory from "../history";
 import rootReducer from './reducers';
-
 import addRiffListener from './listeners/riff';
-
 
 
 const composeEnhancers = composeWithDevTools({
