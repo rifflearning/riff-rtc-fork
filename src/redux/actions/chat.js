@@ -5,6 +5,7 @@ import { JOINING_ROOM,
          REMOVE_PEER,
          MUTE_AUDIO,
          UNMUTE_AUDIO,
+         CHAT_DISPLAY_NAME_CHANGE,
          CHAT_LEAVE_ROOM,
          CHAT_READY_TO_CALL,
          CHAT_SET_WEBRTC_CONFIG,
@@ -22,6 +23,8 @@ import SimpleWebRTC from 'simplewebrtc';
 import ReactDOM from 'react-dom';
 import app from "../../firebase";
 import { push } from 'connected-react-router';
+
+let db = app.firestore();
 
 export const joinRoomError = (errMsg) => {
   return {
@@ -99,6 +102,34 @@ export const joinedRoom = (name) => {
   return {type: JOINED_ROOM,
           name: name};
 };
+
+export const displayNameSaveSuccess = () => {
+  return {type: CHAT_DISPLAY_NAME_CHANGE,
+          status: 'success'};
+};
+
+export const displayNameSaveFail = (err) => {
+  return {type: CHAT_DISPLAY_NAME_CHANGE,
+          status: 'fail',
+          message: err};
+};
+
+export const saveDisplayName = (name, uid, meetingId) => dispatch => {
+  console.log("saving display name in firebase......", name, uid, meetingId);
+  let docId = uid + "_" + meetingId;
+  let docRef = db.collection('meetings').doc(docId);
+  docRef.set({
+    user: uid,
+    meeting: meetingId,
+    displayName: name
+  },{merge: true}).then(() => {
+    console.log("saving display name in firebase SUCCESS");
+    dispatch(displayNameSaveSuccess());
+  }).catch((err) => {
+    console.log("saving display name in firebase ERROR: ");
+    dispatch(displayNameSaveFail(err));
+  });
+}
 
 export const muteAudio = () => {
   console.log("muting audio");

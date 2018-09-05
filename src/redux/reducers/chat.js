@@ -9,6 +9,7 @@ import {
   MUTE_VIDEO,
   ADD_PEER,
   REMOVE_PEER,
+  CHAT_DISPLAY_NAME_CHANGE,
   CHAT_LEAVE_ROOM,
   CHAT_READY_TO_CALL,
   CHAT_VOLUME_CHANGED,
@@ -29,6 +30,8 @@ const initialState = {
   videoMuted: false,
   displayName: "",
   joinRoomError: null,
+  savedDisplayName: false,
+  savedDisplayMessage: '',
   rhythm: {
     authenticated: false,
     token: null,
@@ -80,7 +83,13 @@ const chat = (state = initialState, action) => {
     const idx = state.webRtcPeers.map(item => item.id).indexOf(p.id);
     return {...state, webRtcPeerDisplayNames: [...state.webRtcPeerDisplayNames.slice(0, idx),
                                     action.displayName,
-                                    ...state.webRtcPeerDisplayNames.slice(idx + 1)]};
+                                               ...state.webRtcPeerDisplayNames.slice(idx + 1)]};
+  case(CHAT_DISPLAY_NAME_CHANGE):
+    console.log("saving display name in firebase: ", action);
+    return {...state,
+            savedDisplayName: action.status === 'success',
+            savedDisplayMessage: action.message || '',
+           };
   case(CHAT_GET_MEDIA_ERROR):
     return{...state, getMediaError: action.error};
   case(CHAT_READY_TO_CALL):
