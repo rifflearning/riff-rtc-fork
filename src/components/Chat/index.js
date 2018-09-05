@@ -75,10 +75,6 @@ const mapDispatchToProps = dispatch => ({
   joinWebRtc: (localVideoRef, nick) => {
     dispatch(joinWebRtc(localVideoRef, nick));
   },
-  saveDisplayName: (name, uid, meetingId, webrtcId) => {
-    console.log("saving display name to firebase...", name, uid, meetingId, webrtcId)
-    dispatch(saveDisplayName(name, uid, meetingId, webrtcId));
-  },
   handleReadyClick: (event, name, chat, auth, riff, webrtc) => {
     if ((chat.roomName == '' || chat.displayName == '')) {
       dispatch(joinRoomError('You need to specify a room and a display name!'));
@@ -101,7 +97,7 @@ const mapDispatchToProps = dispatch => ({
                            riff.authToken
                           );
       // use nick property to share riff IDs with all users
-      webrtc.changeNick(auth.user.uid);
+      webrtc.changeNick(auth.user.uid + " " + chat.displayName);
     }
   },
   handleMuteAudioClick: (event, muted, webrtc) => {
@@ -125,14 +121,6 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => ({
   ...dispatchProps,
   ...ownProps,
   withRef: true,
-  saveDisplayName: () => {
-    if (stateProps.riff.meetingId && stateProps.webrtcId != "") {
-      dispatchProps.saveDisplayName(stateProps.displayName,
-                                 stateProps.user.uid,
-                                 stateProps.riff.meetingId,
-                                 stateProps.webrtcId);
-    }
-  },
   handleKeypress: (event, webrtc) => {
     if (Event.key == 'Enter') {
       dispatchProps.handleReadyClick(event,
@@ -236,22 +224,13 @@ const RenderVideos = ({inRoom, webRtcPeers, roomName, displayName,
                        clearJoinRoomError,
                        joinRoomError,
                        joinButtonDisabled,
-                       webrtc}) =>
+                       webrtc, chat}) =>
       {
         //console.log("webrtc peers:", webRtcPeers);
-        if (!savedDisplayName && inRoom) {
-          return (
-            <div class="columns has-text-centered is-centered is-vcentered"
-                 style={{minHeight: "80vh", minWidth: "80vw"}}>
-              <div class="column is-vcentered has-text-centered">
-                <ScaleLoader color={"#8A6A94"}/>
-              </div>
-            </div>
-          );
-        } else if (webRtcPeers.length > 0) {
+        if (webRtcPeers.length > 0) {
           return (
             <div class="column">
-              <RemoteVideoContainer ref = "remote" peers = {webRtcPeers}/>
+              <RemoteVideoContainer ref = "remote" peers = {webRtcPeers} chat={chat}/>
             </div>
           );
         } else {
@@ -305,7 +284,14 @@ const RenderVideos = ({inRoom, webRtcPeers, roomName, displayName,
                             </div>
                     </div>
                     :
-                  <h1>Nobody else here...</h1>}
+                    <div class="columns has-text-centered is-centered is-vcentered"
+                           style={{minHeight: "80vh", minWidth: "80vw"}}>
+                        <div class="column is-vcentered has-text-centered">
+                          <h1>Nobody else here...</h1>
+                          <ScaleLoader color={"#8A6A94"}/>
+                          </div>
+                    </div>
+                    }
               </div>
             </div>
           );
@@ -317,10 +303,6 @@ class Chat extends Component {
     this.onUnload = this.onUnload.bind(this);
   }
 
-  componentDidUpdate() {
-    this.props.saveDisplayName();
-  }
-
   componentDidMount() {
     let localVideo = ReactDOM.findDOMNode(this.refs.local);
     this.webrtc = addWebRtcListeners(this.props.user.email,
@@ -328,7 +310,6 @@ class Chat extends Component {
                                      this.props.dispatch,
                                      store.getState);
     console.log("> webrtc connection ID:", this.webrtc.connection.connection.id);
-//    this.props.saveDisplayName();
 
     // leave chat when window unloads
     window.addEventListener("beforeunload", this.onUnload);
@@ -463,6 +444,7 @@ class Chat extends Component {
             joinButtonDisabled={(this.props.roomName == '' || this.props.displayName == '')}
             clearJoinRoomError={this.props.clearJoinRoomError}
             joinRoomError={this.props.joinRoomError}
+            chat={this.props.chat}
             webrtc={this.webrtc}>
           </RenderVideos>
         </div>

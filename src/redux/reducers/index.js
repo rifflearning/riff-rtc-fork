@@ -23,7 +23,9 @@ const rootPersistConfig = {
 const chatPersistConfig = {
   key: 'chat',
   storage: storage,
-  blacklist: ['webRtcPeers', 'volume', 'roomName', 'inRoom', 'joiningRoom', 'getMediaError', 'savedDisplayName']
+  blacklist: ['webRtcPeers', 'webRtcRiffIds', 'volume', 'roomName',
+              'inRoom', 'joiningRoom', 'getMediaError',
+              'savedDisplayName']
 };
 
 const dashPersistConfig = {

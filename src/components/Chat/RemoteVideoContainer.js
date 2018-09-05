@@ -27,7 +27,6 @@ class PeerVideo extends React.Component {
 
   render () {
     if (this.props.peerLength < 4) {
-      console.log("rendering over 3 peers");
       return (
         <div className = {"videoContainer remotes column"}
              id = {"container_" + this.props.peer.id}
@@ -56,6 +55,8 @@ class RemoteVideoContainer extends React.Component {
   videos() {
     let peerLength = this.props.peers.length;
     console.log("rendering", peerLength, "peers....");
+    console.log("names:", this.props.chat.webRtcPeerDisplayNames);
+    console.log("riff ids:", this.props.chat.webRtcRiffIds);
     return this.props.peers.map(function (peer) {
       return (<PeerVideo key={ peer.id } peer = { peer } peerLength = {peerLength}></PeerVideo>);
     });
