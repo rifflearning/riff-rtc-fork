@@ -123,7 +123,14 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => ({
   ...stateProps,
   ...dispatchProps,
   ...ownProps,
-  withRef: true
+  withRef: true,
+  saveDisplayName: () => {
+    if (stateProps.riff.meetingId && !stateProps.savedDisplayName) {
+      this.props.saveDisplayName(stateProps.displayName,
+                                 stateProps.user.uid,
+                                 stateProps.riff.meetingId);
+    }
+  }
 });
 
 
@@ -294,7 +301,6 @@ const RenderVideos = ({inRoom, webRtcPeers, roomName, displayName,
           );
         }};
 
-
 class Chat extends Component {
   constructor (props) {
     super(props);
@@ -303,18 +309,8 @@ class Chat extends Component {
     this.didSendFirebaseData = false;
   }
 
-  saveDisplayName() {
-    console.log("saving display name in firebase....", this.props.riff.meetingId, this.props.savedDisplayName)
-    if (this.props.riff.meetingId && !this.props.savedDisplayName) {
-      console.log("actually saving!")
-      this.props.saveDisplayName(this.props.displayName,
-                                 this.props.user.uid,
-                                 this.props.riff.meetingId);
-    }
-  };
-
   componentDidUpdate() {
-    this.saveDisplayName();
+    this.props.saveDisplayName();
   }
 
   componentDidMount() {
@@ -323,7 +319,7 @@ class Chat extends Component {
                                      localVideo,
                                      this.props.dispatch,
                                      store.getState);
-    this.saveDisplayName();
+    this.props.saveDisplayName();
     // leave chat when window unloads
     window.addEventListener("beforeunload", this.onUnload);
   }
