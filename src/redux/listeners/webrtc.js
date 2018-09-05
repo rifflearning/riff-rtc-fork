@@ -23,7 +23,9 @@ import {
   muteAudio,
   unMuteAudio,
   leaveRoom,
-  saveLocalWebrtcId
+  saveLocalWebrtcId,
+  changePeerDisplayName,
+  changePeerRiffId
 } from '../actions/chat';
 import {
   updateRiffMeetingId,
@@ -57,9 +59,13 @@ export default function (nick, localVideoNode, dispatch, getState) {
 //  console.log("Local Session ID:", webrtc.connection.socket.sessionId)
 
   webrtc.on('videoAdded', function (video, peer) {
-    console.log("added video", peer, video);
+    console.log("added video", peer, video, "nick:", peer.nick);
     dispatch(addPeer({peer: peer,
                       videoEl: video}));
+    let [riffId, nick] = peer.nick.split(' ');
+    console.log( ">>>>>>>>>>> updating peer:", riffId, nick);
+    dispatch(changePeerRiffId(peer, riffId));
+    dispatch(changePeerDisplayName(peer, nick));
   });
 
   webrtc.on('videoRemoved', function (video, peer) {

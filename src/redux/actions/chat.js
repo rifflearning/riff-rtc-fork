@@ -18,7 +18,8 @@ import { JOINING_ROOM,
          CHAT_SHARE_STREAM,
          CHAT_VOLUME_CHANGED,
          CHAT_JOIN_ROOM_ERROR,
-         CHAT_CLEAR_JOIN_ROOM_ERROR
+         CHAT_CLEAR_JOIN_ROOM_ERROR,
+         CHAT_CHANGE_PEER_RIFF_ID
        } from '../constants/ActionTypes';
 import SimpleWebRTC from 'simplewebrtc';
 import ReactDOM from 'react-dom';
@@ -97,6 +98,13 @@ export const changePeerDisplayName = (peer, displayName) => {
   return {type: CHAT_CHANGE_PEER_DISPLAY_NAME,
           peer: peer,
           displayName: displayName};
+};
+
+export const changePeerRiffId = (peer, riffId) => {
+  console.log("CHANGING PEER RIFF ID", peer, riffId);
+  return {type: CHAT_CHANGE_PEER_RIFF_ID,
+          peer: peer,
+          riffId: riffId};
 };
 
 export const joinedRoom = (name) => {
