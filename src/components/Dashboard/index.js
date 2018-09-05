@@ -14,18 +14,18 @@ import lifecycle from 'react-pure-lifecycle';
 import DashboardView from './DashboardView';
 
 const mapStateToProps = state => ({
-  user: state.auth.user,
-  riff: state.riff,
-  riffAuthToken: state.riff.authToken,
-  meetings: state.dashboard.meetings,
-  numMeetings: state.dashboard.numMeetings,
-  fetchMeetingsStatus: state.dashboard.fetchMeetingsStatus,
-  fetchMeetingsMessage: state.dashboard.fetchMeetingsMessage,
-  lastFetched: state.dashboard.lastFetched,
-  shouldFetch: state.dashboard.shouldFetch,
-  selectedMeeting: state.dashboard.selectedMeeting || "",
-  processedUtterances: state.dashboard.processedUtterances,
-  statsStatus: state.dashboard.statsStatus,
+  user:                   state.auth.user,
+  riff:                   state.riff,
+  riffAuthToken:          state.riff.authToken,
+  meetings:               state.dashboard.meetings,
+  numMeetings:            state.dashboard.numMeetings,
+  fetchMeetingsStatus:    state.dashboard.fetchMeetingsStatus,
+  fetchMeetingsMessage:   state.dashboard.fetchMeetingsMessage,
+  lastFetched:            state.dashboard.lastFetched,
+  shouldFetch:            state.dashboard.shouldFetch,
+  selectedMeeting:        state.dashboard.selectedMeeting || "",
+  processedUtterances:    state.dashboard.processedUtterances,
+  statsStatus:            state.dashboard.statsStatus,
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -45,6 +45,7 @@ const mapDispatchToProps = dispatch => ({
 
 
 const formatMeetingDuration = (meeting) => {
+  // support showing data on in progress meeting by giving them a fake end time of now
   if (!meeting.endTime) {
     meeting = { ...meeting, endTime: new Date()  };
   };
