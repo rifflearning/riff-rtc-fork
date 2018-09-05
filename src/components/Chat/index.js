@@ -46,7 +46,7 @@ const mapStateToProps = state => ({
   // first element is often null, I don't know why
   webRtcPeers: state.chat.webRtcPeers[0] === null ? [] : state.chat.webRtcPeers,
   isAudioMuted: state.chat.audioMuted,
-  volume: Math.ceil(((85 + state.chat.volume)+1)/20)*20,
+  volume: state.chat.volume,
   chat: state.chat,
   auth: state.auth,
   riff: state.riff,
