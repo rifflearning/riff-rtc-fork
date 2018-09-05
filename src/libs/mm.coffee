@@ -14,7 +14,7 @@
   PARTICIPANT_NODE_RADIUS = 20 * 2/3
   ENERGY_NODE_RADIUS = 30 * 2/3
 
-  PARTICIPANT_NODE_COLOR_LOCAL = '#092070'
+  PARTICIPANT_NODE_COLOR_LOCAL = '#4a4a4a'
   PARTICIPANT_NODE_COLOR_OTHER = '#3AC4C5'
 
   # get array of participant nodes from data
@@ -32,13 +32,19 @@
 
   # exported MeetingMediator class
   module.exports.MeetingMediator = class MM
-    constructor: (@data, @localParticipants, width, height) ->
+    constructor: (@data, @localParticipants, width, height, peerColors, riffIds) ->
 
       console.log "constructing MM with data:", @data
       @fontFamily = "Futura,Helvetica Neue,Helvetica,Arial,sans-serif"
       @margin = {top: 0, right: 0, bottom: 0, left: 0}
       @width = width - @margin.right - @margin.left
       @height = height - @margin.bottom - @margin.top
+      @peerColors = peerColors
+      @riffIds = riffIds
+
+      @nodeColorScale = d3.scaleOrdinal()
+            .domain @riffIds
+            .range @peerColors
 
       # radius of network as a whole
       @radius = NETWORK_RADIUS
@@ -56,8 +62,8 @@
 
       # color scale for sphere in the middle
       @sphereColorScale = d3.scaleLinear()
-        .domain [0, @data.participants.length * 3]
-        .range ['#C8E6C9', '#2E7D32']
+        .domain [-5, @data.participants.length * 3]
+        .range ['#f5f5f5', '#9d7dae']
         .clamp true
 
       # create initial node data
@@ -173,7 +179,8 @@
       else if @localParticipants.includes(d.participant)
         PARTICIPANT_NODE_COLOR_LOCAL
       else
-        PARTICIPANT_NODE_COLOR_OTHER
+        @nodeColorScale(d.participant)
+#        PARTICIPANT_NODE_COLOR_OTHER
 
     # d3func - we have different kinds of nodes, so this just abstracts
     # out the transform function.

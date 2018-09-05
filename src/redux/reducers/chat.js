@@ -24,6 +24,7 @@ import {
 } from '../constants/ActionTypes';
 
 const initialState = {
+  peerColors: ['#f56b6b', '#128EAD', '#7caf5f', '#f2a466'],
   joiningRoom: false,
   getMediaError: true,
   inRoom: false,

@@ -21,6 +21,7 @@ class PeerVideo extends React.Component {
       video.style.setProperty('margins', '5px');
       video.style.setProperty('object-fit', 'cover');
       video.style.setProperty('border-radius', '5px');
+      video.style.setProperty('border-bottom', '5px solid ' + this.props.peerColor);
       el.appendChild(video);
     }
   }
@@ -30,7 +31,7 @@ class PeerVideo extends React.Component {
       return (
         <div className = {"videoContainer remotes column"}
              id = {"container_" + this.props.peer.id}
-             style = {{'width': '100vh', 'height': '75vh', 'padding': '0.25rem'}}
+        style = {{'width': '100vh', 'height': '75vh', 'padding': '0.25rem'}}
              ref={this.appendVideo}>
         </div>
       );
@@ -38,7 +39,7 @@ class PeerVideo extends React.Component {
       return (
         <div className = {"videoContainer remotes column is-narrow"}
              id = {"container_" + this.props.peer.id}
-             style = {{'width': '50vh', 'height': '40vh', 'padding': '0.25rem'}}
+        style = {{'width': '50vh', 'height': '40vh', 'padding': '0.25rem'}}
              ref={this.appendVideo}>
         </div>
       );
@@ -58,8 +59,14 @@ class RemoteVideoContainer extends React.Component {
     console.log("names:", this.props.chat.webRtcPeerDisplayNames);
     console.log("riff ids:", this.props.chat.webRtcRiffIds);
     return this.props.peers.map(function (peer) {
-      return (<PeerVideo key={ peer.id } peer = { peer } peerLength = {peerLength}></PeerVideo>);
-    });
+      const idx = this.props.chat.webRtcPeers.map(item => item.id).indexOf(peer.id);
+      let peerColor = this.props.chat.peerColors[idx];
+      console.log("!!PEER COLOR:", peerColor)
+      return (<PeerVideo key={ peer.id }
+              peer = { peer }
+              peerColor = {peerColor}
+              peerLength = {peerLength}></PeerVideo>);
+    }.bind(this));
   };
 
   render() {

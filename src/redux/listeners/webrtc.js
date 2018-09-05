@@ -60,10 +60,8 @@ export default function (nick, localVideoNode, dispatch, getState) {
 
   webrtc.on('videoAdded', function (video, peer) {
     console.log("added video", peer, video, "nick:", peer.nick);
-    dispatch(addPeer({peer: peer,
-                      videoEl: video}));
+    dispatch(addPeer({peer: peer, videoEl: video}));
     let [riffId, nick] = peer.nick.split(' ');
-    console.log( ">>>>>>>>>>> updating peer:", riffId, nick);
     dispatch(changePeerRiffId(peer, riffId));
     dispatch(changePeerDisplayName(peer, nick));
   });
@@ -74,7 +72,8 @@ export default function (nick, localVideoNode, dispatch, getState) {
                          videoEl: video}));
     if (state.chat.inRoom) {
       console.log("riff removing participant: ", peer.nick, "from meeting", state.riff.meetingId);
-      participantLeaveRoom(state.riff.meetingId, peer.nick);
+      let [riffId, ...rest] = peer.nick.split(" ");
+      participantLeaveRoom(state.riff.meetingId, riffId);
     }
   });
 
