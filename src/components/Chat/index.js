@@ -130,7 +130,17 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => ({
                                  stateProps.user.uid,
                                  stateProps.riff.meetingId);
     }
-  }
+  },
+  handleKeypress: (event, webrtc) => {
+    if (Event.key == 'Enter') {
+      dispatchProps.handleReadyClick(event,
+                                     stateProps.displayN,
+                                     stateProps.chat,
+                                     stateProps.auth,
+                                     stateProps.riff,
+                                     webrtc);
+    }
+  },
 });
 
 
@@ -226,7 +236,8 @@ const RenderVideos = ({inRoom, webRtcPeers, roomName, displayName,
                        handleReadyClick,
                        clearJoinRoomError,
                        joinRoomError,
-                       joinButtonDisabled}) =>
+                       joinButtonDisabled,
+                       webrtc}) =>
       {
         //console.log("webrtc peers:", webRtcPeers);
         if (!savedDisplayName && inRoom) {
@@ -276,7 +287,7 @@ const RenderVideos = ({inRoom, webRtcPeers, roomName, displayName,
                                           name="name"
                                           placeholder="Your Name"
                                           value={displayName}
-                                          onKeyPress={ handleKeyPress }
+                                          onKeyPress={ (event) => handleKeyPress(event, webrtc) }
                                           onChange={event => handleDisplayNameChange(event.target.value)}/>
                                     </div>
                               </div>
@@ -304,9 +315,7 @@ const RenderVideos = ({inRoom, webRtcPeers, roomName, displayName,
 class Chat extends Component {
   constructor (props) {
     super(props);
-    this.handleKeyPress = this.handleKeyPress.bind(this);
     this.onUnload = this.onUnload.bind(this);
-    this.didSendFirebaseData = false;
   }
 
   componentDidUpdate() {
@@ -353,12 +362,6 @@ class Chat extends Component {
         }
       }.bind(this));
   };
-
-  handleKeyPress(event) {
-    if (event.key == 'Enter') {
-      this.props.handleReadyClick(event, this.name, this.props.chat, this.props.auth, this.props.riff, this.webrtc);
-    }
-  }
 
   componentWillUnmount() {
     this.webrtc.stopLocalVideo();
@@ -461,8 +464,7 @@ class Chat extends Component {
             joinButtonDisabled={(this.props.roomName == '' || this.props.displayName == '')}
             clearJoinRoomError={this.props.clearJoinRoomError}
             joinRoomError={this.props.joinRoomError}
-
-            >
+            webrtc={this.webrtc}>
           </RenderVideos>
         </div>
       </div>
