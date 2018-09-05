@@ -13,7 +13,7 @@ const initialState = {
   lastFetched: new Date('January 1, 2000 00:01:00'),
   shouldFetch: true,
   numMeetings: 0,
-  selectedMeeting: "",
+  selectedMeeting: null,
   processedUtterances: [],
   statsStatus: 'loading'
 };
