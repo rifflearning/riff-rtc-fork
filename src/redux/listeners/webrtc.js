@@ -22,7 +22,8 @@ import {
   changeRoomName,
   muteAudio,
   unMuteAudio,
-  leaveRoom
+  leaveRoom,
+  saveLocalWebrtcId
 } from '../actions/chat';
 import {
   updateRiffMeetingId,
@@ -52,7 +53,8 @@ export default function (nick, localVideoNode, dispatch, getState) {
 
   const webrtc = new SimpleWebRTC(webRtcConfig);
 
-  console.log("Creating webrtc constant...");
+  console.log("Creating webrtc constant...", webrtc);
+//  console.log("Local Session ID:", webrtc.connection.socket.sessionId)
 
   webrtc.on('videoAdded', function (video, peer) {
     console.log("added video", peer, video);
@@ -76,7 +78,7 @@ export default function (nick, localVideoNode, dispatch, getState) {
 
   webrtc.on('localStream', function (event) {
     if (event.active) {
-      dispatch(getMediaError(false));  
+      dispatch(getMediaError(false));
     }
   });
 
@@ -91,6 +93,10 @@ export default function (nick, localVideoNode, dispatch, getState) {
     console.log("video:", video);
     console.log("stream:", stream)
     dispatch(getMediaError(false));
+    console.log("local webrtc connection id:", webrtc.connection.connection.id);
+    dispatch(saveLocalWebrtcId(webrtc.connection.connection.id));
+
+
     var sib = new sibilant(localVideoNode);
 
     if (sib) {

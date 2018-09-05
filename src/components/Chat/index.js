@@ -19,7 +19,8 @@ import {
   changeDisplayName,
   joinRoomError,
   clearJoinRoomError,
-  saveDisplayName}
+  saveDisplayName,
+  saveLocalWebrtcId}
 from "../../redux/actions/chat";
 import { participantLeaveRoom } from '../../redux/actions/riff';
 import { push } from 'connected-react-router';
@@ -41,9 +42,9 @@ const mapStateToProps = state => ({
   mediaError: state.chat.getMediaError,
   joinRoomError: state.chat.joinRoomError,
   webRtc: state.chat.webRtc,
+  webrtcId: state.chat.webrtcId,
   displayName: state.chat.displayName,
   savedDisplayName: state.chat.savedDisplayName,
-  // first element is often null, I don't know why
   webRtcPeers: state.chat.webRtcPeers[0] === null ? [] : state.chat.webRtcPeers,
   isAudioMuted: state.chat.audioMuted,
   volume: state.chat.volume,
@@ -74,9 +75,9 @@ const mapDispatchToProps = dispatch => ({
   joinWebRtc: (localVideoRef, nick) => {
     dispatch(joinWebRtc(localVideoRef, nick));
   },
-  saveDisplayName: (name, uid, meetingId) => {
-    console.log("in props -- saving display name in firebase....", name, uid, meetingId)
-    dispatch(saveDisplayName(name, uid, meetingId));
+  saveDisplayName: (name, uid, meetingId, webrtcId) => {
+    console.log("saving display name to firebase...", name, uid, meetingId, webrtcId)
+    dispatch(saveDisplayName(name, uid, meetingId, webrtcId));
   },
   handleReadyClick: (event, name, chat, auth, riff, webrtc) => {
     if ((chat.roomName == '' || chat.displayName == '')) {
@@ -90,8 +91,6 @@ const mapDispatchToProps = dispatch => ({
         console.log(err, "---", rd);
       });
 
-      console.log("Clicked Ready to Join");
-      console.log('webrtc object:', webrtc);
       dispatch(joinedRoom(name));
       riffAddUserToMeeting(auth.user.uid,
                            auth.user.email ? auth.user.email : "",
@@ -114,7 +113,9 @@ const mapDispatchToProps = dispatch => ({
       dispatch(muteAudio());
       webrtc.mute();
     }
-
+  },
+  saveLocalWebrtcId: (webrtcId) => {
+    dispatch(saveLocalWebrtcId(webrtcId));
   },
   dispatch: dispatch,
 });
@@ -125,16 +126,17 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => ({
   ...ownProps,
   withRef: true,
   saveDisplayName: () => {
-    if (stateProps.riff.meetingId && !stateProps.savedDisplayName) {
-      this.props.saveDisplayName(stateProps.displayName,
+    if (stateProps.riff.meetingId && stateProps.webrtcId != "") {
+      dispatchProps.saveDisplayName(stateProps.displayName,
                                  stateProps.user.uid,
-                                 stateProps.riff.meetingId);
+                                 stateProps.riff.meetingId,
+                                 stateProps.webrtcId);
     }
   },
   handleKeypress: (event, webrtc) => {
     if (Event.key == 'Enter') {
       dispatchProps.handleReadyClick(event,
-                                     stateProps.displayN,
+                                     stateProps.displayName,
                                      stateProps.chat,
                                      stateProps.auth,
                                      stateProps.riff,
@@ -144,9 +146,6 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => ({
 });
 
 
-
-// width: 15rem;
-// height: 10rem;
 const VideoPlaceholder = styled.div.attrs({
   className: 'has-text-centered',
   ref: 'local'
@@ -328,7 +327,9 @@ class Chat extends Component {
                                      localVideo,
                                      this.props.dispatch,
                                      store.getState);
-    this.props.saveDisplayName();
+    console.log("> webrtc connection ID:", this.webrtc.connection.connection.id);
+//    this.props.saveDisplayName();
+
     // leave chat when window unloads
     window.addEventListener("beforeunload", this.onUnload);
   }
@@ -343,8 +344,6 @@ class Chat extends Component {
       event.preventDefault();
     }
 
-    console.log(this.props);
-    console.log(this.props.leaveRiffRoom)
     if (event) {
       console.log(event);
       event.returnValue = "If you leave, you'll have to re-join the room.";
