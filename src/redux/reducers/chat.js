@@ -100,7 +100,17 @@ const chat = (state = initialState, action) => {
     return {...state, roomName: null, inRoom: false,
             webRtcPeers: []};
   case(CHAT_VOLUME_CHANGED):
-    return {...state, volume: action.volume};
+    if (action.volume !== null) {
+      let vol1 = (((120 - Math.abs(action.volume)) / 120)*100);
+      console.log(vol1);
+      let vol2 = (Math.ceil(vol1)/20)*20;
+      if (vol2 > 0) {
+        return {...state, volume: vol2};
+      } else {
+        return state;
+      }
+
+    }
   case(CHAT_JOIN_ROOM_ERROR):
     return {...state, joinRoomError: action.msg};
   case(CHAT_CLEAR_JOIN_ROOM_ERROR):
