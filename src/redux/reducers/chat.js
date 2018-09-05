@@ -102,7 +102,6 @@ const chat = (state = initialState, action) => {
   case(CHAT_VOLUME_CHANGED):
     if (action.volume !== null) {
       let vol1 = (((120 - Math.abs(action.volume)) / 120)*100);
-      console.log(vol1);
       let vol2 = (Math.ceil(vol1)/20)*20;
       if (vol2 > 0) {
         return {...state, volume: vol2};
