@@ -1,5 +1,6 @@
 import {
   CHAT_SET_WEBRTC_CONFIG,
+  CHAT_WEBRTC_ID_CHANGE,
   JOIN_ROOM,
   JOINED_ROOM,
   JOINING_ROOM,
@@ -38,6 +39,7 @@ const initialState = {
     error: null
   },
   volume: 0,
+  webrtcId: "",
   webRtcPeers: [],
   webRtcPeerDisplayNames: [],
   readyToCall: false,
@@ -90,6 +92,9 @@ const chat = (state = initialState, action) => {
             savedDisplayName: action.status === 'success',
             savedDisplayMessage: action.message || '',
            };
+  case(CHAT_WEBRTC_ID_CHANGE):
+    console.log("webrtc ID change:", action);
+    return {...state, webrtcId: action.webrtcId};
   case(CHAT_GET_MEDIA_ERROR):
     return{...state, getMediaError: action.error};
   case(CHAT_READY_TO_CALL):

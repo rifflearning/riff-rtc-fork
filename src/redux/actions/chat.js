@@ -11,6 +11,7 @@ import { JOINING_ROOM,
          CHAT_SET_WEBRTC_CONFIG,
          CHAT_START_WEBRTC,
          CHAT_CHANGE_ROOM_NAME,
+         CHAT_WEBRTC_ID_CHANGE,
          CHAT_CHANGE_DISPLAY_NAME,
          CHAT_CHANGE_PEER_DISPLAY_NAME,
          CHAT_GET_MEDIA_ERROR,
@@ -114,22 +115,32 @@ export const displayNameSaveFail = (err) => {
           message: err};
 };
 
-export const saveDisplayName = (name, uid, meetingId) => dispatch => {
-  console.log("saving display name in firebase......", name, uid, meetingId);
+export const saveLocalWebrtcId = (webrtcId) => {
+  console.log("saving local webrtc id:", webrtcId)
+  return {type: CHAT_WEBRTC_ID_CHANGE,
+          webrtcId: webrtcId};
+};
+
+export const saveDisplayName = (name, uid, meetingId, webrtcId) => dispatch => {
   let docId = uid + "_" + meetingId;
   let docRef = db.collection('meetings').doc(docId);
   docRef.set({
     user: uid,
     meeting: meetingId,
-    displayName: name
+    webrtcId: webrtcId,
+    displayName: name,
   },{merge: true}).then(() => {
-    console.log("saving display name in firebase SUCCESS");
     dispatch(displayNameSaveSuccess());
   }).catch((err) => {
-    console.log("saving display name in firebase ERROR: ");
     dispatch(displayNameSaveFail(err));
   });
-}
+};
+
+//TODO
+export const fetchPeerDisplayName = (peerId, meetingId) => dispatch => {
+  let docId = peerId + "_" + meetingId;
+  let docRef = db.collection('meetings').doc(docId);
+};
 
 export const muteAudio = () => {
   console.log("muting audio");
