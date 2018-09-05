@@ -22,6 +22,9 @@ flex-direction: column;
 li+li {
 margin-left: 0
 }
+li.selected {
+  background-color: #9d7dae; // purple from the branding document
+}
 `;
 
 const formatChartData = (processedUtterances, participantId) => {
@@ -78,19 +81,26 @@ const TurnChart = ({processedUtterances, participantId}) => {
   );
 };
 
-const MeetingView = ({meeting, handleMeetingClick}) => {
+const MeetingView = ({meeting, selected, handleMeetingClick}) => {
   let m = moment(meeting.startTime).format("ha MMM Do");
   return (
-    <li><a onClick = {(event) => handleMeetingClick(event, meeting)}>
+    <li class={selected ? 'selected' : false}><a onClick = {(event) => handleMeetingClick(event, meeting)}>
         <p>{m}</p>
     </a></li>
   );
 };
 
-const MeetingList = ({fetchMeetingsStatus, fetchMeetingsMessage, meetings, selectedMeeting, handleMeetingClick}) => {
+const MeetingList = ({ fetchMeetingsStatus,
+                       fetchMeetingsMessage,
+                       meetings,
+                       selectedMeeting,
+                       handleMeetingClick }) => {
   let meetingTiles = meetings
     .map((meeting) => {
-      return (<MeetingView key={meeting._id} meeting={meeting} handleMeetingClick={handleMeetingClick}/>);
+      return (<MeetingView key={meeting._id}
+                           meeting={meeting}
+                           selected={selectedMeeting !== null && meeting._id === selectedMeeting._id}
+                           handleMeetingClick={handleMeetingClick}/>);
     });
   console.log("fetchmeetingstatus:", fetchMeetingsStatus);
   console.log("rendering meeting list");
