@@ -87,10 +87,11 @@ const MeetingView = ({meeting, handleMeetingClick}) => {
   );
 };
 
-const MeetingList = ({fetchMeetingsStatus, fetchMeetingsMessage, meetings, handleMeetingClick}) => {
-  let meetingTiles = meetings.map((meeting) => {
-    return (<MeetingView key={meeting._id} meeting={meeting} handleMeetingClick={handleMeetingClick}/>);
-  });
+const MeetingList = ({fetchMeetingsStatus, fetchMeetingsMessage, meetings, selectedMeeting, handleMeetingClick}) => {
+  let meetingTiles = meetings
+    .map((meeting) => {
+      return (<MeetingView key={meeting._id} meeting={meeting} handleMeetingClick={handleMeetingClick}/>);
+    });
   console.log("fetchmeetingstatus:", fetchMeetingsStatus);
   console.log("rendering meeting list");
   return (
@@ -107,60 +108,62 @@ const DashboardView = ({user, riffAuthToken, meetings,
                         handleMeetingClick, selectedMeeting,
                         processedUtterances, statsStatus,
                         handleRefreshClick, selectedMeetingDuration}) =>
-      {
-        console.log("fetch meetings status (view)", fetchMeetingsStatus, meetings);
+{
+  console.log("fetch meetings status (view)", fetchMeetingsStatus, meetings);
 
-        if (fetchMeetingsStatus === 'loading') {
-          return (
-            <div class="columns is-centered has-text-centered">
-              <div class="column">
-                <ScaleLoader color={"#8A6A94"}/>
-              </div>
-            </div>
-          );
-        } else if (fetchMeetingsStatus === 'error') {
-          return (
-            <div class="columns is-centered has-text-centered is-vcentered" style={{height: '90vh'}}>
-              <div class="column is-vcentered" style={{alignItems: 'center'}}>
-                <p class="is-size-4 is-primary">{fetchMeetingsMessage}</p>
-                <ScaleLoader color={"#8A6A94"}/>
-              </div>
-            </div>
-          );
-        } else {
-          return (
+  if (fetchMeetingsStatus === 'loading') {
+    return (
+      <div class="columns is-centered has-text-centered">
+        <div class="column">
+          <ScaleLoader color={"#8A6A94"}/>
+        </div>
+      </div>
+    );
+  } else if (fetchMeetingsStatus === 'error') {
+    return (
+      <div class="columns is-centered has-text-centered is-vcentered" style={{height: '90vh'}}>
+        <div class="column is-vcentered" style={{alignItems: 'center'}}>
+          <p class="is-size-4 is-primary">{fetchMeetingsMessage}</p>
+          <ScaleLoader color={"#8A6A94"}/>
+        </div>
+      </div>
+    );
+  } else {
+    return (
+      <div>
+        <div class="columns">
+          <div class="column is-one-fifth has-text-centered">
+            <a class="button is-rounded"  onClick={event => handleRefreshClick(event, user.uid)}>
+              <MaterialIcon icon="refresh"/>
+            </a>
+          </div>
+        </div>
+      <div class="columns has-text-centered">
+        <div class="column is-one-quarter">
+          <MeetingList meetings={meetings}
+                       selectedMeeting={selectedMeeting}
+                       fetchMeetingsStatus={fetchMeetingsStatus}
+                       fetchMeetingsMessage={fetchMeetingsMessage}
+                       handleMeetingClick={handleMeetingClick}/>
+        </div>
+        <div class="column">
+          {statsStatus === 'loading' ?
             <div>
-              <div class="columns">
-                <div class="column is-one-fifth has-text-centered">
-                  <a class="button is-rounded"  onClick={event => handleRefreshClick(event, user.uid)}>
-                    <MaterialIcon icon="refresh"/>
-                  </a>
+            <ScaleLoader color={"#8A6A94"}/>
+            </div>
+              :
+              <div class="has-text-left">
+                  <p class="is-size-4 is-primary">Room: {selectedMeeting.room} </p>
+                  <p class="is-size-5 is-primary">{processedUtterances.length} Attendees </p>
+                  <p class="is-size-5 is-primary">{selectedMeetingDuration} </p>
+                  <TurnChart processedUtterances={processedUtterances} participantId={user.uid}/>
                 </div>
-              </div>
-            <div class="columns has-text-centered">
-              <div class="column is-one-quarter">
-                <MeetingList meetings={meetings} fetchMeetingsStatus={fetchMeetingsStatus}
-                             fetchMeetingsMessage={fetchMeetingsMessage}
-                             handleMeetingClick={handleMeetingClick}/>
-              </div>
-              <div class="column">
-                {statsStatus === 'loading' ?
-                  <div>
-                  <ScaleLoader color={"#8A6A94"}/>
-                  </div>
-                    :
-                    <div class="has-text-left">
-                        <p class="is-size-4 is-primary">Room: {selectedMeeting.room} </p>
-                        <p class="is-size-5 is-primary">{processedUtterances.length} Attendees </p>
-                        <p class="is-size-5 is-primary">{selectedMeetingDuration} </p>
-                        <TurnChart processedUtterances={processedUtterances} participantId={user.uid}/>
-                      </div>
-                    }
-              </div>
-            </div>
-            </div>
-          );
-        }
-      };
+              }
+        </div>
+      </div>
+      </div>
+    );
+  }
+};
 
 export default DashboardView;

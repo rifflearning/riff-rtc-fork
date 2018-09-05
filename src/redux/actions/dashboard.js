@@ -21,7 +21,7 @@ export const selectMeeting = (meeting) => {
           meeting: meeting};
 };
 
-export const loadRecentMeetings = (uid) => dispatch => {
+export const loadRecentMeetings = (uid, selectedMeeting) => dispatch => {
   dispatch({type: DASHBOARD_FETCH_MEETINGS, status: 'loading'});
   return app.service('participants').find({query: {_id: uid}})
     .then((res) => {
@@ -85,6 +85,11 @@ export const loadRecentMeetings = (uid) => dispatch => {
       }
       meetings.sort((a, b) => /*descending*/ -cmpMeetingsByStartTime(a, b));
       dispatch(updateMeetingList(meetings));
+      if (meetings.length > 0 && selectedMeeting === null) {
+        let newSelectedMeeting = meetings[0];
+        dispatch(selectMeeting(newSelectedMeeting));
+        dispatch(loadMeetingData(newSelectedMeeting._id));
+      }
       //return meetings;
     })
     .catch((err) => {
@@ -174,11 +179,13 @@ export const loadMeetingData = (meetingId) => dispatch => {
       // console.log("utterances", utterances);
       // console.log("processed:", processUtterances(utterances, meetingId));
       return processUtterances(utterances, meetingId);
-    }).then(processedUtterances => {
+    })
+    .then(processedUtterances => {
       dispatch({type: DASHBOARD_FETCH_MEETING_STATS,
                 status: 'loaded',
                 processedUtterances: processedUtterances});
-    }).catch(err => {
+    })
+    .catch(err => {
       console.log("couldn't retrieve meeting data", err);
     });
 };
