@@ -121,7 +121,7 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => ({
   ...dispatchProps,
   ...ownProps,
   withRef: true,
-  handleKeypress: (event, webrtc) => {
+  handleKeyPress: (event, webrtc) => {
     if (Event.key == 'Enter') {
       dispatchProps.handleReadyClick(event,
                                      stateProps.displayName,
@@ -435,7 +435,7 @@ class Chat extends Component {
           <RenderVideos inRoom={this.props.inRoom}
                         roomName={this.props.roomName}
                         displayName={this.props.displayName}
-                        handleKeyPress={this.handleKeyPress}
+                        handleKeyPress={this.props.handleKeyPress}
                         handleDisplayNameChange={this.props.handleDisplayNameChange}
                         savedDisplayName={this.props.savedDisplayName}
                         webRtcPeers={this.props.webRtcPeers}
