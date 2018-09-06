@@ -47,6 +47,12 @@ $family-sans-serif: "Nunito", sans-serif;
 @import "node_modules/bulma/sass/grid/tiles.sass";
 
 @import "bulma/bulma.sass";
+@import 'node_modules/bulma-timeline/dist/css/bulma-timeline.sass';
+
+//@import "node_modules/bulma-extensions/bulma-timeline/dist/css/bulma-timeline.sass";
+
+// Import Extensions
+//@import "sass/extensions/_all";
 
 body {
     background-color: #f6f0fb;
