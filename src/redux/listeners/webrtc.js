@@ -62,8 +62,8 @@ export default function (nick, localVideoNode, dispatch, getState) {
     console.log("added video", peer, video, "nick:", peer.nick);
     dispatch(addPeer({peer: peer, videoEl: video}));
     let [riffId, nick] = peer.nick.split(' ');
-    dispatch(changePeerRiffId(peer, riffId));
-    dispatch(changePeerDisplayName(peer, nick));
+//    dispatch(changePeerRiffId(peer, riffId));
+//    dispatch(changePeerDisplayName(peer, nick));
   });
 
   webrtc.on('videoRemoved', function (video, peer) {
