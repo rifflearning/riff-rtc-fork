@@ -36,8 +36,8 @@ const Footer = styled.footer.attrs({
 const LoadingView = () => {
   console.log("rendering loadingView")
   return (
-    <div class="columns has-text-centered is-centered is-vcentered" style={{minHeight: "100vh"}}>
-      <div class="column is-vcentered has-text-centered">
+    <div className="columns has-text-centered is-centered is-vcentered" style={{minHeight: "100vh"}}>
+      <div className="column is-vcentered has-text-centered">
         <ScaleLoader color={"#8A6A94"}/>
       </div>
     </div>

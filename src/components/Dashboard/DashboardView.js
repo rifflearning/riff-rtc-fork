@@ -85,12 +85,12 @@ const MeetingView = ({meeting, selected, handleMeetingClick}) => {
   let m = moment(meeting.startTime).format("ha MMM Do");
   return (
     <a onClick = {(event) => handleMeetingClick(event, meeting)}>
-    <div class="timeline-item">
-      <div class="timeline-marker is-image is-32x32">
+    <div className="timeline-item">
+      <div className="timeline-marker is-image is-32x32">
         <MaterialIcon icon="voice_chat" color={selected ? '#ab45ab' : '#bdc3c7'} style={{marginLeft: '0.25rem', marginTop: '0.25rem'}}/>
       </div>
 
-      <div class="timeline-content">
+      <div className="timeline-content">
         <span className={selected ? 'heading selected' : 'heading'}>
              <p>{m}</p>
             <p></p>
@@ -120,8 +120,8 @@ const MeetingList = ({ fetchMeetingsStatus,
   console.log("rendering meeting list");
   return (
     <MeetingTabs>
-      <header class="timeline-header">
-        <span class="tag is-medium is-inverted is-primary">Today</span>
+      <header className="timeline-header">
+        <span className="tag is-medium is-inverted is-primary">Today</span>
       </header>
       {meetingTiles}
     </MeetingTabs>
@@ -138,17 +138,17 @@ const DashboardView = ({user, riffAuthToken, meetings,
 
   if (fetchMeetingsStatus === 'loading') {
     return (
-      <div class="columns is-centered has-text-centered">
-        <div class="column">
+      <div className="columns is-centered has-text-centered">
+        <div className="column">
           <ScaleLoader color={"#8A6A94"}/>
         </div>
       </div>
     );
   } else if (fetchMeetingsStatus === 'error') {
     return (
-      <div class="columns is-centered has-text-centered is-vcentered" style={{height: '90vh'}}>
-        <div class="column is-vcentered" style={{alignItems: 'center'}}>
-          <p class="is-size-4 is-primary">{fetchMeetingsMessage}</p>
+      <div className="columns is-centered has-text-centered is-vcentered" style={{height: '90vh'}}>
+        <div className="column is-vcentered" style={{alignItems: 'center'}}>
+          <p className="is-size-4 is-primary">{fetchMeetingsMessage}</p>
           <ScaleLoader color={"#8A6A94"}/>
         </div>
       </div>
@@ -156,22 +156,22 @@ const DashboardView = ({user, riffAuthToken, meetings,
   } else {
     return (
       <div>
-        <div class="columns">
-          <div class="column is-one-fifth has-text-centered">
-            <a class="button is-rounded"  onClick={event => handleRefreshClick(event, user.uid)}>
+        <div className="columns">
+          <div className="column is-one-fifth has-text-centered">
+            <a className="button is-rounded"  onClick={event => handleRefreshClick(event, user.uid)}>
               <MaterialIcon icon="refresh"/>
             </a>
           </div>
         </div>
-      <div class="columns has-text-centered is-centered">
-        <div class="column is-one-quarter has-text-left">
+      <div className="columns has-text-centered is-centered">
+        <div className="column is-one-quarter has-text-left">
           <MeetingList meetings={meetings}
                        selectedMeeting={selectedMeeting}
                        fetchMeetingsStatus={fetchMeetingsStatus}
                        fetchMeetingsMessage={fetchMeetingsMessage}
                        handleMeetingClick={handleMeetingClick}/>
         </div>
-        <div class="column">
+        <div className="column">
           {
             statsStatus === 'loading'
               ? <div>
@@ -179,13 +179,13 @@ const DashboardView = ({user, riffAuthToken, meetings,
                 </div>
               :
                 <React.Fragment>
-                <div class="columns">
-                  <div class="column has-text-left">
-                    <h2 class="is-size-3 is-primary">Room: {selectedMeeting.room} </h2>
-                    <h3 class="is-size-4 is-primary">{processedUtterances.length} Attendees </h3>
-                    <h3 class="is-size-4 is-primary">{selectedMeetingDuration} </h3>
+                <div className="columns">
+                  <div className="column has-text-left">
+                    <h2 className="is-size-3 is-primary">Room: {selectedMeeting.room} </h2>
+                    <h3 className="is-size-4 is-primary">{processedUtterances.length} Attendees </h3>
+                    <h3 className="is-size-4 is-primary">{selectedMeetingDuration} </h3>
                     <br/>
-                    <h2 class="is-size-3 has-text-weight-semi-bold"> Why Turn-Taking? </h2>
+                    <h2 className="is-size-3 has-text-weight-semi-bold"> Why Turn-Taking? </h2>
 
                     <p>
                       In highly collaborative groups, people tend to have even
@@ -198,7 +198,7 @@ const DashboardView = ({user, riffAuthToken, meetings,
                     </p>
 
                     <p>
-                      <span class="has-text-weight-bold">The next two Riff metrics
+                      <span className="has-text-weight-bold">The next two Riff metrics
                       we’ll release</span> are affirmations and interruptions, both of
                       which indicate dynamic, high-engagement conversations.
                     </p>
@@ -227,15 +227,15 @@ const DashboardView = ({user, riffAuthToken, meetings,
                       what new insights are there.
                     </p>
                   </div>
-                  <div class="column">
-                    <div class="card has-text-centered is-centered"
+                  <div className="column">
+                    <div className="card has-text-centered is-centered"
                          style={{borderRadius: '5px', maxWidth: '30vw', paddingTop: '0.75rem'}}>
-                      <div class="card-image has-text-centered is-centered">
+                      <div className="card-image has-text-centered is-centered">
                         <TurnChart processedUtterances={processedUtterances} participantId={user.uid}/>
                       </div>
-                      <div class="card-content">
-                        <div class="title is-5 has-text-left">Time Spoken</div>
-                        <div class="content has-text-left is-size-7">
+                      <div className="card-content">
+                        <div className="title is-5 has-text-left">Time Spoken</div>
+                        <div className="content has-text-left is-size-7">
                           The graph above represents the distribution of speaking during
                           your meeting, which is our turn-taking metric. In turn-taking, we
                           measure only active human vocalization, not the pauses in normal
