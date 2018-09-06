@@ -64,28 +64,36 @@ const chat = (state = initialState, action) => {
     return {...state, webRtc: {config: action.webRtcConfig,
                                signalMasterPath: action.signalMasterPath}};
   case(ADD_PEER):
-    // this removes any null peers
+      // this removes any null peers
+    console.log("adding peer", action)    
+    let [riffId, displayName] = action.peer.peer.nick.split(" ")
+    console.log("adding peer", riffId, displayName)
     const peers = state.webRtcPeers.filter(n => !(n === null));
     let peer_ids = state.webRtcPeers.map(p => p.id);
     if (peer_ids.indexOf(action.peer.id) >= 1) {
       console.log("not re-adding a peer...");
       return state;
     } else {
+      let allPeers = [...peers, action.peer.peer];
+      let displayNames = allPeers.map((p) => { return p.nick.split(" ")[1]});
+      let riffIds = allPeers.map((p) => { return p.nick.split(" ")[0]});
       return {...state,
-              webRtcPeers: [...peers, action.peer.peer],
-              webRtcPeerDisplayNames: [...state.webRtcPeerDisplayNames, ""],
-              webRtcRiffIds: [...state.webRtcRiffIds, ""]};
+              webRtcPeers: allPeers,
+              webRtcPeerDisplayNames: displayNames,
+              webRtcRiffIds: riffIds
+             };
     }
   case(REMOVE_PEER):
     let peer = action.peer.peer;
     const index = state.webRtcPeers.map(item => item.id).indexOf(peer.id);
+    let allPeers = [...state.webRtcPeers.slice(0, index),
+                    ...state.webRtcPeers.slice(index + 1)];
+    let displayNames = allPeers.map((p) => { return p.nick.split(" ")[1]; });
+    let riffIds = allPeers.map((p) => { return p.nick.split(" ")[0]; });
     return {...state,
-            webRtcPeers: [...state.webRtcPeers.slice(0, index),
-                          ...state.webRtcPeers.slice(index + 1)],
-            webRtcPeerDisplayNames: [...state.webRtcPeerDisplayNames.slice(0, index),
-                                     ...state.webRtcPeerDisplayNames.slice(index + 1)],
-            webRtcRiffIds: [...state.webRtcRiffIds.slice(0, index),
-                            ...state.webRtcRiffIds.slice(index + 1)]};
+            webRtcPeers: allPeers,
+            webRtcPeerDisplayNames: displayNames,
+            webRtcRiffIds: riffIds};
   case(CHAT_CHANGE_PEER_DISPLAY_NAME):
     let p = action.peer;
     const idx = state.webRtcPeers.map(item => item.id).indexOf(p.id);
@@ -94,7 +102,9 @@ const chat = (state = initialState, action) => {
                                                ...state.webRtcPeerDisplayNames.slice(idx + 1)]};
   case(CHAT_CHANGE_PEER_RIFF_ID):
     let pp = action.peer;
-    const iidx = state.webRtcRiffIds.map(item => item.id).indexOf(pp.id);
+    let [riffid, displayname] = pp.nick.split(" ");
+    const iidx = state.webRtcPeers.map(item => item.id).indexOf(pp.id);
+    console.log("changing riff id at index", iidx);
     return {...state, webRtcRiffIds: [...state.webRtcRiffIds.slice(0, iidx),
                                       action.riffId,
                                       ...state.webRtcRiffIds.slice(iidx + 1)]};
