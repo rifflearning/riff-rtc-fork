@@ -32,7 +32,7 @@
 
   # exported MeetingMediator class
   module.exports.MeetingMediator = class MM
-    constructor: (@data, @localParticipants, width, height, peerColors, riffIds) ->
+    constructor: (@data, @localParticipants, width, height, peerColors, riffIds, localId) ->
 
       console.log "constructing MM with data:", @data
       @fontFamily = "Futura,Helvetica Neue,Helvetica,Arial,sans-serif"
@@ -42,9 +42,17 @@
       @peerColors = peerColors
       @riffIds = riffIds
 
-      @nodeColorScale = d3.scaleOrdinal()
-            .domain @riffIds
-            .range @peerColors
+      @remoteParticipants = [...@data.participants.slice(0, @data.participants.indexOf(@localParticipants[0])),
+                             ...@data.participants.slice(@data.participants.indexOf(@localParticipants[0]) + 1)]
+
+                             
+      # @nodeColorScale = d3.scaleOrdinal()
+      #       .domain @remoteParticipants
+      #       .range @peerColors
+
+      @nodeColorScale = (p) =>
+        idx = @remoteParticipants.indexOf(p)
+        @peerColors[idx]
 
       # radius of network as a whole
       @radius = NETWORK_RADIUS
@@ -276,7 +284,15 @@
 
     updateData: (data) ->
       console.log "updating MM viz with data:", data
+      data.participants = data.participants.sort()
+      @remoteParticipants = [...data.participants.slice(0, data.participants.indexOf(@localParticipants[0])),
+                             ...data.participants.slice(data.participants.indexOf(@localParticipants[0]) + 1)]
       # if we're not updating participants, don't redraw everything.
+      console.log("local participant:", @localParticipants[0])
+      console.log("remote participants:", @remoteParticipants)
+      console.log("beginning:", data.participants.slice(0, data.participants.indexOf(@localParticipants[0])))
+      console.log("end", data.participants.slice(data.participants.indexOf(@localParticipants[0]) + 1))
+      console.log("color:", @remoteParticipants.map((p) => @nodeColorScale(p)))
       if data.participants.length == @data.participants.length
         @data = data
         @updateLinkWeight()

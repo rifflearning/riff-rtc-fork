@@ -105,7 +105,7 @@ class Mediator {
     }.bind(this));
   }
 
-  constructor(app, participants, user, roomName, userName, peerColors, riffIds) {
+  constructor(app, participants, user, roomName, userName, peerColors, riffIds, localId) {
     log("initial state:", participants, user, roomName, userName);
 
     this.mm = null;
@@ -119,6 +119,7 @@ class Mediator {
     this.userName = userName;
     this.peerColors = peerColors;
     this.riffIds = riffIds;
+    this.localId = localId;
 
     // if (!elementIsEmpty('#meeting-mediator')) {
     //   log("not starting a second MM...");
@@ -136,7 +137,8 @@ class Mediator {
                      this.mm_width,
                      this.mm_height,
                      this.peerColors,
-                     this.riffIds);
+                     this.riffIds,
+                     this.localId);
     this.mm.render('#meeting-mediator');
     this.maybe_update_mm_turns = this.maybe_update_mm_turns.bind(this);
     this.turns.on("updated", this.maybe_update_mm_turns)
