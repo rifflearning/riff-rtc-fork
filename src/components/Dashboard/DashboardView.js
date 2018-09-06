@@ -23,7 +23,7 @@ li+li {
 margin-left: 0
 }
 li.selected {
-  background-color: #9d7dae; // purple from the branding document
+  background-color: #eba7fa;
 }
 `;
 
