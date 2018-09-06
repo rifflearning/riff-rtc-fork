@@ -34,19 +34,20 @@ const formatChartData = (processedUtterances, participantId) => {
   let nextOtherUser = 1;
 
   let data = [];
+  let peerColors = ['#f56b6b', '#128EAD', '#7caf5f', '#f2a466'];
   let colors = [];
 
   processedUtterances.forEach(p => {
     // our display name from firebase if we've got it.
-    let label = p.displayName;
+    let label = p.name;
 
     if (p.participantId === participantId) {
-      data.unshift([ label || 'You', p.lengthUtterances]);
+      data.unshift([ 'You', p.lengthUtterances]);
       colors.unshift(colorYou);
     }
     else {
       data.push([ label || `User ${nextOtherUser++}`, p.lengthUtterances]);
-      colors.push(colorOther);
+      colors.push(peerColors[nextOtherUser++ - 1]);
     }
   });
 
@@ -76,7 +77,7 @@ const TurnChart = ({processedUtterances, participantId}) => {
   return (
     <PieChart donut={true} library={chartOptions}
               data={r.data} colors={r.colors}
-              height="30vw" width="30vw" title="Time spoken"/>
+              height="30vw" width="30vw" />
   );
 };
 
@@ -120,7 +121,7 @@ const MeetingList = ({ fetchMeetingsStatus,
   return (
     <MeetingTabs>
       <header class="timeline-header">
-        <span class="tag is-medium is-primary">Today</span>
+        <span class="tag is-medium is-inverted is-primary">Today</span>
       </header>
       {meetingTiles}
     </MeetingTabs>
@@ -184,7 +185,7 @@ const DashboardView = ({user, riffAuthToken, meetings,
                         <h3 class="is-size-4 is-primary">{processedUtterances.length} Attendees </h3>
                           <h3 class="is-size-4 is-primary">{selectedMeetingDuration} </h3>
                             <br/>
-                            <h2 class="is-size-2 has-text-weight-semi-bold"> Why Turn-Taking? </h2>
+                            <h2 class="is-size-3 has-text-weight-semi-bold"> Why Turn-Taking? </h2>
 
                               <p>
                                   In highly collaborative groups, people tend to have even
@@ -228,7 +229,7 @@ const DashboardView = ({user, riffAuthToken, meetings,
                                   </p>
                     </div>
                     <div class="column">
-                        <div class="card has-text-centered is-centered" style={{borderRadius: '5px', maxWidth: '30vw'}}>
+                        <div class="card has-text-centered is-centered" style={{borderRadius: '5px', maxWidth: '30vw', paddingTop: '0.75rem'}}>
                             <div class="card-image has-text-centered is-centered">
                                 <TurnChart processedUtterances={processedUtterances} participantId={user.uid}/>
                               </div>

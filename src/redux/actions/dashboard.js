@@ -176,11 +176,18 @@ export const loadMeetingData = (meetingId) => dispatch => {
   console.log("finding utterances for meeting", meetingId);
   return app.service('utterances').find({query: {meeting: meetingId, $limit: 10000}})
     .then((utterances) => {
-      // console.log("utterances", utterances);
+      console.log("utterances", utterances);
       // console.log("processed:", processUtterances(utterances, meetingId));
       return processUtterances(utterances, meetingId);
-    })
-    .then(processedUtterances => {
+    }).then(processedUtterances => {
+      let promises = _.map(processedUtterances, (u) => {
+        return app.service('participants').get(u.participantId)
+          .then((res) => {
+            return {...u, name: res.name};
+          });
+      });
+      return Promise.all(promises);
+    }).then(processedUtterances => {
       dispatch({type: DASHBOARD_FETCH_MEETING_STATS,
                 status: 'loaded',
                 processedUtterances: processedUtterances});
