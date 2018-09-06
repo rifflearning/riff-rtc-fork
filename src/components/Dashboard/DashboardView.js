@@ -23,7 +23,7 @@ li+li {
 margin-left: 0
 }
 li.selected {
-  background-color: #eba7fa;
+  background-color: #d0bdda;
 }
 `;
 
