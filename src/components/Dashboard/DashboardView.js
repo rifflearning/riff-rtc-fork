@@ -11,19 +11,18 @@ import moment from 'moment';
 ReactChartkick.addAdapter(Chart);
 
 const MeetingTabs = styled.div.attrs({
-  className: 'tabs is-boxed is-size-5'
+  className: 'timeline'
 })`
+padding-left: 2.5rem;
 overflow-y: scroll;
-max-height: 80vh;
-ul {
--webkit-flex-direction: column;
-flex-direction: column;
+max-height: 100vh;
+&::-webkit-scrollbar {
+    width: 0px;  /* remove scrollbar space */
+    background: transparent;  /* optional: just make scrollbar invisible */
 }
-li+li {
-margin-left: 0
-}
-li.selected {
-  background-color: #d0bdda;
+/* optional: show position indicator in red */
+&::-webkit-scrollbar-thumb {
+    background: #FF0000;
 }
 `;
 
@@ -35,19 +34,20 @@ const formatChartData = (processedUtterances, participantId) => {
   let nextOtherUser = 1;
 
   let data = [];
+  let peerColors = ['#f56b6b', '#128EAD', '#7caf5f', '#f2a466'];
   let colors = [];
 
   processedUtterances.forEach(p => {
     // our display name from firebase if we've got it.
-    let label = p.displayName;
+    let label = p.name;
 
     if (p.participantId === participantId) {
-      data.unshift([ label || 'You', p.lengthUtterances]);
+      data.unshift([ 'You', p.lengthUtterances]);
       colors.unshift(colorYou);
     }
     else {
       data.push([ label || `User ${nextOtherUser++}`, p.lengthUtterances]);
-      colors.push(colorOther);
+      colors.push(peerColors[nextOtherUser++ - 1]);
     }
   });
 
@@ -77,16 +77,28 @@ const TurnChart = ({processedUtterances, participantId}) => {
   return (
     <PieChart donut={true} library={chartOptions}
               data={r.data} colors={r.colors}
-              height="500px" width="800px" title="Time spoken"/>
+              height="30vw" width="30vw" />
   );
 };
 
 const MeetingView = ({meeting, selected, handleMeetingClick}) => {
   let m = moment(meeting.startTime).format("ha MMM Do");
   return (
-    <li class={selected ? 'selected' : false}><a onClick = {(event) => handleMeetingClick(event, meeting)}>
-        <p>{m}</p>
-    </a></li>
+    <a onClick = {(event) => handleMeetingClick(event, meeting)}>
+    <div class="timeline-item">
+      <div class="timeline-marker is-image is-32x32">
+        <MaterialIcon icon="voice_chat" color={selected ? '#ab45ab' : '#bdc3c7'} style={{marginLeft: '0.25rem', marginTop: '0.25rem'}}/>
+      </div>
+
+      <div class="timeline-content">
+        <span className={selected ? 'heading selected' : 'heading'}>
+             <p>{m}</p>
+            <p></p>
+        </span>
+      </div>
+    </div>
+    </a>
+
   );
 };
 
@@ -100,15 +112,18 @@ const MeetingList = ({ fetchMeetingsStatus,
       return (<MeetingView key={meeting._id}
                            meeting={meeting}
                            selected={selectedMeeting !== null && meeting._id === selectedMeeting._id}
-                           handleMeetingClick={handleMeetingClick}/>);
+              handleMeetingClick={handleMeetingClick}/>
+
+             );
     });
   console.log("fetchmeetingstatus:", fetchMeetingsStatus);
   console.log("rendering meeting list");
   return (
     <MeetingTabs>
-      <ul>
-        {meetingTiles}
-      </ul>
+      <header class="timeline-header">
+        <span class="tag is-medium is-inverted is-primary">Today</span>
+      </header>
+      {meetingTiles}
     </MeetingTabs>
   );
 };
@@ -148,8 +163,8 @@ const DashboardView = ({user, riffAuthToken, meetings,
             </a>
           </div>
         </div>
-      <div class="columns has-text-centered">
-        <div class="column is-one-quarter">
+      <div class="columns has-text-centered is-centered">
+        <div class="column is-one-quarter has-text-left">
           <MeetingList meetings={meetings}
                        selectedMeeting={selectedMeeting}
                        fetchMeetingsStatus={fetchMeetingsStatus}
@@ -160,74 +175,79 @@ const DashboardView = ({user, riffAuthToken, meetings,
           {
             statsStatus === 'loading'
               ? <div>
-                  <ScaleLoader color={"#8A6A94"}/>
-                </div>
-              : <div class="has-text-left">
-                  <p class="is-size-4 is-primary">Room: {selectedMeeting.room} </p>
-                  <p class="is-size-5 is-primary">{processedUtterances.length} Attendees </p>
-                  <p class="is-size-5 is-primary">{selectedMeetingDuration} </p>
+              <ScaleLoader color={"#8A6A94"}/>
+              </div>
+              :
+              <React.Fragment>
+              <div class="columns">
+                  <div class="column has-text-left">
+                      <h2 class="is-size-3 is-primary">Room: {selectedMeeting.room} </h2>
+                        <h3 class="is-size-4 is-primary">{processedUtterances.length} Attendees </h3>
+                          <h3 class="is-size-4 is-primary">{selectedMeetingDuration} </h3>
+                            <br/>
+                            <h2 class="is-size-3 has-text-weight-semi-bold"> Why Turn-Taking? </h2>
 
-                  <TurnChart processedUtterances={processedUtterances} participantId={user.uid}/>
+                              <p>
+                                  In highly collaborative groups, people tend to have even
+                                    turn-taking in which everyone is speaking and listening to each
+                                      other equally. In hierarchical groups, participants tend to speak
+                                    only in response to the meeting convener or manager, and not to
+                                    each other. When turn-taking is relatively equal, this indicates
+                                    a balanced conversation in which people are likely to have been
+                                    collaborating effectively.
+                                </p>
 
-                  <div class="content">
-                    <p>
-                      The graph above represents the distribution of speaking during
-                      your meeting, which is our turn-taking metric. In turn-taking, we
-                      measure only active human vocalization, not the pauses in normal
-                      speech, which is why time spoken is typically less than the
-                      meeting duration.
-                    </p>
+                                  <p>
+                                <span class="has-text-weight-bold">The next two Riff metrics we’ll release </span>are affirmations and
+                                  interruptions, both of which indicate dynamic, high-engagement
+                                  conversations.
+                                    </p>
+                                    <br/>
 
-                    <h2 class="is-size-2"> Why Turn-Taking? </h2>
-
-                    <p>
-                      In highly collaborative groups, people tend to have even
-                      turn-taking in which everyone is speaking and listening to each
-                      other equally. In hierarchical groups, participants tend to speak
-                      only in response to the meeting convener or manager, and not to
-                      each other. When turn-taking is relatively equal, this indicates
-                      a balanced conversation in which people are likely to have been
-                      collaborating effectively.
-                    </p>
-
-                    <p>
-                      Learn more &lt;linked below> about new Riff insights we’ll be releasing soon.
-                    </p>
-                  </div>
-
-                  <div class="content">
-                    <p>
-                      The next two Riff metrics we’ll release are affirmations and
-                      interruptions, both of which indicate dynamic, high-engagement
-                      conversations.
-                    </p>
-
-                    <ul>
-                      <li>
-                        <strong>Affirmations</strong> are micro-gestures or vocalizations that signal
-                        you're listening, like nodding your head or saying "Ah ha" or "Uh
+                              <ul>
+                                  <li>
+                                      <strong>Affirmations</strong> are micro-gestures or vocalizations that signal
+                                        you're listening, like nodding your head or saying "Ah ha" or "Uh
                         huh". They signal that listeners are attentive and engaged, and
-                        can indicate a cooperative relationship between participants.
-                      </li>
+                                        can indicate a cooperative relationship between participants.
+                                    </li>
 
-                      <li>
-                        <strong>Interruptions</strong> are important for understanding how the group is
-                        functioning overall.  Interruptions that allow the speaker to
-                        continue, such as when someone says, "Oh, I see! That's so cool,"
-                        indicate agreement and enthusiasm. Interruptions, that derail a
-                        speaker and take over the conversation, suggest a power imbalance
-                        within the group.
-                      </li>
-                    </ul>
+                                    <li>
+                                        <strong>Interruptions</strong> are important for understanding how the group is
+                                          functioning overall.  Interruptions that allow the speaker to
+                                          continue, such as when someone says, "Oh, I see! That's so cool,"
+                                          indicate agreement and enthusiasm. Interruptions, that derail a
+                                          speaker and take over the conversation, suggest a power imbalance
+                                          within the group.
+                                      </li>
+                                </ul>
 
-                    <p>
-                      Visit your My Riffs page often over the next few weeks, and see
-                      what new insights are there.
-                    </p>
-                  </div>
-
+                                <br/>
+                                <p>
+                                    Visit your My Riffs page often over the next few weeks, and see
+                                      what new insights are there.
+                                  </p>
+                    </div>
+                    <div class="column">
+                        <div class="card has-text-centered is-centered" style={{borderRadius: '5px', maxWidth: '30vw', paddingTop: '0.75rem'}}>
+                            <div class="card-image has-text-centered is-centered">
+                                <TurnChart processedUtterances={processedUtterances} participantId={user.uid}/>
+                              </div>
+                              <div class="card-content">
+                                  <div class="title is-5 has-text-left">Time Spoken</div>
+                                    <div class="content has-text-left is-size-7">
+                                        The graph above represents the distribution of speaking during
+                                          your meeting, which is our turn-taking metric. In turn-taking, we
+                                          measure only active human vocalization, not the pauses in normal
+                                          speech, which is why time spoken is typically less than the
+                                          meeting duration.
+                                      </div>
+                                </div>
+                          </div>
+                      </div>
                 </div>
-          }
+                </React.Fragment>
+              }
         </div>
       </div>
       </div>

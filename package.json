@@ -35,6 +35,8 @@
   },
   "dependencies": {
     "body-parser": "^1.18.3",
+    "bulma-extensions": "^2.2.2",
+    "bulma-timeline": "^3.0.0",
     "config": "^2.0.1",
     "cookie-parser": "^1.4.3",
     "dotenv": "^6.0.0",
