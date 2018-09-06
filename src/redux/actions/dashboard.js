@@ -85,7 +85,7 @@ export const loadRecentMeetings = (uid, selectedMeeting) => dispatch => {
       }
       meetings.sort((a, b) => /*descending*/ -cmpMeetingsByStartTime(a, b));
       dispatch(updateMeetingList(meetings));
-      if (meetings.length > 0 && selectedMeeting === null) {
+      if (meetings.length > 0) {
         let newSelectedMeeting = meetings[0];
         dispatch(selectMeeting(newSelectedMeeting));
         dispatch(loadMeetingData(newSelectedMeeting._id));
