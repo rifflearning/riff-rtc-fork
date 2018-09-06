@@ -22,7 +22,10 @@ import {
   changeRoomName,
   muteAudio,
   unMuteAudio,
-  leaveRoom
+  leaveRoom,
+  saveLocalWebrtcId,
+  changePeerDisplayName,
+  changePeerRiffId
 } from '../actions/chat';
 import {
   updateRiffMeetingId,
@@ -52,12 +55,15 @@ export default function (nick, localVideoNode, dispatch, getState) {
 
   const webrtc = new SimpleWebRTC(webRtcConfig);
 
-  console.log("Creating webrtc constant...");
+  console.log("Creating webrtc constant...", webrtc);
+//  console.log("Local Session ID:", webrtc.connection.socket.sessionId)
 
   webrtc.on('videoAdded', function (video, peer) {
-    console.log("added video", peer, video);
-    dispatch(addPeer({peer: peer,
-                      videoEl: video}));
+    console.log("added video", peer, video, "nick:", peer.nick);
+    dispatch(addPeer({peer: peer, videoEl: video}));
+    let [riffId, nick] = peer.nick.split(' ');
+    dispatch(changePeerRiffId(peer, riffId));
+    dispatch(changePeerDisplayName(peer, nick));
   });
 
   webrtc.on('videoRemoved', function (video, peer) {
@@ -66,7 +72,8 @@ export default function (nick, localVideoNode, dispatch, getState) {
                          videoEl: video}));
     if (state.chat.inRoom) {
       console.log("riff removing participant: ", peer.nick, "from meeting", state.riff.meetingId);
-      participantLeaveRoom(state.riff.meetingId, peer.nick);
+      let [riffId, ...rest] = peer.nick.split(" ");
+      participantLeaveRoom(state.riff.meetingId, riffId);
     }
   });
 
@@ -76,7 +83,7 @@ export default function (nick, localVideoNode, dispatch, getState) {
 
   webrtc.on('localStream', function (event) {
     if (event.active) {
-      dispatch(getMediaError(false));  
+      dispatch(getMediaError(false));
     }
   });
 
@@ -91,6 +98,10 @@ export default function (nick, localVideoNode, dispatch, getState) {
     console.log("video:", video);
     console.log("stream:", stream)
     dispatch(getMediaError(false));
+    console.log("local webrtc connection id:", webrtc.connection.connection.id);
+    dispatch(saveLocalWebrtcId(webrtc.connection.connection.id));
+
+
     var sib = new sibilant(localVideoNode);
 
     if (sib) {

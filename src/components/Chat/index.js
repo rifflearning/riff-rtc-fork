@@ -18,7 +18,9 @@ import {
   changeRoomName,
   changeDisplayName,
   joinRoomError,
-  clearJoinRoomError}
+  clearJoinRoomError,
+  saveDisplayName,
+  saveLocalWebrtcId}
 from "../../redux/actions/chat";
 import { participantLeaveRoom } from '../../redux/actions/riff';
 import { push } from 'connected-react-router';
@@ -26,6 +28,7 @@ import addWebRtcListeners from "../../redux/listeners/webrtc";
 import { riffAddUserToMeeting } from '../../redux/actions/riff';
 import { store, persistor } from '../../redux/store';
 import LeaveRoomButton from './LeaveRoomButton';
+import {ScaleLoader} from 'react-spinners';
 import app from '../../firebase';
 let db = app.firestore();
 
@@ -39,11 +42,12 @@ const mapStateToProps = state => ({
   mediaError: state.chat.getMediaError,
   joinRoomError: state.chat.joinRoomError,
   webRtc: state.chat.webRtc,
+  webrtcId: state.chat.webrtcId,
   displayName: state.chat.displayName,
-  // first element is often null, I don't know why
+  savedDisplayName: state.chat.savedDisplayName,
   webRtcPeers: state.chat.webRtcPeers[0] === null ? [] : state.chat.webRtcPeers,
   isAudioMuted: state.chat.audioMuted,
-  volume: Math.ceil(((85 + state.chat.volume)+1)/20)*20,
+  volume: state.chat.volume,
   chat: state.chat,
   auth: state.auth,
   riff: state.riff,
@@ -83,8 +87,6 @@ const mapDispatchToProps = dispatch => ({
         console.log(err, "---", rd);
       });
 
-      console.log("Clicked Ready to Join");
-      console.log('webrtc object:', webrtc);
       dispatch(joinedRoom(name));
       riffAddUserToMeeting(auth.user.uid,
                            auth.user.email ? auth.user.email : "",
@@ -95,7 +97,7 @@ const mapDispatchToProps = dispatch => ({
                            riff.authToken
                           );
       // use nick property to share riff IDs with all users
-      webrtc.changeNick(auth.user.uid);
+      webrtc.changeNick(auth.user.uid + " " + chat.displayName);
     }
   },
   handleMuteAudioClick: (event, muted, webrtc) => {
@@ -107,7 +109,9 @@ const mapDispatchToProps = dispatch => ({
       dispatch(muteAudio());
       webrtc.mute();
     }
-
+  },
+  saveLocalWebrtcId: (webrtcId) => {
+    dispatch(saveLocalWebrtcId(webrtcId));
   },
   dispatch: dispatch,
 });
@@ -116,13 +120,20 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => ({
   ...stateProps,
   ...dispatchProps,
   ...ownProps,
-  withRef: true
+  withRef: true,
+  handleKeypress: (event, webrtc) => {
+    if (Event.key == 'Enter') {
+      dispatchProps.handleReadyClick(event,
+                                     stateProps.displayName,
+                                     stateProps.chat,
+                                     stateProps.auth,
+                                     stateProps.riff,
+                                     webrtc);
+    }
+  },
 });
 
 
-
-// width: 15rem;
-// height: 10rem;
 const VideoPlaceholder = styled.div.attrs({
   className: 'has-text-centered',
   ref: 'local'
@@ -208,102 +219,88 @@ opacity: 0.5;
 
 const RenderVideos = ({inRoom, webRtcPeers, roomName, displayName,
                        handleKeyPress, handleDisplayNameChange, handleRoomNameChange,
+                       savedDisplayName,
                        handleReadyClick,
                        clearJoinRoomError,
                        joinRoomError,
-                       joinButtonDisabled}) => {
-  //console.log("webrtc peers:", webRtcPeers);
-  if (webRtcPeers.length > 0) {
-    return (
-      <div class="column">
-        <RemoteVideoContainer ref = "remote" peers = {webRtcPeers}/>
-      </div>
-    );
-  } else {
-    return (
-      <div class="column">
-      <div class="columns has-text-centered is-centered">
-        {!inRoom ?
-          <div>
-          <div class='has-text-centered column is-half' style={{whiteSpace: 'nowrap'}}>
-              <div class="columns">
-                  <div class="column">
-                      <h2 class="is-size-4">Joining room</h2>
-                    </div>
-                    <div class="column">
-                      <RoomNameEntry
-                          type="text"
-                          name="name"
-                          placeholder="my-room-name"
-                          value={roomName}
-                          onChange={event => handleRoomNameChange(event.target.value)}/>
-                      </div>
-                </div>
+                       joinButtonDisabled,
+                       webrtc, chat}) =>
+      {
+        //console.log("webrtc peers:", webRtcPeers);
+        if (webRtcPeers.length > 0) {
+          return (
+            <div class="column">
+              <RemoteVideoContainer ref = "remote" peers = {webRtcPeers} chat={chat}/>
             </div>
-            <div class='has-text-centered column is-half' style={{whiteSpace: 'nowrap'}}>
-                <div class="columns">
-                    <div class="column">
-                        <h2 class="is-size-4">With display name </h2>
-                      </div>
-                      <div class="column">
-                          <RoomNameEntry
-                              type="text"
-                              name="name"
-                              placeholder="Your Name"
-                              value={displayName}
-                              onKeyPress={ handleKeyPress }
-                              onChange={event => handleDisplayNameChange(event.target.value)}/>
+          );
+        } else {
+          return (
+            <div class="column">
+              <div class="columns has-text-centered is-centered">
+                {!inRoom ?
+                  <div>
+                      <div class='has-text-centered column is-half' style={{whiteSpace: 'nowrap'}}>
+                          <div class="columns">
+                              <div class="column">
+                                  <h2 class="is-size-4">Joining room</h2>
+                                </div>
+                                <div class="column">
+                                    <RoomNameEntry
+                                        type="text"
+                                        name="name"
+                                        placeholder="my-room-name"
+                                        value={roomName}
+                                        onChange={event => handleRoomNameChange(event.target.value)}/>
+                                  </div>
+                            </div>
                         </div>
-                  </div>
+                        <div class='has-text-centered column is-half' style={{whiteSpace: 'nowrap'}}>
+                            <div class="columns">
+                                <div class="column">
+                                    <h2 class="is-size-4">With display name </h2>
+                                  </div>
+                                  <div class="column">
+                                      <RoomNameEntry
+                                          type="text"
+                                          name="name"
+                                          placeholder="Your Name"
+                                          value={displayName}
+                                          onKeyPress={ (event) => handleKeyPress(event, webrtc) }
+                                          onChange={event => handleDisplayNameChange(event.target.value)}/>
+                                    </div>
+                              </div>
+                          </div>
+                          <div class='has-text-centered is-centered column' >
+                              <a class="button is-outlined is-primary"
+                                   style={{'marginTop': '10px'}}
+                                   disabled={joinButtonDisabled}
+                                   onClick={handleReadyClick}>Join Room</a>
+                                { joinRoomError &&
+                                  <ErrorNotification>
+                                      <button class="delete" onClick={clearJoinRoomError}></button>
+                                        {joinRoomError}
+                                    </ErrorNotification>
+                                    }
+                            </div>
+                    </div>
+                    :
+                    <div class="columns has-text-centered is-centered is-vcentered"
+                           style={{minHeight: "80vh", minWidth: "80vw"}}>
+                        <div class="column is-vcentered has-text-centered">
+                          <h1>Nobody else here...</h1>
+                          <ScaleLoader color={"#8A6A94"}/>
+                          </div>
+                    </div>
+                    }
               </div>
-              <div class='has-text-centered is-centered column' >
-              <a class="button is-outlined is-primary"
-                   style={{'marginTop': '10px'}}
-                   disabled={joinButtonDisabled}
-                   onClick={handleReadyClick}>Join Room</a>
-                    { joinRoomError &&
-                      <ErrorNotification>
-                          <button class="delete" onClick={clearJoinRoomError}></button>
-                            {joinRoomError}
-                        </ErrorNotification>
-                        }
-                </div>
             </div>
-          :
-          <h1>Nobody else here...</h1>}
-         </div>
-      </div>
-    );
-  }
-}
+          );
+        }};
 
 class Chat extends Component {
   constructor (props) {
     super(props);
-    this.handleKeyPress = this.handleKeyPress.bind(this);
     this.onUnload = this.onUnload.bind(this);
-    this.didSendFirebaseData = false;
-  }
-
-  saveDisplayName() {
-    if (this.props.riff.meetingId && !this.didSendFirebaseData) {
-      let docId = this.props.auth.user.uid + "_" + this.props.riff.meetingId;
-      let docRef = db.collection('meetings').doc(docId);
-      docRef.set({
-        user: this.props.auth.user.uid,
-        meeting: this.props.riff.meetingId,
-        displayName: this.props.chat.displayName
-      }, {merge: true});
-      this.didSendFirebaseData = true;
-    }
-  }
-
-  componentDidUpdate() {
-    //console.log(this.props.joinRoomError);
-    // console.log(!(this.props.roomName == '' && this.props.chat.displayName == ''));
-    // console.log(this.props.roomName);
-    // console.log(this.props.chat.displayName);
-    this.saveDisplayName();
   }
 
   componentDidMount() {
@@ -312,7 +309,8 @@ class Chat extends Component {
                                      localVideo,
                                      this.props.dispatch,
                                      store.getState);
-    this.saveDisplayName();
+    console.log("> webrtc connection ID:", this.webrtc.connection.connection.id);
+
     // leave chat when window unloads
     window.addEventListener("beforeunload", this.onUnload);
   }
@@ -327,8 +325,6 @@ class Chat extends Component {
       event.preventDefault();
     }
 
-    console.log(this.props);
-    console.log(this.props.leaveRiffRoom)
     if (event) {
       console.log(event);
       event.returnValue = "If you leave, you'll have to re-join the room.";
@@ -346,12 +342,6 @@ class Chat extends Component {
         }
       }.bind(this));
   };
-
-  handleKeyPress(event) {
-    if (event.key == 'Enter') {
-      this.props.handleReadyClick(event, this.name, this.props.chat, this.props.auth, this.props.riff, this.webrtc);
-    }
-  }
 
   componentWillUnmount() {
     this.webrtc.stopLocalVideo();
@@ -447,14 +437,15 @@ class Chat extends Component {
                         displayName={this.props.displayName}
                         handleKeyPress={this.handleKeyPress}
                         handleDisplayNameChange={this.props.handleDisplayNameChange}
+                        savedDisplayName={this.props.savedDisplayName}
                         webRtcPeers={this.props.webRtcPeers}
                         handleRoomNameChange={this.props.handleRoomNameChange}
                         handleReadyClick={(event) => this.props.handleReadyClick(event, this.name, this.props.chat, this.props.auth, this.props.riff, this.webrtc)}
             joinButtonDisabled={(this.props.roomName == '' || this.props.displayName == '')}
             clearJoinRoomError={this.props.clearJoinRoomError}
             joinRoomError={this.props.joinRoomError}
-
-            >
+            chat={this.props.chat}
+            webrtc={this.webrtc}>
           </RenderVideos>
         </div>
       </div>
