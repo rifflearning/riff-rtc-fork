@@ -35,8 +35,6 @@
   },
   "dependencies": {
     "body-parser": "^1.18.3",
-    "bulma-extensions": "^2.2.2",
-    "bulma-timeline": "^3.0.0",
     "config": "^2.0.1",
     "cookie-parser": "^1.4.3",
     "dotenv": "^6.0.0",
@@ -62,6 +60,8 @@
     "autoprefixer": "^8.6.3",
     "babel-loader": "^8.0.2",
     "bulma": "^0.7.1",
+    "bulma-extensions": "^2.2.2",
+    "bulma-timeline": "^3.0.0",
     "cache-loader": "^1.2.2",
     "chart.js": "^2.7.2",
     "clean-webpack-plugin": "^0.1.19",
