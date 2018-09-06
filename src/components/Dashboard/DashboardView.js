@@ -166,9 +166,12 @@ const DashboardView = ({user, riffAuthToken, meetings,
                   <p class="is-size-4 is-primary">Room: {selectedMeeting.room} </p>
                   <p class="is-size-5 is-primary">{processedUtterances.length} Attendees </p>
                   <p class="is-size-5 is-primary">{selectedMeetingDuration} </p>
+
+                  <TurnChart processedUtterances={processedUtterances} participantId={user.uid}/>
+
                   <div class="content">
                     <p>
-                      The graph below represents the distribution of speaking during
+                      The graph above represents the distribution of speaking during
                       your meeting, which is our turn-taking metric. In turn-taking, we
                       measure only active human vocalization, not the pauses in normal
                       speech, which is why time spoken is typically less than the
@@ -191,8 +194,6 @@ const DashboardView = ({user, riffAuthToken, meetings,
                       Learn more &lt;linked below> about new Riff insights we’ll be releasing soon.
                     </p>
                   </div>
-
-                  <TurnChart processedUtterances={processedUtterances} participantId={user.uid}/>
 
                   <div class="content">
                     <p>
