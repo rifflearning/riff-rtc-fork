@@ -22,13 +22,13 @@ const NavBar = styled.nav.attrs({
 const ProfileLinks = (props) => {
   if (!props.loggedIn) {
     return (
-      <div class="navbar-end">
+      <div className="navbar-end">
         <a className="navbar-item" href="mailto:beta@rifflearning.com">Send Feedback</a>
         <Link className='navbar-item' to="/signup">Sign Up</Link>
         <Link className='navbar-item' to="/login">Login</Link>
       </div>);
   } else {
-    return <div class="navbar-end">
+    return <div className="navbar-end">
       <a className='navbar-item' href="mailto:beta@rifflearning.com">Send Feedback</a>
       <Link className='navbar-item' to="/profile">Profile</Link>
       <Link className='navbar-item' to="/home" onClick={ props.handleLogOut }>Log Out</Link>
@@ -38,7 +38,7 @@ const ProfileLinks = (props) => {
 
 const NavBarView = ({loggedIn, menuOpen, handleLogOut, handleBurgerClick}) => (
   <NavBar role="navigation" aria-label="main navigation">
-    <div class="navbar-brand">
+    <div className="navbar-brand">
       <Link className="navbar-item" to="/home">
       <Brandimg src={require('../../../assets/rifflogo.jpeg')}/>
     </Link>
@@ -49,7 +49,7 @@ const NavBarView = ({loggedIn, menuOpen, handleLogOut, handleBurgerClick}) => (
     </div>
   </div>
     <div className={menuOpen ? 'navbar-menu is-active' : 'navbar-menu'}>
-    <div class="navbar-start">
+    <div className="navbar-start">
       <Link className='navbar-item' to="/riffs">My Riffs</Link>
       <Link className='navbar-item' to="/room">Chat</Link>
       <a className='navbar-item' href="https://rifflearning.com">Learn More</a>

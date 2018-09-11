@@ -30,7 +30,7 @@ const mapMergeProps = (stateProps, dispatchProps, ownProps) => ({
 });
 
 const LeaveButtonView = ({leaveRoom}) => (
-  <a class="button is-primary" style={{'marginTop': '10px'}} onClick={event => leaveRoom(event)} >Leave Room</a>
+  <a className="button is-primary" style={{'marginTop': '10px'}} onClick={event => leaveRoom(event)} >Leave Room</a>
 );
 
 

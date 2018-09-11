@@ -37,22 +37,22 @@ class Home extends React.Component {
   render() {
     return (
       <HomeSection>
-        <div class="columns">
-          <div class="column">
-            <div class="content">
-              <h1 class="is-size-1"> Riff is a new way to talk online. </h1>
+        <div className="columns">
+          <div className="column">
+            <div className="content">
+              <h1 className="is-size-1"> Riff is a new way to talk online. </h1>
               <p>
                 Riff teaches you how to make your conversations better by measuring how
                 you interact with others and giving you feedback about what happened.
               </p>
             </div>
           </div>
-          <div class="column">
+          <div className="column">
             <MakeMeetingCard>
             </MakeMeetingCard>
           </div>
         </div>
-        <div class="section has-text-centered is-centered"
+        <div className="section has-text-centered is-centered"
              style={{marginLeft: "-1.5rem",
                      marginRight: "-1.5rem",
                      marginTop: "2rem",
@@ -60,32 +60,32 @@ class Home extends React.Component {
                      paddingTop: "2rem",
                      paddingBottom: "2rem",
              background: "linear-gradient(30deg, rgba(138,106,148,1) 12%, rgba(171,69,171,1) 87%)"}}>
-          <div class="columns has-text-centered is-centered">
-            <div class="column is-one-quarter">
-              <div class="card" style={{maxHeight: '20rem', objectFit: 'contain'}}>
-                <figure class="image is-square">
+          <div className="columns has-text-centered is-centered">
+            <div className="column is-one-quarter">
+              <div className="card" style={{maxHeight: '20rem', objectFit: 'contain'}}>
+                <figure className="image is-square">
                   <img  style={{maxHeight: '20rem', objectFit: 'contain'}} src={require('../../assets/camera.png')}/>
                 </figure>
               </div>
             </div>
-            <div class="column is-one-quarter">
-              <div class="card" style={{maxHeight: '20rem', objectFit: 'contain'}}>
-                <figure class="image is-square">
+            <div className="column is-one-quarter">
+              <div className="card" style={{maxHeight: '20rem', objectFit: 'contain'}}>
+                <figure className="image is-square">
                   <img  style={{maxHeight: '20rem', objectFit: 'contain'}} src={require('../../assets/invite.png')}/>
                 </figure>
               </div>
             </div>
-            <div class="column is-one-quarter">
-              <div class="card" style={{maxHeight: '20rem', objectFit: 'contain'}}>
-                <figure class="image is-square">
+            <div className="column is-one-quarter">
+              <div className="card" style={{maxHeight: '20rem', objectFit: 'contain'}}>
+                <figure className="image is-square">
                   <img  style={{maxHeight: '20rem', objectFit: 'contain'}} src={require('../../assets/data.png')}/>
                 </figure>
               </div>
             </div>
           </div>
-          <div class="columns is-centered has-text-left" style={{color: 'white'}}>
-            <div class="column is-three-quarters">
-              <h2 class="is-size-2"> Why Riff? </h2>
+          <div className="columns is-centered has-text-left" style={{color: 'white'}}>
+            <div className="column is-three-quarters">
+              <h2 className="is-size-2"> Why Riff? </h2>
               <p>
                 Riff measures conversational dynamics and provides feedback during and
                 after your conversations. Each participant receives objective data to help
@@ -97,10 +97,10 @@ class Home extends React.Component {
           </div>
         </div>
 
-        <div class="columns">
-          <div class="column">
-            <div class="content">
-              <h1 class="is-size-2"> Our Beta has three features </h1>
+        <div className="columns">
+          <div className="column">
+            <div className="content">
+              <h1 className="is-size-2"> Our Beta has three features </h1>
               <ul>
                 <li>
                   Instrumented video chat — our proprietary WebRTC video chat application

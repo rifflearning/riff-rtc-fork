@@ -121,7 +121,7 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => ({
   ...dispatchProps,
   ...ownProps,
   withRef: true,
-  handleKeypress: (event, webrtc) => {
+  handleKeyPress: (event, webrtc) => {
     if (Event.key == 'Enter') {
       dispatchProps.handleReadyClick(event,
                                      stateProps.displayName,
@@ -229,22 +229,22 @@ const RenderVideos = ({inRoom, webRtcPeers, roomName, displayName,
         //console.log("webrtc peers:", webRtcPeers);
         if (webRtcPeers.length > 0) {
           return (
-            <div class="column">
+            <div className="column">
               <RemoteVideoContainer ref = "remote" peers = {webRtcPeers} chat={chat}/>
             </div>
           );
         } else {
           return (
-            <div class="column">
-              <div class="columns has-text-centered is-centered">
+            <div className="column">
+              <div className="columns has-text-centered is-centered">
                 {!inRoom ?
                   <div>
-                      <div class='has-text-centered column is-half' style={{whiteSpace: 'nowrap'}}>
-                          <div class="columns">
-                              <div class="column">
-                                  <h2 class="is-size-4">Joining room</h2>
+                      <div className='has-text-centered column is-half' style={{whiteSpace: 'nowrap'}}>
+                          <div className="columns">
+                              <div className="column">
+                                  <h2 className="is-size-4">Joining room</h2>
                                 </div>
-                                <div class="column">
+                                <div className="column">
                                     <RoomNameEntry
                                         type="text"
                                         name="name"
@@ -254,12 +254,12 @@ const RenderVideos = ({inRoom, webRtcPeers, roomName, displayName,
                                   </div>
                             </div>
                         </div>
-                        <div class='has-text-centered column is-half' style={{whiteSpace: 'nowrap'}}>
-                            <div class="columns">
-                                <div class="column">
-                                    <h2 class="is-size-4">With display name </h2>
+                        <div className='has-text-centered column is-half' style={{whiteSpace: 'nowrap'}}>
+                            <div className="columns">
+                                <div className="column">
+                                    <h2 className="is-size-4">With display name </h2>
                                   </div>
-                                  <div class="column">
+                                  <div className="column">
                                       <RoomNameEntry
                                           type="text"
                                           name="name"
@@ -270,23 +270,23 @@ const RenderVideos = ({inRoom, webRtcPeers, roomName, displayName,
                                     </div>
                               </div>
                           </div>
-                          <div class='has-text-centered is-centered column' >
-                              <a class="button is-outlined is-primary"
+                          <div className='has-text-centered is-centered column' >
+                              <a className="button is-outlined is-primary"
                                    style={{'marginTop': '10px'}}
                                    disabled={joinButtonDisabled}
                                    onClick={handleReadyClick}>Join Room</a>
                                 { joinRoomError &&
                                   <ErrorNotification>
-                                      <button class="delete" onClick={clearJoinRoomError}></button>
+                                      <button className="delete" onClick={clearJoinRoomError}></button>
                                         {joinRoomError}
                                     </ErrorNotification>
                                     }
                             </div>
                     </div>
                     :
-                    <div class="columns has-text-centered is-centered is-vcentered"
+                    <div className="columns has-text-centered is-centered is-vcentered"
                            style={{minHeight: "80vh", minWidth: "80vw"}}>
-                        <div class="column is-vcentered has-text-centered">
+                        <div className="column is-vcentered has-text-centered">
                           <h1>Nobody else here...</h1>
                           <ScaleLoader color={"#8A6A94"}/>
                           </div>
@@ -367,8 +367,8 @@ class Chat extends Component {
 
   render () {
     return (
-      <div class="section">
-        <div class="columns">
+      <div className="section">
+        <div className="columns">
           <Menu>
             {!this.props.inRoom ?
               <MenuLabelCentered>
@@ -400,16 +400,16 @@ class Chat extends Component {
                   <p> Can't see your video? Make sure your camera is enabled.
                     </p>
                 </VideoPlaceholder>}
-              <p class="menu-label">{this.props.user.email}</p>
+              <p className="menu-label">{this.props.user.email}</p>
               {this.props.inRoom &&
-                <div class="has-text-centered">
-                    <div class="control">
+                <div className="has-text-centered">
+                    <div className="control">
                         {this.props.isAudioMuted ?
-                          <a class="button is-rounded is-danger"  onClick={event => this.props.handleMuteAudioClick(event, this.props.isAudioMuted, this.webrtc)}>
+                          <a className="button is-rounded is-danger"  onClick={event => this.props.handleMuteAudioClick(event, this.props.isAudioMuted, this.webrtc)}>
                               <MaterialIcon icon="mic_off"/>
                             </a>
                           :
-                            <a class="button is-rounded" onClick={event => this.props.handleMuteAudioClick(event, this.props.isAudioMuted, this.webrtc)}>
+                            <a className="button is-rounded" onClick={event => this.props.handleMuteAudioClick(event, this.props.isAudioMuted, this.webrtc)}>
                                 <MaterialIcon icon="mic"/>
                               </a>
                           }
@@ -417,13 +417,13 @@ class Chat extends Component {
                   </div>
               }
             {!this.props.inRoom ?
-              <div class="has-text-centered">
-                  <div class="level">
-                      <div class="level-item" style={{'maxWidth': '20%'}}>
+              <div className="has-text-centered">
+                  <div className="level">
+                      <div className="level-item" style={{'maxWidth': '20%'}}>
                           <MaterialIcon icon="mic"></MaterialIcon>
                         </div>
-                        <div class="level-item">
-                            <progress style={{maxWidth: '100%'}} class="progress is-success" value={this.props.volume} max="100"></progress>
+                        <div className="level-item">
+                            <progress style={{maxWidth: '100%'}} className="progress is-success" value={this.props.volume} max="100"></progress>
                           </div>
                     </div>
                     <p>Having trouble? <a href="/room">refresh the page</a> and allow access to your camera and mic.</p>
@@ -435,7 +435,7 @@ class Chat extends Component {
           <RenderVideos inRoom={this.props.inRoom}
                         roomName={this.props.roomName}
                         displayName={this.props.displayName}
-                        handleKeyPress={this.handleKeyPress}
+                        handleKeyPress={this.props.handleKeyPress}
                         handleDisplayNameChange={this.props.handleDisplayNameChange}
                         savedDisplayName={this.props.savedDisplayName}
                         webRtcPeers={this.props.webRtcPeers}

@@ -32,20 +32,20 @@ const MakeMeetingCardView = ({
   joinRoom,
   isInvalid}) => (
     <GradientCard>
-      <div class="card-content">
-        <p class="title">
+      <div className="card-content">
+        <p className="title">
           Start a room to make your meetings actually engaging.
         </p>
-        <div class="field has-addons">
-          <div class="control">
-            <input class="input" type="text"
+        <div className="field has-addons">
+          <div className="control">
+            <input className="input" type="text"
                    value={ roomName }
                    placeholder="your-next-great-meeting"
                    onChange={ event => handleRoomNameChange(event.target.value)}
               onKeyPress={ handleKeyPress }/>
           </div>
-          <div class="control">
-            <a class="button is-primary" disabled={isInvalid} onClick={ () => joinRoom(roomName) }>
+          <div className="control">
+            <a className="button is-primary" disabled={isInvalid} onClick={ () => joinRoom(roomName) }>
               Go
             </a>
           </div>

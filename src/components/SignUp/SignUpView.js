@@ -40,46 +40,46 @@ const SignUpView = ({handleSignUp,
                      email,
                      password,
                      isInvalid}) => (
-  <div class="section">
-    <div class="columns">
+  <div className="section">
+    <div className="columns">
       <GradientCol>
         <FixedCard>
-          <p class="title">
+          <p className="title">
             Sign Up
           </p>
           <form onSubmit={handleSignUp}>
-            <div class="field">
-              <label class="label">email</label>
-              <div class="control">
-                <input class="input"
+            <div className="field">
+              <label className="label">email</label>
+              <div className="control">
+                <input className="input"
                   type="text"
                   name="email"
                   placeholder="example@riff.com"
                   onChange={event => handleEmail(event.target.value)}/>
               </div>
             </div>
-            <div class="field">
-              <label class="label">password</label>
-              <div class="control">
-                <input class="input"
+            <div className="field">
+              <label className="label">password</label>
+              <div className="control">
+                <input className="input"
                   type="password"
                   name="password"
                   placeholder="something unique and long"
                   onChange={event => handlePassword(event.target.value)}/>
               </div>
             </div>
-            <div class="field">
-              <div class="control">
-                <button class="button is-link" type="submit" disabled={isInvalid}>Submit</button>
+            <div className="field">
+              <div className="control">
+                <button className="button is-link" type="submit" disabled={isInvalid}>Submit</button>
               </div>
             </div>
-            { error && <div class="notification is-warning">
-              <button class="delete" onClick={clearError}></button>
+            { error && <div className="notification is-warning">
+              <button className="delete" onClick={clearError}></button>
               {error.message}</div> }
           </form>
         </FixedCard>
       </GradientCol>
-      <div class="column">
+      <div className="column">
         <SignInContent>
           <h1> Sign up to see data about your conversations. </h1>
           <p>
