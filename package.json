@@ -22,11 +22,11 @@
   "bugs": "https://github.com/rifflearning/riff-rtc/issues",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node server.js",
+    "start": "node server/server.js",
     "build:prod-broken": "coffee -c src/libs/mm.coffee; webpack --mode production --config webpack/webpack.config.js",
     "build:prod": "npm run build:dev",
     "build:dev": "coffee -c src/libs/mm.coffee; webpack --mode development --config webpack/webpack.config.dev.js",
-    "start:dev-server": "nodemon server.js",
+    "start:dev-server": "nodemon server/server.js",
     "start:dev-client": "webpack --watch --config webpack/webpack.config.dev.js",
     "start:dev": "concurrently --kill-others \"npm run start:dev-server\" \"npm run start:dev-client\""
   },

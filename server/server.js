@@ -1,3 +1,5 @@
+const path = require('path');
+
 const express = require('express');
 const app = express();
 const server = require('http').createServer(app);
@@ -8,6 +10,9 @@ const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const serveStatic = require('serve-static');
 const hoganXpress = require('hogan-xpress'); // mustache templating engine
+
+const spaRouter = require('./routes/spa');
+const ltiRouter = require('./routes/lti');
 
 const request = require('request');
 const lti = require("ims-lti");
@@ -60,7 +65,12 @@ function get_room(id, callback) {
 
 // Use the session middleware
 app.use(session({ secret: config.get('server.sessionSecret'), cookie: { maxAge: 60000 }}));
-app.use(serveStatic(__dirname + '/build', { index: false, redirect: false }));
+app.use(serveStatic(path.join(__dirname, '../build'), { index: false, redirect: false }));
+
+app.use('/api/lti', ltiRouter);
+
+// All routes not handled above should return the SPA
+app.use('*', spaRouter);
 
 app.post('/lti_launch', handle_launch, chat_route);
 app.get('*', chat_route);
@@ -78,7 +88,7 @@ function handle_launch(req, res, next) {
   const consumer_secret = config.get('server.lti.consumerSecret');
 
   let client = redis.createClient(config.get('server.lti.redisUrl'));
-  store = new lti.Stores.RedisStore('consumer_key', client);
+  store = new lti.Stores.RedisStore(client);
   req.lti = new lti.Provider(consumer_key, consumer_secret, store);
   req.session.body = req.body;
   req.lti.valid_request(req, function (err, isValid) {
