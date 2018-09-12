@@ -7,10 +7,15 @@ server:
   port: 3001
   sessionSecret: secret
   lti:
-    roomMapUrl:
-    redisUrl:
-    consumerKey: key
-    consumerSecret: secret
+    enabled: false
+    redisUrl: redis://localhost:6379
+  lmss:
+    -
+      name: Emeritus
+      type: canvas
+      lti:
+        oauth_consumer_key: key
+        oauth_consumer_secret: secret
 
 client:
   react_app_debug: true
