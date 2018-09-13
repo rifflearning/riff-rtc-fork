@@ -9,7 +9,9 @@ const cookieParser = require('cookie-parser');
 const bodyParser = require('body-parser');
 const serveStatic = require('serve-static');
 const hoganXpress = require('hogan-xpress'); // mustache templating engine
+const reqLogger = require('morgan');
 
+const { loggerInstance: logger } = require('./utils/logger');
 const spaRouter = require('./routes/spa');
 const ltiRouter = require('./routes/lti');
 
@@ -17,12 +19,12 @@ require('dotenv').config();
 const config = require('config');
 let serverConfig = config.get('server');
 let clientConfig = config.get('client');
-//console.log('server config: ', serverConfig);
-//console.log('client config: ', clientConfig);
+logger.debug({ serverConfig, clientConfig });
 
 app.engine('html', hoganXpress);
 app.set('view engine', 'html');
 
+app.use(reqLogger('dev'));
 app.use(cookieParser());
 app.enable("trust proxy");
 
@@ -55,7 +57,7 @@ app.use('*', spaRouter);
 const port = config.get('server.port') || 5000;
 server.listen(port);
 
-console.log("Listening!");
+logger.info({port}, 'Listening!');
 
 /* **************************************************************************
  * misdirected                                                         */ /**

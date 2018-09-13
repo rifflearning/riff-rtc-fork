@@ -21,6 +21,8 @@ const request = require('request');
 const lti = require("ims-lti");
 const redis = require("redis");
 
+const { loggerInstance: logger } = require('../utils/logger');
+
 /* GET single page application */
 router.post('/launch', ltiLaunch);
 
@@ -39,7 +41,7 @@ const activeLMSs = new Map();
  */
 function ltiLaunch(req, res)
 {
-  console.log('INFO: ltiLaunch');
+  logger.debug({ body: req.body }, 'ltiLaunch');
 
   req.lti = getLtiProvider(req.body.oauth_consumer_key);
   req.session.body = req.body;
@@ -48,8 +50,9 @@ function ltiLaunch(req, res)
       if (err)
       {
         // invalid lti launch request
-        console.log(err);
-        return res.send("LTI Verification failed!");
+        errmsg = 'LTI Verification failed!';
+        logger.error({ err }, errmsg);
+        return res.send(errmsg);
       }
 
       req.session.isValid = isValid;
@@ -87,6 +90,7 @@ function getLtiProvider(oathConsumerKey)
 
   if (!lms)
   {
+    logger.error({ oath_consumer_key: oathConsumerKey }, 'No LMS found with given oath_consumer_key');
     throw new Error(`No LMS found with given oath_consumer_key: ${oathConsumerKey}`);
   }
 

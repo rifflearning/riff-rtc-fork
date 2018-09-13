@@ -17,11 +17,17 @@
 const express = require('express');
 const router = express.Router();
 
+const path = require('path');
+const config = require('config');
+
+const { loggerInstance } = require('../utils/logger');
+const logger = loggerInstance.child({ router: 'spa' });
+
 /* GET single page application */
 router.get('*', spaIndex);
 
 /** Path to the SPA's main html file */
-const indexPath = path.join(__dirname, '../build/index.html');
+const indexPath = path.join(__dirname, '../../build/index.html');
 
 /** client configuration values that need to be added to main html file at runtime */
 const client_config = JSON.stringify(config.get('client'));
@@ -38,8 +44,8 @@ const client_config = JSON.stringify(config.get('client'));
 function spaIndex(req, res)
 {
   let user_data = req.session.user_data ? JSON.stringify(req.session.user_data) : '{}';
-  // console.log('INFO: chat_route: config=', config);
   res.render(indexPath, { client_config, user_data });
+  logger.debug({req, res});
 }
 
 module.exports = router;
