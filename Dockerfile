@@ -50,26 +50,13 @@ ENV NODE_ENV=production
 COPY --from=build --chown=node:node /app/prod_node_modules ./node_modules/
 # copy app project file, build artifacts and configuration files
 COPY --from=build --chown=node:node /app/config ./config/
-COPY --from=build --chown=node:node /app/package.json /app/server.js ./
+COPY --from=build --chown=node:node /app/server ./server/
+COPY --from=build --chown=node:node /app/package.json ./
 COPY --from=build --chown=node:node /app/build/index.html ./build/
 # allow the port used to be specified, default to 3001
 ARG PORT=3001
 ENV PORT=$PORT
 # expose port
 EXPOSE $PORT
-# allow all referenced environment variables to be overridden
-ARG FIREBASE_CONFIG
-ARG DATASERVER_EMAIL
-ARG DATASERVER_PASSWORD
-ARG SESSION_SECRET
-ARG CONSUMER_KEY
-ARG CONSUMER_SECRET
-# Set the environment variables w/ values passed in
-ENV FIREBASE_CONFIG=$FIREBASE_CONFIG \
-    DATASERVER_EMAIL=$DATASERVER_EMAIL \
-    DATASERVER_PASSWORD=$DATASERVER_PASSWORD \
-    SESSION_SECRET=$SESSION_SECRET \
-    CONSUMER_KEY=$CONSUMER_KEY \
-    CONSUMER_SECRET=$CONSUMER_SECRET
 # define command to start the riff-rtc server
 CMD ["npm", "start"]
