@@ -93,6 +93,7 @@ function createLogger()
       {
         req: expressReqSerializer,
         res: bunyan.stdSerializers.res,
+        err: bunyan.stdSerializers.err,
       },
     };
 

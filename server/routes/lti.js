@@ -17,6 +17,8 @@
 const express = require('express');
 const router = express.Router();
 
+const config = require('config');
+
 const request = require('request');
 const lti = require("ims-lti");
 const redis = require("redis");
@@ -26,9 +28,8 @@ const { loggerInstance: logger } = require('../utils/logger');
 /* GET single page application */
 router.post('/launch', ltiLaunch);
 
+router.get('/launch', (req, res) => { return res.send('Hello there from lti launch get'); });
 
-/** Map of active (LMSs which have had a launch request) LMSs */
-const activeLMSs = new Map();
 
 /* **************************************************************************
  * ltiLaunch                                                           */ /**
@@ -43,15 +44,31 @@ function ltiLaunch(req, res)
 {
   logger.debug({ body: req.body }, 'ltiLaunch');
 
-  req.lti = getLtiProvider(req.body.oauth_consumer_key);
+  try
+  {
+    if (!req.body || !req.body.oauth_consumer_key)
+      throw new Error('Request body did not contain an oauth_consumer_key value!');
+
+    lti = getLtiProvider(req.body.oauth_consumer_key);
+  }
+  catch (e)
+  {
+    let errmsg = 'Could not configure LTI Provider, check consumer key and LMS list!';
+    logger.error(e.toString());
+    logger.debug({ err: e });
+    res.status(400); // Bad Request
+    return res.send(errmsg);
+  }
+
   req.session.body = req.body;
-  req.lti.valid_request(req, (err, isValid) =>
+  lti.valid_request(req, (err, isValid) =>
     {
       if (err)
       {
         // invalid lti launch request
-        errmsg = 'LTI Verification failed!';
+        let errmsg = 'LTI Verification failed!';
         logger.error({ err }, errmsg);
+        res.status(400); // Bad Request
         return res.send(errmsg);
       }
 
@@ -74,23 +91,14 @@ function ltiLaunch(req, res)
 
 function getLtiProvider(oathConsumerKey)
 {
-  // Note: although not 100% clear from the ims-lti docs, it seems that a new
-  // provider should be created for each request.
-
-  // If we've already created the ltiProvider, return it
-  if (activeLMSs.has(oathConsumerKey))
-  {
-    return activeLMSs.get(oathConsumerKey).lti.provider;
-  }
-
   // Find the matching oathConsumerSecret
-  let lmss = config.get('server.lti.lmss');
-
+  let lmss = config.has('server.lti.lmss') ? config.get('server.lti.lmss') : [];
   let lms = lmss.find(lms => lms.lti.oath_consumer_key === oathConsumerKey);
 
   if (!lms)
   {
-    logger.error({ oath_consumer_key: oathConsumerKey }, 'No LMS found with given oath_consumer_key');
+    logger.error({ oath_consumer_key: oathConsumerKey,
+                   LMSs: lmss.map(lms => lms.name) }, 'No LMS found with given oath_consumer_key');
     throw new Error(`No LMS found with given oath_consumer_key: ${oathConsumerKey}`);
   }
 
@@ -100,9 +108,8 @@ function getLtiProvider(oathConsumerKey)
   // Create the ltiProvider
   let client = redis.createClient(config.get('server.lti.redisUrl'));
   store = new lti.Stores.RedisStore('consumer_key', client);
-  lms.lti.provider = new lti.Provider(lms.lti.oath_consumer_key, lms.lti.oath_consumer_secret, store);
-  activeLMSs.set(lms.lti.oath_consumer_key, lms);
-  return lms.lti.provider;
+  let ltiProvider = new lti.Provider(lms.lti.oath_consumer_key, lms.lti.oath_consumer_secret, store);
+  return ltiProvider;
 }
 
 module.exports = router;
