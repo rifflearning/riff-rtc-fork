@@ -16,6 +16,19 @@ server:
       lti:
         oauth_consumer_key: key
         oauth_consumer_secret: secret
+  log:
+      name: riff-rtc
+      level: info
+      streams:
+          -
+              output: file
+              level: debug
+              logDir: "./logs"
+              type: rotating-file
+              period: 1d
+              count: 10
+          -
+              output: stderr
 
 client:
   react_app_debug: true
