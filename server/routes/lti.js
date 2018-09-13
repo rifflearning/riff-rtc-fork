@@ -41,7 +41,7 @@ function ltiLaunch(req, res)
 {
   console.log('INFO: ltiLaunch');
 
-  req.lti = getLtiProvider(oathConsumerKey);
+  req.lti = getLtiProvider(req.body.oauth_consumer_key);
   req.session.body = req.body;
   req.lti.valid_request(req, (err, isValid) =>
     {
