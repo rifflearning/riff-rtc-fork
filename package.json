@@ -109,7 +109,7 @@
     "redux-persist": "^5.10.0",
     "redux-thunk": "^2.3.0",
     "sass-loader": "^7.1.0",
-    "sibilant-webaudio": "^0.1.4",
+    "sibilant-webaudio": "^0.1.5",
     "simplewebrtc": "^3.0.2",
     "socket.io-client": "^2.1.1",
     "strip-json-comments": "^2.0.1",
