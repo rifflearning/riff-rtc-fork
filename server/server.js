@@ -1,5 +1,6 @@
 const path = require('path');
 
+const config = require('config');
 const express = require('express');
 const app = express();
 const server = require('http').createServer(app);
@@ -11,14 +12,16 @@ const serveStatic = require('serve-static');
 const hoganXpress = require('hogan-xpress'); // mustache templating engine
 const reqLogger = require('morgan');
 
+const rtcServerVer = require('../package.json').version;
 const { loggerInstance: logger } = require('./utils/logger');
 const spaRouter = require('./routes/spa');
 const ltiRouter = require('./routes/lti');
 
 require('dotenv').config();
-const config = require('config');
-let serverConfig = config.get('server');
-let clientConfig = config.get('client');
+
+// Log the current config settings
+const serverConfig = config.get('server');
+const clientConfig = { rtcServerVer, ...(config.get('client')) };
 logger.debug({ serverConfig, clientConfig });
 
 app.engine('html', hoganXpress);
@@ -41,7 +44,8 @@ app.use(session({ secret: config.get('server.sessionSecret'),
 app.use(serveStatic(path.join(__dirname, '../build'), { index: false, redirect: false }));
 
 // Named base routes
-app.use('/api/lti', ltiRouter);
+if (config.get('server.lti.enabled'))
+  app.use('/api/lti', ltiRouter);
 
 // These routes shouldn't be getting to this server, the reverse proxy should have
 // redirected them to the servers that handle them, so we'll just respond w/ a 404.

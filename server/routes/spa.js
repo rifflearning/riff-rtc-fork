@@ -20,6 +20,7 @@ const router = express.Router();
 const path = require('path');
 const config = require('config');
 
+const rtcServerVer = require('../../package.json').version;
 const { loggerInstance } = require('../utils/logger');
 const logger = loggerInstance.child({ router: 'spa' });
 
@@ -30,7 +31,8 @@ router.get('*', spaIndex);
 const indexPath = path.join(__dirname, '../../build/index.html');
 
 /** client configuration values that need to be added to main html file at runtime */
-const client_config = JSON.stringify(config.get('client'));
+const clientConfig = { rtcServerVer, ...(config.get('client')) };
+const client_config = JSON.stringify(clientConfig);
 
 /* **************************************************************************
  * spaIndex                                                            */ /**
