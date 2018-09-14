@@ -111,6 +111,14 @@ module.exports = {
     //   filename: 'styles.css'
     // })
   ],
+  watchOptions: {
+    poll: 1000,
+    ignored: [
+      /node_modules/,
+      'logs/*',
+      'server/**/*',
+    ],
+  },
   devServer: {
     hot: true,
     quiet: true,
