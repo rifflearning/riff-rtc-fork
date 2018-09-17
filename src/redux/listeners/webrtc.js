@@ -50,6 +50,14 @@ export default function (nick, localVideoNode, dispatch, getState) {
       path: signalmasterPath,
       forceNew: true
     },
+    media: {
+      audio: true,
+      video: {
+        width: { max: 640 },
+        height: { max: 480 },
+        frameRate: { max: 30 }
+      }
+    },
     debug: !!window.client_config.webrtc_debug
   };
 
