@@ -81,8 +81,8 @@ export default function (nick, localVideoNode, dispatch, getState) {
       dispatch(getMediaError(event));
   });
 
-  webrtc.on('localStream', function (event) {
-    if (event.active) {
+  webrtc.on('localStream', function (stream) {
+    if (stream.active) {
       dispatch(getMediaError(false));
     }
   });
@@ -93,16 +93,14 @@ export default function (nick, localVideoNode, dispatch, getState) {
   };
 
   webrtc.on('readyToCall', function (video, peer) {
-    let stream = localVideoNode.captureStream ? localVideoNode.captureStream() : localVideoNode.mozCaptureStream();
-    console.log("videoNode:", localVideoNode)
-    console.log("video:", video);
-    console.log("stream:", stream)
+    let stream = webrtc.webrtc.localStreams[0];
+    // when using localvideonode, we don't get a stream in chrome.
+    //let stream = localVideoNode.captureStream ? localVideoNode.captureStream() : localVideoNode.mozCaptureStream();
     dispatch(getMediaError(false));
     console.log("local webrtc connection id:", webrtc.connection.connection.id);
     dispatch(saveLocalWebrtcId(webrtc.connection.connection.id));
 
-
-    var sib = new sibilant(localVideoNode);
+    var sib = new sibilant(stream);
 
     if (sib) {
       webrtc.stopVolumeCollection = function () {
