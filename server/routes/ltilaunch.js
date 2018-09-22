@@ -1,8 +1,8 @@
 /* ******************************************************************************
- * lti.js                                                                       *
+ * ltilaunch.js                                                                 *
  * *************************************************************************/ /**
  *
- * @fileoverview Express route handler for the LTI (Learning Tool Integrations)
+ * @fileoverview Express route handler for launching Riff via LTI (Learning Tool Integrations)
  *
  * [More detail about the file's contents]
  *
@@ -14,21 +14,11 @@
  *
  * ******************************************************************************/
 
-const express = require('express');
-const router = express.Router();
-
 const config = require('config');
 
 const request = require('request');
 const lti = require("ims-lti");
 const redis = require("redis");
-
-const { loggerInstance: logger } = require('../utils/logger');
-
-/* GET single page application */
-router.post('/launch', ltiLaunch);
-
-router.get('/launch', (req, res) => { return res.send('Hello there from lti launch get'); });
 
 
 /* **************************************************************************
@@ -40,16 +30,18 @@ router.get('/launch', (req, res) => { return res.send('Hello there from lti laun
  * @param {ExpressRequest} req
  * @param {ExpressResponse} res
  */
-function ltiLaunch(req, res)
+function ltiLaunch(req, res, next)
 {
-  logger.debug({ body: req.body }, 'ltiLaunch');
+  const logger = req.app.get('routerLogger').child({ route_handler: 'ltiLaunch' });
+
+  logger.debug({ req, reqUrl: req.url, reqOrigUrl: req.originalUrl, body: req.body }, 'ltiLaunch entered...');
 
   try
   {
     if (!req.body || !req.body.oauth_consumer_key)
       throw new Error('Request body did not contain an oauth_consumer_key value!');
 
-    lti = getLtiProvider(req.body.oauth_consumer_key);
+    lti = getLtiProvider(req.body.oauth_consumer_key, logger);
   }
   catch (e)
   {
@@ -75,21 +67,24 @@ function ltiLaunch(req, res)
       req.session.isValid = isValid;
       // collect the data we're interested in from the request
       let email = req.body.lis_person_contact_email_primary;
-      let ltiData =
+      req.session.ltiData =
         {
           lti_user: true,
+          is_valid: isValid,
           user_id: req.body.user_id,
+          context_id: req.body.context_id,
           email,
           name: req.body.lis_person_name_full,
-          context_id: req.body.context_id,
-          room: get_room(email),
+          group: 'riff_group1',
         };
 
-      return res.json(ltiData);
+      //return res.json(req.session.ltiData);
+      req.originalUrl = '/chat';
+      return next();
     });
 }
 
-function getLtiProvider(oathConsumerKey)
+function getLtiProvider(oathConsumerKey, logger)
 {
   // Find the matching oathConsumerSecret
   let lmss = config.has('server.lti.lmss') ? config.get('server.lti.lmss') : [];
@@ -112,4 +107,12 @@ function getLtiProvider(oathConsumerKey)
   return ltiProvider;
 }
 
-module.exports = router;
+// ES6 import compatible export
+//        either: import ltiLaunch from 'ltilaunch';
+//            or: import { ltiLaunch } from 'ltilaunch';
+//   or CommonJS: const { ltiLaunch } = require('ltilaunch');
+module.exports =
+{
+  default: ltiLaunch,
+  ltiLaunch,
+};

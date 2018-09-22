@@ -1,10 +1,10 @@
 /* ******************************************************************************
- * spa.js                                                                       *
+ * spaindex.js                                                                  *
  * *************************************************************************/ /**
  *
  * @fileoverview Express route handler for the spa (Single Page Application)
  *
- * [More detail about the file's contents]
+ * Returns the html to load the SPA in a browser.
  *
  * Created on       September 12, 2018
  * @author          Michael Jay Lippert
@@ -14,18 +14,11 @@
  *
  * ******************************************************************************/
 
-const express = require('express');
-const router = express.Router();
-
 const path = require('path');
 const config = require('config');
 
 const rtcServerVer = require('../../package.json').version;
-const { loggerInstance } = require('../utils/logger');
-const logger = loggerInstance.child({ router: 'spa' });
 
-/* GET single page application */
-router.get('*', spaIndex);
 
 /** Path to the SPA's main html file */
 const indexPath = path.join(__dirname, '../../build/index.html');
@@ -37,17 +30,29 @@ const client_config = JSON.stringify(clientConfig);
 /* **************************************************************************
  * spaIndex                                                            */ /**
  *
- * render the single page application index.html file with the user_data
- * and the client configuration.
+ * render the single page application index.html file with any lti_data
+ * from an ltiLaunch and the client configuration values from this server.
  *
  * @param {ExpressRequest} req
  * @param {ExpressResponse} res
  */
 function spaIndex(req, res)
 {
-  let user_data = req.session.user_data ? JSON.stringify(req.session.user_data) : '{}';
-  res.render(indexPath, { client_config, user_data });
-  logger.debug({req, res});
+  const logger = req.app.get('routerLogger').child({ route_handler: 'spaIndex' });
+
+  // session.ltiData will exist when launching the SPA via LTI (see route handler ltiLaunch)
+  let lti_data = req.session.ltiData ? JSON.stringify(req.session.ltiData) : '{lti_user: false}';
+  res.render(indexPath, { client_config, lti_data });
+  logger.debug({ req, res, ltiData: req.session.ltiData || 'none' }, '...exiting spaIndex');
 }
 
-module.exports = router;
+//
+// ES6 import compatible export
+//        either: import spaIndex from 'spaindex';
+//            or: import { spaIndex } from 'spaindex';
+//   or CommonJS: const { spaIndex } = require('spaindex');
+module.exports =
+{
+  default: spaIndex,
+  spaIndex,
+};

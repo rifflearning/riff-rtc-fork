@@ -14,8 +14,8 @@ const reqLogger = require('morgan');
 
 const rtcServerVer = require('../package.json').version;
 const { loggerInstance: logger } = require('./utils/logger');
-const spaRouter = require('./routes/spa');
-const ltiRouter = require('./routes/lti');
+const { spaRouter } = require('./routes/router_spa');
+const { ltiRouter } = require('./routes/router_apilti');
 
 require('dotenv').config();
 
@@ -27,6 +27,8 @@ logger.debug({ serverConfig, clientConfig });
 app.engine('html', hoganXpress);
 app.set('view engine', 'html');
 
+app.set('appLogger', logger);
+app.set('routerLogger', logger.child({ router: 'APP' })); // will be overwritten by router's middleware
 app.use(reqLogger('dev'));
 app.use(cookieParser());
 app.enable("trust proxy");
@@ -54,7 +56,7 @@ app.use('/api/signalmaster', misdirected);
 app.use('/api', misdirected);
 
 // All routes not handled above should return the SPA
-app.use('*', spaRouter);
+app.use('/', spaRouter);
 
 
 // Start listening for requests
@@ -74,6 +76,7 @@ logger.info({port}, 'Listening!');
  */
 function misdirected(req, res)
 {
+  logger.debug({ req, reqUrl: req.url, reqOrigUrl: req.originalUrl }, 'misdirected');
   res.status(404);
   res.send('404: File Not Found');
 }
