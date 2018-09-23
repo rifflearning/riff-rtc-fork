@@ -22,7 +22,7 @@ require('dotenv').config();
 // Log the current config settings
 const serverConfig = config.get('server');
 const clientConfig = { rtcServerVer, ...(config.get('client')) };
-logger.debug({ serverConfig, clientConfig });
+logger.debug({ serverConfig: redactSecrets(serverConfig), clientConfig });
 
 app.engine('html', hoganXpress);
 app.set('view engine', 'html');
@@ -79,4 +79,38 @@ function misdirected(req, res)
   logger.debug({ req, reqUrl: req.url, reqOrigUrl: req.originalUrl }, 'misdirected');
   res.status(404);
   res.send('404: File Not Found');
+}
+
+/* **************************************************************************
+ * redactSecrets                                                       */ /**
+ *
+ * Replace all secret values from a server configuration with the string
+ * 'REDACTED'.
+ *
+ * NOTE: It's pointless to do that for the client configuration because that
+ * is sent to the browser and therefore there are easier ways of reading it
+ * than looking in the server logs.
+ *
+ * @param {Object} serverConfig
+ *      [Description of the serverConfig parameter]
+ *
+ * @returns {Object}
+ */
+function redactSecrets(serverConfig)
+{
+  // shallow copy we can modify
+  let newServerConfig = { ...serverConfig };
+
+  newServerConfig.lmss = newServerConfig.lmss.map(lms =>
+    {
+      let newLms = { ...lms };
+      if (newLms.lti && newLms.lti.oauth_consumer_secret)
+      {
+        newLms.lti = { ...newLms.lti, oauth_consumer_secret: 'REDACTED' };
+      }
+
+      return newLms;
+    });
+
+  return newServerConfig;
 }
