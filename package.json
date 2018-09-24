@@ -1,6 +1,6 @@
 {
   "name": "riff-rtc",
-  "description": "WebRTC browser client that connects to the riff-server",
+  "description": "Riff platform client and server videoconferencing and social metrics",
   "version": "0.4.0-dev.21",
   "license": "MIT",
   "private": true,
