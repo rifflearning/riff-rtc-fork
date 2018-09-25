@@ -17,6 +17,8 @@
 const express = require('express');
 const router = express.Router();
 
+const config = require('config');
+
 const { ltiLaunch } = require('./ltilaunch');
 const { spaIndex } = require('./spaindex');
 
@@ -33,7 +35,8 @@ router.use((req, res, next) =>
  * after which we will return the SPA index file w/ some extra information
  * in a global window property named `lti_data`.
  */
-router.post('/lti/launch', ltiLaunch, spaIndex);
+if (config.get('server.lti.enabled'))
+  router.post('/lti/launch', ltiLaunch, spaIndex);
 
 /* GET single page application */
 router.get('*', spaIndex);
