@@ -13,6 +13,16 @@
  * const routeHndlr = expressAsyncHandler(asyncRouteHndlr);
  * app.get('/foo', routeHndlr);
  *
+ * DEVNOTE: More googling found this page (which references an npm package)
+ *   article: [Using Async Await in Express with Node 9](https://medium.com/@Abazhenov/using-async-await-in-express-with-node-8-b8af872c0016)
+ *   npm package: https://www.npmjs.com/package/express-async-handler
+ *   git repo: https://github.com/Abazhenov/express-async-handler
+ *
+ *   I'm not sure that using a tiny package like that is worth replacing
+ *   this simple code. But it was worth updating this code to match what
+ *   is there, since the package was updated to address several issues.
+ *
+ *
  * Created on       September 23, 2018
  * @author          Michael Jay Lippert
  *
@@ -21,20 +31,26 @@
  *
  * ******************************************************************************/
 
-/* **************************************************************************
- * expressAsyncHandler                                                 */ /**
+/* ******************************************************************************
+ * asyncUtil                                                               */ /**
  *
- * [Description of expressAsyncHandler]
+ * Intended to wrap an async function whose last argument is an error callback
+ * such that the error callback is called w/ any promise reject from the async
+ * function.
  *
- * @param {function(req, res, next): any} fn
- *      [Description of the fn parameter]
+ * @param {function(...args): any} fn
+ *      a possibly async function whose last arg is an error handler function
+ *      taking a single error argument.
  *
- * @returns {function(req, res, next): Promise}
+ * @returns {function(...args): Promise}
  */
-const expressAsyncHandler = fn => (req, res, next) =>
-  Promise
-    .resolve(fn(req, res, next))
-    .catch(next);
+const asyncUtil = fn =>
+  function asyncUtilWrap(...args)
+  {
+    const fnReturn = fn(...args);
+    const next = args[args.length-1];
+    return Promise.resolve(fnReturn).catch(next);
+  };
 
 // ES6 import compatible export
 //        either: import expressAsyncHandler from 'express_asynchandler';
@@ -42,6 +58,6 @@ const expressAsyncHandler = fn => (req, res, next) =>
 //   or CommonJS: const { expressAsyncHandler } = require('express_asynchandler');
 module.exports =
 {
-  default: expressAsyncHandler,
-  expressAsyncHandler,
+  default: asyncUtil,
+  expressAsyncHandler: asyncUtil,
 };
