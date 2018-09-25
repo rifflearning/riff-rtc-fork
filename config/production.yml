@@ -9,11 +9,14 @@
 # with those confidential settings.
 #
 server:
+  lti:
+    enabled: false
+    redisUrl: redis://redis-server:6379
   log:
-      level: info
-      streams:
-          -
-              output: stdout
+    level: info
+    streams:
+      -
+        output: stdout
 
 client:
   react_app_debug: false
