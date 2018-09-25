@@ -31,20 +31,6 @@ ARG PORT=3001
 ENV PORT=$PORT
 # expose port
 EXPOSE $PORT
-# allow all referenced environment variables to be overridden
-ARG FIREBASE_CONFIG
-ARG DATASERVER_EMAIL
-ARG DATASERVER_PASSWORD
-ARG SESSION_SECRET
-ARG CONSUMER_KEY
-ARG CONSUMER_SECRET
-# Set the environment variables w/ values passed in
-ENV FIREBASE_CONFIG=$FIREBASE_CONFIG \
-    DATASERVER_EMAIL=$DATASERVER_EMAIL \
-    DATASERVER_PASSWORD=$DATASERVER_PASSWORD \
-    SESSION_SECRET=$SESSION_SECRET \
-    CONSUMER_KEY=$CONSUMER_KEY \
-    CONSUMER_SECRET=$CONSUMER_SECRET
 # when a container is started w/ this image the riff-server repository working
 # directory must be bound at /app and all dependent packages installed for this
 # command to correctly start the riff-server

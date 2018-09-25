@@ -1,30 +1,49 @@
-rhythm-rtc
-======================
+riff-rtc
+========
 
-Rhythm RTC server and client!
+Riff video chat (using WebRTC) platform server and client
 
-This is a standalone webRTC server / client videoconference solution built on top of
-[SimpleWebRTC](https://github.com/andyet/SimpleWebRTC/). 
+## Client ##
 
-It incorporates the [Rhythm](https://rhythm.mit.edu) framework for
-measuring conversation dynamics within teams. 
+A single page application (SPA) implmented with React which provides the interface
+for the Riff Learning communication tools and metrics.
 
-Files and Folders:
-------------------
+The videoconferencing is build on top of [SimpleWebRTC][], and the initial design
+and data analysis came from the MIT [Rhythm][] framework for
+measuring conversation dynamics within teams.
+
+## Server ##
+
+The server exists to integrate configuration values into the client and serve the
+various files the client consists of to the browser. It also supports integration
+with LMSs via the LTI specification.
+
+## Files and Folders ##
 
 - public: client side public HTML / CSS
 - src: client side javascript
+- server: server side javascript
+- config: configuration files (see [node-config][])
+- webpack:
+- docker:
 
- 
+## Installing and running ##
 
-Installing Required Modules:
-----------------------------
+```sh
+npm install
+npm run build:prod
+npm start
+```
 
- - `npm install`
+## Configuration ##
+
+(section to be written)
+
+## Docker container ##
+
+(section to be written)
 
 
-Running the Server:
--------------------
- - `npm start`
- 
-
+[SimpleWebRTC]: <https://github.com/andyet/SimpleWebRTC/> "SimpleWebRTC"
+[Rhythm]: <https://rhythm.mit.edu> "MIT Rhythm"
+[node-config]: <https://github.com/lorenwest/node-config#readme> "node-config readme"

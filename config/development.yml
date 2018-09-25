@@ -6,6 +6,13 @@
 # DON'T ADD *Confidential* IDs and keys to this file. Use local.yml (or
 # local-development.yml) which should not be committed!
 #
+server:
+  lti:
+    enabled: false
+    redisUrl: redis://redis-server:6379
+  log:
+    level: debug
+
 client:
   react_app_debug: true
   webrtc_debug: true

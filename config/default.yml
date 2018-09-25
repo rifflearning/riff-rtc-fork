@@ -7,10 +7,28 @@ server:
   port: 3001
   sessionSecret: secret
   lti:
-    roomMapUrl:
-    redisUrl:
-    consumerKey: key
-    consumerSecret: secret
+    enabled: false
+    redisUrl: redis://localhost:6379
+  lmss:
+    -
+      name: Emeritus
+      type: canvas
+      lti:
+        oauth_consumer_key: key
+        oauth_consumer_secret: secret
+  log:
+      name: riff-rtc
+      level: info
+      streams:
+          -
+              output: file
+              level: debug
+              logDir: "./logs"
+              type: rotating-file
+              period: 1d
+              count: 10
+          -
+              output: stderr
 
 client:
   react_app_debug: true

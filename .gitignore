@@ -9,8 +9,8 @@ build
 
 # ignore swap files
 *.swp
+
 # Logs
-logs
 *.log
 npm-debug.log*
 

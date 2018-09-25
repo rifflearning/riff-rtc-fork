@@ -5,4 +5,5 @@ Dockerfile*
 docker-*
 node_modules/
 build/
+logs/
 *.log

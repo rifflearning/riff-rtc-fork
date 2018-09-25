@@ -8,6 +8,13 @@
 # or by adding a local-production.yml file (which should NOT be committed)
 # with those confidential settings.
 #
+server:
+  log:
+      level: info
+      streams:
+          -
+              output: stdout
+
 client:
   react_app_debug: false
   webrtc_debug: false
