@@ -1,7 +1,7 @@
 {
   "name": "riff-rtc",
   "description": "Riff platform client and server videoconferencing and social metrics",
-  "version": "0.4.0-dev.21",
+  "version": "0.4.0-dev.22",
   "license": "MIT",
   "private": true,
   "keywords": [
