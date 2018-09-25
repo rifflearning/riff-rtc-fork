@@ -1,3 +1,20 @@
+/* ******************************************************************************
+ * server.js                                                                    *
+ * *************************************************************************/ /**
+ *
+ * @fileoverview Main node server entry point
+ *
+ * Sets up an express server app for serving the riff-rtc client files and
+ * supporting LTI launch of the Riff videoconference from an LMS course.
+ *
+ * Created on       September 12, 2018
+ * @author          Michael Jay Lippert
+ *
+ * @copyright (c) 2018 Riff Learning,
+ *            MIT License (see https://opensource.org/licenses/MIT)
+ *
+ * ******************************************************************************/
+
 const path = require('path');
 
 const config = require('config');

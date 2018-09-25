@@ -9,7 +9,7 @@
  * Created on       September 12, 2018
  * @author          Michael Jay Lippert
  *
- * @copyright (c) 2018 Michael Jay Lippert,
+ * @copyright (c) 2018 Riff Learning,
  *            MIT License (see https://opensource.org/licenses/MIT)
  *
  * ******************************************************************************/
