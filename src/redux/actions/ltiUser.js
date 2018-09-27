@@ -1,8 +1,10 @@
 import {
   LTI_INITIALIZE_USER
 } from '../constants/ActionTypes';
-
-import {attemptUserCreate, attemptUserSignIn, createUserSuccess, createUserFail} from './auth';
+import {push} from 'connected-react-router';
+import {attemptUserCreate, attemptUserSignIn, loginUserSuccess, createUserFail} from './auth';
+import {changeRoomNameState, joinRoom} from './makeMeeting';
+import {changeDisplayName} from './chat';
 import app from '../../firebase';
 
 
@@ -21,8 +23,9 @@ export const initializeLTIUser = ltiData => dispatch => {
   };
 
 
-  let ltiUserEmail = "LTI::" + ltiState.ltiUserEmail;
+  let ltiUserEmail = "LTI_" + ltiState.ltiUserEmail;
   let ltiUserPass =  ltiState.ltiUserId + ltiState.ltiFullName;
+  console.log("Logging in user through LTI...");
 
   app.auth().createUserWithEmailAndPassword(ltiUserEmail, ltiUserPass)
     .then(() => {
@@ -32,9 +35,18 @@ export const initializeLTIUser = ltiData => dispatch => {
       console.log("error code:", errorCode);
       if (errorCode == 'auth/email-already-in-use') {
         console.log("Email already in use, but is an LTI user. Logging in....");
-        dispatch(attemptUserSignIn(ltiUserEmail, ltiUserPass));
+        return app.auth().signInWithEmailAndPassword(ltiUserEmail, ltiUserPass);
       }
-      return {type: LTI_INITIALIZE_USER, ltiState};
+      return false;
+    }).then((resp) => {
+      if (resp) {
+        dispatch(loginUserSuccess(resp));
+        dispatch(joinRoom(ltiState.group));
+        dispatch(changeDisplayName(ltiState.ltiUserFullName));
+        dispatch(push("/room"));
+      } else {
+        console.log("couldn't login LTI user. ");
+      }
     });
 
 };
