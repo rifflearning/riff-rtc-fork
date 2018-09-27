@@ -72,20 +72,46 @@ async function asyncLtiLaunch(req, res, next)
   try
   {
     // collect the data we're interested in from the request
-    let email = req.body.lis_person_contact_email_primary;
+    //
+    // Some info on the IDs in the req body:
+    //   https://www.imsglobal.org/best-practices-managing-ids-lti
+    // It looks like the context_id is the course section id or
+    // is at least expected to be a unique identifier for the course
+    // section.
+    // Definitions from the above link:
+    //   "A course template is the abstract course which is independent of
+    //   when it is taught. A course offering relates to the specific
+    //   period of time when the course is available. A course section is
+    //   the specific instance into which students are enrolled and taught.
+    //   The course template may have one or more course offerings, each of
+    //   which may have one or more course sections."
     req.session.ltiData =
       {
         lti_user: true,
         is_valid: await isValidRequest(req),
-        user_id: req.body.user_id,
-        context_id: req.body.context_id,
-        email,
-        name: req.body.lis_person_name_full,
         group: 'riff_group1',
+        user:
+        {
+          id:    req.body.user_id,
+          email: req.body.lis_person_contact_email_primary,
+          name:
+          {
+            given:  req.body.lis_person_name_given,
+            family: req.body.lis_person_name_family,
+            full:   req.body.lis_person_name_full,
+          },
+        },
+        context:
+        {
+          id:    req.body.context_id,
+          title: req.body.context_title,
+          label: req.body.context_label,
+          course_section_id: req.body.lis_course_section_sourcedid,
+        },
       };
 
-    // If valid all this handler is responsible for is populating the session.ltiData
-    // the next handler in the chain should render the index.html with that
+    // If valid all this handler is responsible for is populating session.ltiData
+    // The next handler in the chain should render the index.html with that
     // data included.
     return next();
   }
