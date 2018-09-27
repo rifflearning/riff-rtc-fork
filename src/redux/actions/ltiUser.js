@@ -3,7 +3,6 @@ import {
 } from '../constants/ActionTypes';
 
 import {attemptUserCreate, attemptUserSignIn, createUserSuccess, createUserFail} from './auth';
-import admin from '../../firebase/admin';
 import app from '../../firebase';
 
 
@@ -22,7 +21,7 @@ export const initializeLTIUser = ltiData => dispatch => {
   };
 
 
-  let ltiUserEmail = ltiState.ltiUserEmail;
+  let ltiUserEmail = "LTI::" + ltiState.ltiUserEmail;
   let ltiUserPass =  ltiState.ltiUserId + ltiState.ltiFullName;
 
   app.auth().createUserWithEmailAndPassword(ltiUserEmail, ltiUserPass)
@@ -38,18 +37,4 @@ export const initializeLTIUser = ltiData => dispatch => {
       return {type: LTI_INITIALIZE_USER, ltiState};
     });
 
-  // console.log("firebase creating user with LTI ID", admin.auth())
-  // admin.auth().createUser({
-  //   uid: ltiState.ltiUserId,
-  //   email: ltiState.ltiUserEmail,
-  //   displayName: ltiState.ltiUserFullName
-  // }).then((userRecord) => {
-  //   console.log("received user record:", userRecord)
-  //   dispatch(createUserSuccess(userRecord));
-  // }).catch((err) => {
-  //   console.log("error:", err)
-  //   dispatch(createUserFail(err));
-  // });
-
-  
 };
