@@ -24,7 +24,8 @@ export const initializeLTIUser = ltiData => dispatch => {
 
 
   let ltiUserEmail = "LTI_" + ltiState.ltiUserEmail;
-  let ltiUserPass =  ltiState.ltiUserId + ltiState.ltiFullName;
+  let ltiUserPass =  "LTIPASS_" + ltiState.ltiUserId;
+  let ltiGroupname = ltiState.ltiContextId + "_" + ltiState.group;
   console.log("Logging in user through LTI...");
 
   app.auth().createUserWithEmailAndPassword(ltiUserEmail, ltiUserPass)
@@ -41,7 +42,7 @@ export const initializeLTIUser = ltiData => dispatch => {
     }).then((resp) => {
       if (resp) {
         dispatch(loginUserSuccess(resp));
-        dispatch(joinRoom(ltiState.group));
+        dispatch(joinRoom(ltiGroupname));
         dispatch(changeDisplayName(ltiState.ltiUserFullName));
         dispatch(push("/room"));
       } else {

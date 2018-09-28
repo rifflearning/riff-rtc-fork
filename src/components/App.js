@@ -79,7 +79,7 @@ class App extends React.Component {
     }
 
     // if window was loaded with LTI data
-    if (window.lti_data) {
+    if (window.lti_data.lti_user) {
       console.log("Loaded with LTI data and user.");
       this.props.initializeLTIUser(window.lti_data);
     } else if (!this.props.auth.user.uid && !this.props.auth.uid) {
