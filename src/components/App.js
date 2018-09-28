@@ -7,7 +7,6 @@ import Profile from "./Profile";
 import Dashboard from "./Dashboard";
 import Chat from "./Chat";
 import NavBar from "./NavBar";
-//import Loading from "./Loading";
 import {ScaleLoader} from 'react-spinners';
 import styled, { injectGlobal, keyframes } from 'styled-components';
 import store from '../redux/store';
@@ -26,6 +25,7 @@ import firebase from "../firebase";
 import addAuthListener from '../redux/listeners/auth';
 import { attemptLoginAnonymous } from '../redux/actions/auth';
 import { attemptRiffAuthenticate } from '../redux/actions/riff';
+import { initializeLTIUser } from '../redux/actions/ltiUser';
 
 const Footer = styled.footer.attrs({
   className: 'footer'
@@ -34,7 +34,6 @@ const Footer = styled.footer.attrs({
 `;
 
 const LoadingView = () => {
-  console.log("rendering loadingView")
   return (
     <div className="columns has-text-centered is-centered is-vcentered" style={{minHeight: "100vh"}}>
       <div className="column is-vcentered has-text-centered">
@@ -52,12 +51,15 @@ const mapStateToProps = state => ({
 });
 
 const mapDispatchToProps = dispatch => ({
-  logInAnonymously: () => {
+  attemptLoginAnonymous: () => {
     attemptLoginAnonymous();
   },
   authenticateRiff: () => {
     console.log("attempt riff auth");
     dispatch(attemptRiffAuthenticate());
+  },
+  initializeLTIUser: (data) => {
+    dispatch(initializeLTIUser(data));
   },
   dispatch: dispatch
 });
@@ -71,21 +73,18 @@ class App extends React.Component {
                     this.props.auth);
   }
 
-  // componentWillUpdate() {
-  //   console.log("updating...", this.props.auth.user.uid, this.props.auth.uid);
-  //   if (!this.props.auth.user.uid && !this.props.auth.uid) {
-  //     console.log("No user detected, creating anonymous ID");
-  //     this.props.logInAnonymously();
-  //   }
-  // }
-
   componentWillMount() {
     if (!this.props.riff.token) {
       this.props.authenticateRiff();
     }
-    if (!this.props.auth.user.uid && !this.props.auth.uid) {
+
+    // if window was loaded with LTI data
+    if (window.lti_data.lti_user) {
+      console.log("Loaded with LTI data and user.");
+      this.props.initializeLTIUser(window.lti_data);
+    } else if (!this.props.auth.user.uid && !this.props.auth.uid) {
       console.log("No user detected, creating anonymous ID");
-      this.props.logInAnonymously();
+      this.props.attemptLoginAnonymous();
     }
   }
 

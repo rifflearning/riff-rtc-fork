@@ -1,5 +1,5 @@
 import app from '../../firebase';
-import { loginAnonymously } from '../actions/auth.js';
+import { loginAnonymously, loginUserSuccess } from '../actions/auth.js';
 
 
 export default function (dispatch, authState) {
@@ -16,6 +16,7 @@ export default function (dispatch, authState) {
         dispatch(loginAnonymously(uid));
       } else {
         console.log("Have a user", user);
+        dispatch(loginUserSuccess({user}));
       }
     }
   });
