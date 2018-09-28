@@ -18,6 +18,8 @@
 const express = require('express');
 const router = express.Router();
 
+const { ltiConfig } = require('./lticonfig');
+
 
 router.use((req, res, next) =>
   {
@@ -27,6 +29,7 @@ router.use((req, res, next) =>
   });
 
 /* GET single page application */
+router.get('/config', ltiConfig);
 router.get('/launch', get_launch);
 
 
