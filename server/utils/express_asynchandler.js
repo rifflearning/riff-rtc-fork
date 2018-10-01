@@ -31,6 +31,8 @@
  *
  * ******************************************************************************/
 
+/* eslint-disable promise/no-callback-in-promise */
+
 /* ******************************************************************************
  * asyncUtil                                                               */ /**
  *
@@ -48,7 +50,7 @@ const asyncUtil = fn =>
   function asyncUtilWrap(...args)
   {
     const fnReturn = fn(...args);
-    const next = args[args.length-1];
+    const next = args[args.length - 1];
     return Promise.resolve(fnReturn).catch(next);
   };
 
@@ -58,6 +60,6 @@ const asyncUtil = fn =>
 //   or CommonJS: const { expressAsyncHandler } = require('express_asynchandler');
 module.exports =
 {
-  default: asyncUtil,
+  'default': asyncUtil,
   expressAsyncHandler: asyncUtil,
 };

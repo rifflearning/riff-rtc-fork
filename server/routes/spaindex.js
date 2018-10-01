@@ -24,8 +24,8 @@ const rtcServerVer = require('../../package.json').version;
 const indexPath = path.join(__dirname, '../../build/index.html');
 
 /** client configuration values that need to be added to main html file at runtime */
-const clientConfig = { rtcServerVer, ...(config.get('client')) };
-const client_config = JSON.stringify(clientConfig);
+const clientConfig = { rtcServerVer, ...config.get('client') };
+const client_config = JSON.stringify(clientConfig); /* eslint-disable-line camelcase */
 
 /* **************************************************************************
  * spaIndex                                                            */ /**
@@ -41,6 +41,7 @@ function spaIndex(req, res)
   const logger = req.app.get('routerLogger').child({ route_handler: 'spaIndex' });
 
   // session.ltiData will exist when launching the SPA via LTI (see route handler ltiLaunch)
+  // eslint-disable-next-line camelcase
   let lti_data = req.session.ltiData ? JSON.stringify(req.session.ltiData) : '{lti_user: false}';
   res.render(indexPath, { client_config, lti_data });
   logger.debug({ req, res, ltiData: req.session.ltiData || 'none' }, '...exiting spaIndex');
@@ -53,6 +54,6 @@ function spaIndex(req, res)
 //   or CommonJS: const { spaIndex } = require('spaindex');
 module.exports =
 {
-  default: spaIndex,
+  'default': spaIndex,
   spaIndex,
 };

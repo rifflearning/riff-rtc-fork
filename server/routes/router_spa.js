@@ -23,7 +23,8 @@ const { ltiLaunch } = require('./ltilaunch');
 const { spaIndex } = require('./spaindex');
 
 
-router.use((req, res, next) =>
+router.use(
+  (req, res, next) =>
   {
     const appLogger = req.app.get('appLogger');
     req.app.set('routerLogger', appLogger.child({ router: 'spa' }));
@@ -35,7 +36,7 @@ router.use((req, res, next) =>
  * after which we will return the SPA index file w/ some extra information
  * in a global window property named `lti_data`.
  */
-if (config.get('server.lti.enabled'))
+if (config.get('server.lti.enabled')) // eslint-disable-line curly
   router.post('/lti/launch', ltiLaunch, spaIndex);
 
 /* GET single page application */
@@ -48,6 +49,6 @@ router.get('*', spaIndex);
 //   or CommonJS: const { spaRouter } = require('router_spa');
 module.exports =
 {
-  default: router,
+  'default': router,
   spaRouter: router,
 };

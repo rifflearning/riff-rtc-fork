@@ -20,9 +20,12 @@
  *
  * ******************************************************************************/
 
-if (process.argv.length <= 2) {
-    console.log("Usage: " + __filename + " SOME_PARAM");
-    process.exit(-1);
+/* eslint-disable no-console */
+
+if (process.argv.length <= 2)
+{
+  console.log('Usage: ' + __filename + ' SOME_PARAM');
+  process.exit(-1);
 }
 
 var params = process.argv.slice(2);
@@ -50,7 +53,7 @@ function getSimpleHash(s)
 {
   // convert string to array of numbers
   let ints = [];
-  for (i = 0; i < s.length; ++i)
+  for (let i = 0; i < s.length; ++i)
   {
     if (i % 2 === 0)
     {
@@ -75,10 +78,8 @@ function getSimpleHash(s)
  *
  * [Description of newSecret]
  *
- * @param {string}
- *      [Description of the  parameter]
- *
  * @returns {string}
+ *    returns a reasonable random secret string
  */
 function newSecret()
 {
@@ -93,5 +94,6 @@ function newSecret()
     randomBytes.push(r & 0xFF);
   }
 
-  return randomBytes.map(b => (b < 16 ? '0' : '') + b.toString(16)).join('').slice(0, SECRET_LEN);
+  secret = randomBytes.map(b => (b < 16 ? '0' : '') + b.toString(16)).join('').slice(0, SECRET_LEN);
+  return secret;
 }

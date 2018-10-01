@@ -22,7 +22,8 @@ const config = require('config');
  *
  * [Description of createLogger]
  *
- * @returns a new bunyan logger initialized with the log settings from config.
+ * @returns {BunyanLogger}
+ *    a new bunyan logger initialized with the log settings from config.
  *
  * **************************************************************************/
 function createLogger()
@@ -69,7 +70,7 @@ function createLogger()
     // Possibly add other output types such as logstash
     else
     {
-      console.log(`Logger warning: unrecognized configuration value log.streams[${index}].type`);
+      console.log(`Logger warning: unrecognized configuration value log.streams[${index}].type`); // eslint-disable-line no-console
     }
   };
 
@@ -79,7 +80,7 @@ function createLogger()
   if (logStreams.length === 0)
   {
     const errorMessage = 'Logger warning: no stream attached to the logger!';
-    console.log(errorMessage);
+    console.log(errorMessage); // eslint-disable-line no-console
     throw Error(errorMessage);
   }
 
@@ -156,6 +157,6 @@ const loggerInstance = createLogger();
  */
 module.exports =
 {
-  default: loggerInstance,
+  'default': loggerInstance,
   loggerInstance,
 };

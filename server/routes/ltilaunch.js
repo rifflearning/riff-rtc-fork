@@ -18,11 +18,11 @@ const util = require('util');
 
 const config = require('config');
 
-const request = require('request');
-const lti = require("ims-lti");
-const redis = require("redis");
+const lti = require('ims-lti');
+const redis = require('redis');
 
 const { expressAsyncHandler } = require('../utils/express_asynchandler');
+const { LoggedError } = require('../utils/errortypes');
 
 
 /* **************************************************************************
@@ -47,7 +47,7 @@ async function asyncLtiLaunch(req, res, next)
   let ltiProvider = null;
   try
   {
-    if (!req.body || !req.body.oauth_consumer_key)
+    if (!req.body || !req.body.oauth_consumer_key) // eslint-disable-line curly
       throw new Error('Request body did not contain an oauth_consumer_key value!');
 
     ltiProvider = getLtiProvider(req.body.oauth_consumer_key, logger);
@@ -119,7 +119,7 @@ async function asyncLtiLaunch(req, res, next)
   {
     // invalid lti launch request
     let errmsg = 'LTI Verification failed!';
-    if (!(err instanceof LoggedError))
+    if (!(err instanceof LoggedError)) // eslint-disable-line curly
       logger.error({ err }, errmsg);
     res.status(400); // Bad Request
     return res.send(errmsg);
@@ -135,12 +135,12 @@ function getLtiProvider(oauthConsumerKey, logger)
 {
   // Find the matching oauthConsumerSecret
   let lmss = config.has('server.lmss') ? config.get('server.lmss') : [];
-  let lms = lmss.find(lms => lms.lti.oauth_consumer_key === oauthConsumerKey);
+  let lms = lmss.find(curLms => curLms.lti.oauth_consumer_key === oauthConsumerKey);
 
   if (!lms)
   {
     logger.error({ oauth_consumer_key: oauthConsumerKey,
-                   LMSs: lmss.map(lms => lms.name) }, 'No LMS found with given oauth_consumer_key');
+                   LMSs: lmss.map(curLms => curLms.name) }, 'No LMS found with given oauth_consumer_key');
     throw new LoggedError(`No LMS found with given oauth_consumer_key: ${oauthConsumerKey}`);
   }
 
@@ -149,37 +149,14 @@ function getLtiProvider(oauthConsumerKey, logger)
 
   // Create the ltiProvider
   let client = redis.createClient(config.get('server.lti.redisUrl'));
-  store = new lti.Stores.RedisStore('consumer_key', client);
+  let store = new lti.Stores.RedisStore('consumer_key', client);
   let ltiProvider = new lti.Provider(lms.lti.oauth_consumer_key, lms.lti.oauth_consumer_secret, store);
   return ltiProvider;
 }
 
-/* ******************************************************************************
- * LoggedError                                                             */ /**
- *
- * Throw a LoggedError when details about the error have been logged before throwing.
- * This lets us avoid logging the error multiple times up the chain by checking
- * the instanceof type.
- *
- ********************************************************************************/
-class LoggedError extends Error
-{
-  /* **************************************************************************
-   * constructor                                                         */ /**
-   *
-   * LoggedError class constructor.
-   *
-   * @param {string} message
-   */
-  constructor(message)
-  {
-    super(message);
-    this.name = 'LoggedError';
-  }
-}
-
 // Make sure that all extraneous error paths from the async route handler are dealt with.
 const ltiLaunch = expressAsyncHandler(asyncLtiLaunch);
+
 
 // ES6 import compatible export
 //        either: import ltiLaunch from 'ltilaunch';
@@ -187,6 +164,6 @@ const ltiLaunch = expressAsyncHandler(asyncLtiLaunch);
 //   or CommonJS: const { ltiLaunch } = require('ltilaunch');
 module.exports =
 {
-  default: ltiLaunch,
+  'default': ltiLaunch,
   ltiLaunch,
 };
