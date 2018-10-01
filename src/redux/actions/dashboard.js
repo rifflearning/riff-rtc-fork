@@ -2,7 +2,8 @@ import {
   DASHBOARD_UPDATE_MEETING_LIST,
   DASHBOARD_FETCH_MEETINGS,
   DASHBOARD_SELECT_MEETING,
-  DASHBOARD_FETCH_MEETING_STATS
+  DASHBOARD_FETCH_MEETING_STATS,
+  DASHBOARD_FETCH_MEETING_NETWORK
 } from '../constants/ActionTypes';
 import _ from 'underscore';
 import { app, socket} from "../../riff";
@@ -171,6 +172,71 @@ function cmpMeetingsByStartTime(a, b) {
   return a.startTime < b.startTime ? -1 : a.startTime > b.startTime ? 1 : 0;
 }
 
+// goal is to process and create a network of who follows whom
+// each node is a participant
+// each directed edge A->B indicates probability that B follows A. 
+export const processNetwork = (utterances, meetingId) => {
+  let participantUtterances = _.groupBy(utterances, 'participant');
+  let participants = Object.keys(participantUtterances);
+  let sortedUtterances = _.sortBy(utterances, (u) => { return u.startTime; });
+
+  let recentUttCounts = _.each(sortedUtterances, (ut, idx, l) => {
+    // go through prior utterances (within 5 s)
+    let recentUtterances = _.filter(sortedUtterances.slice(0, idx), (recentUt) => {
+      let recent = ((new Date(ut.startTime).getTime() - new Date(recentUt.endTime).getTime()) / 1000) < 5;
+      let sameParticipant = ut.participant == recentUt.participant;
+      return recent && !sameParticipant;
+    });
+    return {participant: ut.participant,
+            counts: _.countBy(recentUtterances, 'participant')};
+  });
+
+  // create object with the following format:
+  // {participantId: {participantId: Count, participantId: Count, ...}}
+  let aggregatedCounts = _.reduce(recentUttCounts, (memo, val, idx, l) => {
+    if (!memo[val.participant]) {
+      memo[val.participant] = val.counts;
+    } else {
+      // update count object that's stored in memo, adding new 
+      // keys as we need to.
+      // obj here should be an object of {participantId: nUtterances}
+      let obj = memo[val.participant];
+      _.each(_.pairs(val.counts), (pair) => {
+        if (!obj[pair[0]]) {
+          obj[pair[0]] = pair[1];
+        } else {
+          obj[pair[0]] += pair[1];
+        }
+      });
+      memo[val.participant] = obj;
+    }
+  });
+
+  let finalEdges = [];
+  let edges = _.each(_.pairs(aggregatedCounts), (obj, idx) => {
+    let participant = obj[0];
+    _.each(_.pairs(obj[1]), (o) => {
+      let toAppend = {source: participant, target: o[0], weight: o[1]};
+      finalEdges.push(toAppend);
+    });
+  });
+
+  let nodes = _.map(participants, (p) => { return {id: p}; });
+
+  let promises = _.map(nodes, (n) => {
+    let docId = n.id + "_" + meetingId;
+    let docRef = db.collection('meetings').doc(docId);
+    return docRef.get().then((doc) => {
+      return Object.assign(n, {displayName: doc.displayName});
+    });
+  });
+
+  return Promise.all(promises).then(values => {
+    return {nodes: values,
+            edges: finalEdges};
+  });
+};
+
 export const loadMeetingData = (meetingId) => dispatch => {
   dispatch({type: DASHBOARD_FETCH_MEETING_STATS, status: 'loading'});
   console.log("finding utterances for meeting", meetingId);
@@ -178,14 +244,19 @@ export const loadMeetingData = (meetingId) => dispatch => {
     .then((utterances) => {
       console.log("utterances", utterances);
       // console.log("processed:", processUtterances(utterances, meetingId));
-      return processUtterances(utterances, meetingId);
-    }).then(processedUtterances => {
+      return {processedUtterances: processUtterances(utterances, meetingId),
+              processedNetwork: processNetwork(utterances, meetingId)};
+
+    }).then(({processedUtterances, processedNetwork}) => {
       let promises = _.map(processedUtterances, (u) => {
         return app.service('participants').get(u.participantId)
           .then((res) => {
             return {...u, name: res.name};
           });
       });
+      dispatch({type: DASHBOARD_FETCH_MEETING_NETWORK,
+                status: 'loaded',
+                networkData: processedNetwork});
       return Promise.all(promises);
     }).then(processedUtterances => {
       dispatch({type: DASHBOARD_FETCH_MEETING_STATS,
