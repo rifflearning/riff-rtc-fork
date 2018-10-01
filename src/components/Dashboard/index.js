@@ -25,6 +25,7 @@ const mapStateToProps = state => ({
   shouldFetch:            state.dashboard.shouldFetch,
   selectedMeeting:        state.dashboard.selectedMeeting || null,
   processedUtterances:    state.dashboard.processedUtterances,
+  processedNetwork:       state.dashboard.networkData,
   statsStatus:            state.dashboard.statsStatus,
 });
 

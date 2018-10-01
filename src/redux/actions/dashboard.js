@@ -180,16 +180,23 @@ export const processNetwork = (utterances, meetingId) => {
   let participants = Object.keys(participantUtterances);
   let sortedUtterances = _.sortBy(utterances, (u) => { return u.startTime; });
 
-  let recentUttCounts = _.each(sortedUtterances, (ut, idx, l) => {
-    // go through prior utterances (within 5 s)
+  let recentUttCounts = _.map(sortedUtterances, (ut, idx, l) => {
+    // get list of utterances within 2 seconds that are not by the speaker.
     let recentUtterances = _.filter(sortedUtterances.slice(0, idx), (recentUt) => {
-      let recent = ((new Date(ut.startTime).getTime() - new Date(recentUt.endTime).getTime()) / 1000) < 5;
+      let recent = ((new Date(ut.startTime).getTime() - new Date(recentUt.endTime).getTime()) / 1000) < 2;
       let sameParticipant = ut.participant == recentUt.participant;
       return recent && !sameParticipant;
     });
-    return {participant: ut.participant,
-            counts: _.countBy(recentUtterances, 'participant')};
+    if (recentUtterances.length > 0) {
+      return {participant: ut.participant,
+              counts: _.countBy(recentUtterances, 'participant')};
+    } else {
+      return false;
+    }
   });
+
+  recentUttCounts = _.compact(recentUttCounts);
+  console.log("recent utt counts:", recentUttCounts);
 
   // create object with the following format:
   // {participantId: {participantId: Count, participantId: Count, ...}}
@@ -210,7 +217,8 @@ export const processNetwork = (utterances, meetingId) => {
       });
       memo[val.participant] = obj;
     }
-  });
+    return memo;
+  }, {});
 
   let finalEdges = [];
   let edges = _.each(_.pairs(aggregatedCounts), (obj, idx) => {
@@ -221,14 +229,16 @@ export const processNetwork = (utterances, meetingId) => {
     });
   });
 
+  finalEdges = _.map(finalEdges, (e, idx) => { return { ...e, id: "e" + idx}; });
+
   let nodes = _.map(participants, (p) => { return {id: p}; });
+  console.log("nodes", nodes, "edges", finalEdges);
 
   let promises = _.map(nodes, (n) => {
-    let docId = n.id + "_" + meetingId;
-    let docRef = db.collection('meetings').doc(docId);
-    return docRef.get().then((doc) => {
-      return Object.assign(n, {displayName: doc.displayName});
-    });
+    return app.service('participants').get(n.id)
+      .then((res) => {
+        return {...n, name: res.name};
+      });
   });
 
   return Promise.all(promises).then(values => {
@@ -243,27 +253,33 @@ export const loadMeetingData = (meetingId) => dispatch => {
   return app.service('utterances').find({query: {meeting: meetingId, $limit: 10000}})
     .then((utterances) => {
       console.log("utterances", utterances);
-      // console.log("processed:", processUtterances(utterances, meetingId));
       return {processedUtterances: processUtterances(utterances, meetingId),
               processedNetwork: processNetwork(utterances, meetingId)};
 
     }).then(({processedUtterances, processedNetwork}) => {
-      let promises = _.map(processedUtterances, (u) => {
-        return app.service('participants').get(u.participantId)
-          .then((res) => {
-            return {...u, name: res.name};
-          });
+      console.log("utterances:", processedUtterances, "network:", processedNetwork);
+
+      processedNetwork.then((networkObj) => {
+        dispatch({type: DASHBOARD_FETCH_MEETING_NETWORK,
+                  status: 'loaded',
+                  networkData: networkObj});
       });
-      dispatch({type: DASHBOARD_FETCH_MEETING_NETWORK,
-                status: 'loaded',
-                networkData: processedNetwork});
-      return Promise.all(promises);
-    }).then(processedUtterances => {
-      dispatch({type: DASHBOARD_FETCH_MEETING_STATS,
-                status: 'loaded',
-                processedUtterances: processedUtterances});
-    })
-    .catch(err => {
+
+      processedUtterances.then((processedUtterances) => {
+        let promises = _.map(processedUtterances, (u) => {
+          return app.service('participants').get(u.participantId)
+            .then((res) => {
+              return {...u, name: res.name};
+            });
+        });
+        Promise.all(promises).then((processedUtterances) => {
+          console.log("processed utterances:", processedUtterances);
+          dispatch({type: DASHBOARD_FETCH_MEETING_STATS,
+                    status: 'loaded',
+                    processedUtterances: processedUtterances});
+        });
+      });
+    }).catch(err => {
       console.log("couldn't retrieve meeting data", err);
     });
 };

@@ -8,6 +8,7 @@ import MaterialIcon from 'material-icons-react';
 import Chart from 'chart.js';
 import moment from 'moment';
 import TurnChart from "./TurnChart";
+import NetworkChart from "./NetworkChart";
 
 const MeetingTabs = styled.div.attrs({
   className: 'timeline'
@@ -76,7 +77,7 @@ const DashboardView = ({user, riffAuthToken, meetings,
                         fetchMeetingsStatus, fetchMeetingsMessage, numMeetings,
                         handleMeetingClick, selectedMeeting,
                         processedUtterances, statsStatus,
-                        handleRefreshClick, selectedMeetingDuration}) =>
+                        handleRefreshClick, selectedMeetingDuration, processedNetwork}) =>
 {
   console.log("fetch meetings status (view)", fetchMeetingsStatus, meetings);
 
@@ -175,7 +176,7 @@ const DashboardView = ({user, riffAuthToken, meetings,
                     <div className="card has-text-centered is-centered"
                          style={{borderRadius: '5px', maxWidth: '30vw', paddingTop: '0.75rem'}}>
                       <div className="card-image has-text-centered is-centered">
-                        <TurnChart processedUtterances={processedUtterances} participantId={user.uid}/>
+                          <TurnChart processedUtterances={processedUtterances} participantId={user.uid}/>
                       </div>
                       <div className="card-content">
                         <div className="title is-5 has-text-left">Time Spoken</div>
@@ -189,7 +190,8 @@ const DashboardView = ({user, riffAuthToken, meetings,
                       </div>
                     </div>
                   </div>
-                </div>
+                  </div>
+                  <NetworkChart processedNetwork={processedNetwork}/>
                 </React.Fragment>
               }
         </div>
