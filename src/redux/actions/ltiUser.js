@@ -41,7 +41,7 @@ export const initializeLTIUser = ltiData => dispatch => {
       return false;
     }).then((resp) => {
       if (resp) {
-        dispatch(loginUserSuccess(resp));
+        dispatch(loginUserSuccess({user: resp}));
         dispatch(joinRoom(ltiGroupname));
         dispatch(changeDisplayName(ltiState.ltiUserFullName));
         dispatch(push("/room"));
