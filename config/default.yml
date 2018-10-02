@@ -16,6 +16,12 @@ server:
       lti:
         oauth_consumer_key: key
         oauth_consumer_secret: secret
+      group_api:
+        type: emeritus
+        riff_group_regex: '^riff_'
+        developer_id: id
+        developer_key: key
+        authorization_token: bearer token
   log:
     name: riff-rtc
     level: info

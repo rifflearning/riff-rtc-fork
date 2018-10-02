@@ -38,12 +38,38 @@ class LoggedError extends Error
   }
 }
 
-//
+
+/* ******************************************************************************
+ * AppError                                                                */ /**
+ *
+ * An AppError is the base error type for application errors, and may be initialized
+ * with a message and a context object.
+ *
+ ********************************************************************************/
+class AppError extends Error
+{
+  /* **************************************************************************
+   * constructor                                                         */ /**
+   *
+   * AppError class constructor.
+   *
+   * @param {string} message
+   * @param {Object} context
+   */
+  constructor(message, context = {})
+  {
+    super(message);
+    this.name = 'AppError';
+    this.context = context;
+  }
+}
+
 // ES6 import compatible export
 //    NO default: import errorTypes from 'errortypes'; // intentionally not supported
 //    use either: import { LoggedError } from 'errortypes';
 //   or CommonJS: const { LoggedError } = require('errortypes');
 module.exports =
 {
+  AppError,
   LoggedError,
 };
