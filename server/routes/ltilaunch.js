@@ -69,6 +69,13 @@ async function asyncLtiLaunch(req, res, next)
 
   let isValidRequest = util.promisify(ltiProvider.valid_request);
 
+  // skip validity check if debug setting requests it
+  if (config.get('server.debug.assume_lti_valid'))
+  {
+    logger.warn('Skipping OAUTH validity check');
+    isValidRequest = () => Promise.resolve(true);
+  }
+
   try
   {
     // collect the data we're interested in from the request

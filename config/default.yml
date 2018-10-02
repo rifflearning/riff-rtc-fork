@@ -29,6 +29,8 @@ server:
         count: 10
       -
         output: stderr
+  debug:
+    assume_lti_valid: true
 
 client:
   react_app_debug: true

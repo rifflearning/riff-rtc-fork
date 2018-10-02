@@ -17,6 +17,8 @@ server:
     streams:
       -
         output: stdout
+  debug:
+    assume_lti_valid: false
 
 client:
   react_app_debug: false
