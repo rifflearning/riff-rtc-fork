@@ -224,20 +224,27 @@ export const processNetwork = (utterances, meetingId) => {
   let edges = _.each(_.pairs(aggregatedCounts), (obj, idx) => {
     let participant = obj[0];
     _.each(_.pairs(obj[1]), (o) => {
-      let toAppend = {source: participant, target: o[0], weight: o[1]};
+      let toAppend = {source: participant, target: o[0], size: o[1]};
       finalEdges.push(toAppend);
     });
   });
 
-  finalEdges = _.map(finalEdges, (e, idx) => { return { ...e, id: "e" + idx}; });
-
-  let nodes = _.map(participants, (p) => { return {id: p}; });
+  // make edge sizes between 0 and 1, and then multiply by sizeMultiplier
+  let maxEdgeSize = _.max(finalEdges, (e) => { return e.size; }).size;
+  let sizeMultiplier = 15;
+  finalEdges = _.map(finalEdges, (e, idx) => { return { ...e,
+                                                        id: "e" + idx,
+                                                        size: (e.size / maxEdgeSize)*sizeMultiplier};});
+  // filter any edges under 0.2 weight
+  finalEdges = _.filter(finalEdges, (e) => { return !(e.size < 0.1*sizeMultiplier); });
+  let nodes = _.map(participants, (p, idx) => { return {id: p,
+                                                        size: 20}; });
   console.log("nodes", nodes, "edges", finalEdges);
 
   let promises = _.map(nodes, (n) => {
     return app.service('participants').get(n.id)
       .then((res) => {
-        return {...n, name: res.name};
+        return {...n, label: res.name};
       });
   });
 

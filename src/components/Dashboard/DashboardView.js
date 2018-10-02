@@ -191,7 +191,7 @@ const DashboardView = ({user, riffAuthToken, meetings,
                     </div>
                   </div>
                   </div>
-                  <NetworkChart processedNetwork={processedNetwork}/>
+                  <NetworkChart processedNetwork={processedNetwork} participantId={user.uid}/>
                 </React.Fragment>
               }
         </div>
