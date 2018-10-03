@@ -15,7 +15,7 @@ const MeetingTabs = styled.div.attrs({
 })`
 padding-left: 2.5rem;
 overflow-y: scroll;
-max-height: 100vh;
+max-height: 85vh;
 &::-webkit-scrollbar {
     width: 0px;  /* remove scrollbar space */
     background: transparent;  /* optional: just make scrollbar invisible */
@@ -124,14 +124,27 @@ const DashboardView = ({user, riffAuthToken, meetings,
                 </div>
               :
                 <React.Fragment>
-                <div className="columns">
+                    <div className="columns" style={{maxHeight: "90vh", overflowY: 'scroll'}}>
                   <div className="column has-text-left">
                     <h2 className="is-size-3 is-primary">Room: {selectedMeeting.room} </h2>
                     <h3 className="is-size-4 is-primary">{processedUtterances.length} Attendees </h3>
                     <h3 className="is-size-4 is-primary">{selectedMeetingDuration} </h3>
                     <br/>
-                    <h2 className="is-size-3 has-text-weight-semi-bold"> Why Turn-Taking? </h2>
 
+                      <div className="card has-text-centered is-centered"
+                             style={{borderRadius: '5px', maxWidth: '30vw', paddingTop: '0.75rem'}}>
+                          <div className="card-image has-text-centered is-centered">
+                              <NetworkChart processedNetwork={processedNetwork} participantId={user.uid}/>
+                            </div>
+                            <div className="card-content">
+                                <div className="title is-5 has-text-left">Influence</div>
+                                  <div className="content has-text-left is-size-7">
+                                      This network shows who most commonly speaks after whom.
+                                        The thicker an edge is from person A to person B, the more likely A is to speak directly after B.
+                                    </div>
+                              </div>
+                        </div>
+                        <h2 className="is-size-3 has-text-weight-semi-bold"> Why Turn-Taking? </h2>
                     <p>
                       In highly collaborative groups, people tend to have even
                       turn-taking in which everyone is speaking and listening to each
@@ -191,7 +204,6 @@ const DashboardView = ({user, riffAuthToken, meetings,
                     </div>
                   </div>
                   </div>
-                  <NetworkChart processedNetwork={processedNetwork} participantId={user.uid}/>
                 </React.Fragment>
               }
         </div>

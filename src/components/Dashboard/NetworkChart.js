@@ -7,7 +7,7 @@ import {ScaleLoader} from 'react-spinners';
 import {Sigma, SigmaEnableWebGL,
         RandomizeNodePositions,
         RelativeSize,
-        EdgeShapes,
+        EdgeShapes, NodeShapes,
        } from 'react-sigma';
 import ForceLink from 'react-sigma/lib/ForceLink';
 import MaterialIcon from 'material-icons-react';
@@ -46,15 +46,23 @@ const addLabelsToData = (networkData, participantId) => {
   return networkData;
 };
 
+
+const divStyle = {
+  '.sigma-scene': {
+    left: "0px"
+  }
+};
+
 const NetworkChart = ({processedNetwork, participantId}) => {
   console.log("data for network:", processedNetwork);
   processedNetwork = addColorsToData(processedNetwork, participantId);
   processedNetwork = addLabelsToData(processedNetwork, participantId);
 
   return (
-    <Sigma graph={processedNetwork}
-           renderer="canvas"
-           settings={{
+    <Sigma
+      graph={processedNetwork}
+      renderer="canvas"
+      settings={{
              drawEdges: true,
              clone: false,
              maxNodeSize: 20,
@@ -66,6 +74,7 @@ const NetworkChart = ({processedNetwork, participantId}) => {
            }}>
       <RelativeSize initialSize={10}/>
       <EdgeShapes default="curvedArrow"/>
+      <NodeShapes default="circle" borderColor="#FF3333"/>
       <ForceLink background easing="cubicInOut"/>
       <RandomizeNodePositions/>
     </Sigma>

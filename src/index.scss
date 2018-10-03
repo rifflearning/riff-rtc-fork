@@ -27,6 +27,13 @@ a:hover {
   color: $purpleHover;
 }
 
+.sigma-scene {
+    left: 0px;
+}
+
+.sigma-mouse {
+    left: 0px
+}
 
 // Update Bulma's global variables
 $family-sans-serif: "Nunito", sans-serif;
