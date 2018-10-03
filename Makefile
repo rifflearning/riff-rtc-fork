@@ -54,7 +54,7 @@ build : src/libs/mm.js
 
 build-dev : src/libs/mm.js
 	$(WEBPACK) --mode development --config webpack/webpack.config.dev.js
-	
+
 doc :
 	@echo doc would run the compiler: $(COMPILER)
 
@@ -62,7 +62,7 @@ lint-log: LINT_OPTIONS = --output-file $(LINT_LOG)
 lint-log: LINT_FORMAT = unix
 vim-lint: LINT_FORMAT = unix
 lint vim-lint lint-log:
-	$(LINT) $(LINT_OPTIONS) --format $(LINT_FORMAT) src test
+	$(LINT) $(LINT_OPTIONS) --format $(LINT_FORMAT) server
 
 test :
 	@echo test would run $(MOCHA) --reporter spec test | tee $(TEST_LOG)

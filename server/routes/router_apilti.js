@@ -21,7 +21,8 @@ const router = express.Router();
 const { ltiConfig } = require('./lticonfig');
 
 
-router.use((req, res, next) =>
+router.use(
+  (req, res, next) =>
   {
     const appLogger = req.app.get('appLogger');
     req.app.set('routerLogger', appLogger.child({ router: 'apilti' }));
@@ -30,11 +31,11 @@ router.use((req, res, next) =>
 
 /* GET single page application */
 router.get('/config', ltiConfig);
-router.get('/launch', get_launch);
+router.get('/launch', getLaunch);
 
 
 /* **************************************************************************
- * get_launch                                                          */ /**
+ * getLaunch                                                           */ /**
  *
  * Handle getting the lti/launch route. I.e. do nothing, since this isn't
  * a defined endpoint at this time.
@@ -43,7 +44,7 @@ router.get('/launch', get_launch);
  * it is trivial and does nothing. If it did anything real it would be in its
  * own file.
  */
-function get_launch(req, res, next)
+function getLaunch(req, res /*, next*/)
 {
   const logger = req.app.get('routerLogger').child({ route_handler: 'get_launch' });
 
@@ -58,6 +59,6 @@ function get_launch(req, res, next)
 //   or CommonJS: const { ltiRouter } = require('router_apilti');
 module.exports =
 {
-  default: router,
+  'default': router,
   ltiRouter: router,
 };
