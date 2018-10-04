@@ -19,8 +19,8 @@ const util = require('util');
 const config = require('config');
 
 const lti = require('ims-lti');
-const redis = require('redis');
 
+const { getRedisClient } = require('../utils/redisclient');
 const { expressAsyncHandler } = require('../utils/express_asynchandler');
 const { LoggedError } = require('../utils/errortypes');
 const { getLmsGroup } = require('../utils/group');
@@ -156,7 +156,7 @@ function getLtiProvider(oauthConsumerKey, logger)
   }
 
   // Create the ltiProvider
-  let client = redis.createClient(config.get('server.lti.redisUrl'));
+  let client = getRedisClient();
   let store = new lti.Stores.RedisStore('consumer_key', client);
   let ltiProvider = new lti.Provider(lms.lti.oauth_consumer_key, lms.lti.oauth_consumer_secret, store);
 
