@@ -33,108 +33,257 @@
 const axios = require('axios');
 
 const { AppError } = require('../errortypes');
+const { getRedisClient } = require('../redisclient');
+
+const SEC_PER_MIN = 60;
+const SEC_PER_HR = 60 * SEC_PER_MIN;
+
+// TODO: Consider getting this value from the configuration
+const GROUPS_CACHE_EXPIRE_SECS = 2 * SEC_PER_MIN;
+
 
 /* ******************************************************************************
- * getEmeritusGroup                                                        */ /**
+ * EmeritusGroupApi                                                        */ /**
  *
- * Find the Riff group name for the validated student launch using the Emeritus API
+ * [Description of the EmeritusGroupApi class]
  *
- * @param {Object} groupApiConfig
- * @param {Object} req
- *
- * @returns {string}
- */
-async function getEmeritusGroup(groupApiConfig, req)
+ ********************************************************************************/
+class EmeritusGroupApi
 {
-  const logger = req.app.get('routerLogger').child({ fn: 'getEmeritusGroup' });
-
-  let { custom_canvas_api_domain: groupApiDomain,
-        custom_canvas_course_id:  courseId,
-        custom_canvas_user_id:    userId,
-      } = req.body; // eslint-disable-line indent
-
-  // The req body values are all strings, but when we query the api we're going to
-  // receive the ids as numbers, so convert it for later comparisons.
-  userId = parseInt(userId, 10);
-
-  const emeritusReqConfig =
-    {
-      baseURL: `https://${groupApiDomain}/api/v1/`,
-      headers:
-      {
-        Authorization: `Bearer ${groupApiConfig.authorization_token}`,
-      },
-    };
-
-  let emeritusReq = axios.create(emeritusReqConfig);
-
-  // NOTE: in general don't log the Authorization header, but leaving it commented out for interactive debugging
-  logger.debug({ url: `/courses/${courseId}/groups` /*, emeritusReqConfig*/ }, 'requesting all course groups...');
-
-  let response = await emeritusReq.get(`/courses/${courseId}/groups`);
-  let allCourseGroups = response.data;
-  logger.debug({ courseId, group_count: allCourseGroups.length }, 'Got all groups for the Emeritus course');
-
-  // filter out the non-riff groups, and only keep a few of the group's properties
-  let riffGroupRe = new RegExp(groupApiConfig.riff_group_regex);
-  let riffGroups = allCourseGroups.filter(grp => riffGroupRe.test(grp.name))
-                                  .map(grp => ({ id: grp.id, name: grp.name, members_count: grp.members_count }));
-  logger.debug({ riffGroups,
-                 riff_group_count: riffGroups.length,
-                 riffGroupRE: groupApiConfig.riff_group_regex }, 'Filtered out all non Riff groups');
-
-  // Check the users of each riff group until we find the group w/ the user doing the launch
-  let usersGroup = '';
-  for (let grp of riffGroups)
+  /* **************************************************************************
+   * constructor                                                         */ /**
+   *
+   * EmeritusGroupApi class constructor.
+   *
+   * @param {!EmeritusGroupApi.Config} config
+   *      The settings to configure this EmeritusGroupApi
+   */
+  constructor({ lms, req, logger } = {})
   {
-    response = await emeritusReq.get(`/groups/${grp.id}/users`);
-    let users = response.data;
-    let userFound = users.some(u => u.id === userId);
-    logger.debug({ group: grp, users, userId, userFound }, 'users in group');
-    // TODO: Cache riffGroups/users in redis for 8-24 hours
-    // redis key could be: groupApiDomain + '/' + courseId
-    // value: groups: [{id, name, users: [{id, name, login_id}]}]
-    if (userFound)
-    {
-      usersGroup = grp.name;
-      break;
-    }
+    this.logger = (logger || req.app.get('routerLogger')).child({ 'class': 'EmeritusGroupApi' });
+
+    // instance properties
+    ({ custom_canvas_api_domain: this.apiDomain,
+       custom_canvas_course_id:  this.customCourseId,
+       context_id:               this.contextId,
+     } = req.body);  // eslint-disable-line indent
+
+    this.groupApiConfig = lms.group_api;
+    this.groupsCacheKey = `riff-rtc:emeritus:${this.apiDomain}:${this.contextId}`;
   }
 
-  if (!usersGroup)
+  /* **************************************************************************
+   * getGroup                                                            */ /**
+   *
+   * [Description of getGroup]
+   *
+   * @param {string} requestorId
+   *      [Description of the requestorId parameter]
+   *
+   * @returns {string}
+   */
+  async getGroup(requestorId)
   {
+    let groups = await this._getGroups();
+    let groupForUser = groups.find(EmeritusGroupApi._isUserInGroup(requestorId));
+
+    if (groupForUser) // eslint-disable-line curly
+      return groupForUser.name;
+
+    // No group was found for the user, throw an error
     let errorContext =
       {
         user:
         {
-          id: req.body.user_id,
-          custom_id: userId,
-          name: req.body.lis_person_name_full,
-          email: req.body.lis_person_contact_email_primary,
+          // id: req.body.user_id,
+          custom_id: requestorId,
+          // name: req.body.lis_person_name_full,
+          // email: req.body.lis_person_contact_email_primary,
         },
         course:
         {
-          context_id: req.body.context_id,
-          context_title: req.body.context_title,
-          custom_id: courseId,
-          group_count: allCourseGroups.length,
-          riff_group_count: riffGroups.length,
+          context_id: this.contextId,
+          // context_title: req.body.context_title,
+          custom_id: this.customCourseId,
+          riff_group_count: groups.length,
         }
       };
 
     throw new AppError('No group found for Emeritus LTI user', errorContext);
   }
 
-  return usersGroup;
+  /* **************************************************************************
+   * getRequesterId                                                      */ /**
+   *
+   * [Description of getRequesterId]
+   *
+   * @param {ExpressRequest} req
+   *      [Description of the req parameter]
+   *
+   * @returns {number}
+   */
+  getRequesterId(req)
+  {
+    // The req body values are all strings, but when we query the api we're
+    // going to receive the ids as numbers, so the id we return is converted
+    // to avoid having to convert it later for comparisons.
+    return parseInt(req.body.custom_canvas_user_id, 10);
+  }
+
+  /* **************************************************************************
+   * _getGroups                                                          */ /**
+   *
+   * [Description of _getGroups]
+   *
+   * @param {string}
+   *      [Description of the  parameter]
+   *
+   * @returns {string}
+   */
+  async _getGroups()
+  {
+    let groups = await this._getGroupsFromCache();
+    if (groups !== null)
+    {
+      this.logger.debug({ groupsCacheKey: this.groupsCacheKey, groups }, 'Emeritus groups cache hit');
+    }
+    else
+    {
+      this.logger.debug({ groupsCacheKey: this.groupsCacheKey }, 'Emeritus groups cache miss');
+
+      groups = await this._getGroupsFromLMS();
+
+      this.logger.debug('Successfully got riff course groups directly from Emeritus');
+
+      const redisClient = getRedisClient();
+      redisClient.set(this.groupsCacheKey, JSON.stringify(groups), 'EX', GROUPS_CACHE_EXPIRE_SECS);
+    }
+
+    return groups;
+  }
+
+  /* **************************************************************************
+   * _getGroupsFromCache                                                 */ /**
+   *
+   * [Description of _getGroupsFromCache]
+   *
+   * @param {string}
+   *      [Description of the  parameter]
+   *
+   * @returns {string}
+   */
+  async _getGroupsFromCache()
+  {
+    const redisClient = getRedisClient();
+    let groupsJson = await redisClient.getAsync(this.groupsCacheKey);
+    let groups = null;
+    if (groupsJson)   // eslint-disable-line curly
+      groups = JSON.parse(groupsJson);
+    return groups;
+  }
+
+  /* **************************************************************************
+   * _getGroupsFromLMS                                                   */ /**
+   *
+   * [Description of _getGroupsFromLMS]
+   *
+   * @param {string}
+   *      [Description of the  parameter]
+   *
+   * @returns {string}
+   */
+  async _getGroupsFromLMS()
+  {
+    const emeritusReqConfig =
+      {
+        baseURL: `https://${this.apiDomain}/api/v1/`,
+        headers:
+        {
+          Authorization: `Bearer ${this.groupApiConfig.authorization_token}`,
+        },
+      };
+
+    let emeritusReq = axios.create(emeritusReqConfig);
+
+    // NOTE: in general don't log the Authorization header, but leaving it commented out for interactive debugging
+    let groupsEndpoint = `/courses/${this.customCourseId}/groups`;
+    this.logger.debug({ url: groupsEndpoint /*, emeritusReqConfig*/ }, 'requesting all course groups...');
+
+    let response = await emeritusReq.get(groupsEndpoint);
+    let allCourseGroups = response.data;
+    this.logger.debug({ customCourseId: this.customCourseId,
+                        group_count: allCourseGroups.length }, 'Got all groups for the Emeritus course');
+
+    // filter out the non-riff groups, and only keep a few of the group's properties
+    let riffGroupRe = new RegExp(this.groupApiConfig.riff_group_regex);
+    let riffGroups = allCourseGroups.filter(grp => riffGroupRe.test(grp.name))
+                                    .map(grp => ({ id: grp.id, name: grp.name, members_count: grp.members_count }));
+    this.logger.debug({ riffGroups,
+                        riff_group_count: riffGroups.length,
+                        riffGroupRE: riffGroupRe.toString() }, 'Filtered out all non Riff groups');
+
+    // get the users for all Riff groups
+    let usersResponses = await Promise.all(riffGroups.map(grp => emeritusReq.get(`/groups/${grp.id}/users`)));
+
+    /* eslint-disable indent */
+    let groups = riffGroups.map(
+                  (grp, i) =>
+                  {
+                    let users = usersResponses[i].data.map(u => ({ custom_id: u.id,
+                                                                   name: u.name,
+                                                                   email: u.login_id }));
+                    return { ...grp, users };
+                  });
+    /* eslint-enable indent */
+
+    return groups;
+  }
+
+  /* **************************************************************************
+   * _isUserInGroup (static)                                             */ /**
+   *
+   * [Description of _isUserInGroup]
+   *
+   * @param {string} customUserId
+   *      [Description of the customUserId parameter]
+   *
+   * @returns {function(grp): boolean}
+   */
+  static _isUserInGroup(customUserId)
+  {
+    /* eslint-disable indent */
+    return (grp) =>
+           {
+             return grp.users.some(u => u.custom_id === customUserId);
+           };
+    /* eslint-enable indent */
+  }
 }
+
+/* ******************************************************************************
+ * EmeritusGroupApi.Config                                                 */ /**
+ *
+ * The EmeritusGroupApi.Config defines the object passed to the constructor that
+ * contains options/values used to initialize an instance of a EmeritusGroupApi.
+ *
+ * @typedef {!Object} EmeritusGroupApi.Config
+ *
+ * @property {string} lms
+ *      The LMS configuration for an Emeritus canvas instance containing the
+ *      information needed to query the LMS for group information.
+ *
+ * @property {ExpressRequest} req
+ *      The express request containing the values for the course that contains
+ *      the groups to be examined.
+ */
 
 
 // ES6 import compatible export
-//        either: import getEmeritusGroup from 'emeritusgroup';
-//            or: import { getEmeritusGroup } from 'emeritusgroup';
-//   or CommonJS: const { getEmeritusGroup } = require('emeritusgroup');
+//        either: import EmeritusGroupApi from './emeritusgroup';
+//            or: import { EmeritusGroupApi } from './emeritusgroup';
+//   or CommonJS: const { EmeritusGroupApi } = require('./emeritusgroup');
 module.exports =
 {
-  'default': getEmeritusGroup,
-  getEmeritusGroup,
+  'default': EmeritusGroupApi,
+  EmeritusGroupApi,
 };
