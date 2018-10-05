@@ -113,11 +113,12 @@ const Gantt = function() {
 
     svg.append("g")
       .attr("class", "x axis")
+      .attr("class", "axisGray")
       .attr("transform", "translate(0, " + (height - margin.top - margin.bottom) + ")")
       .transition()
       .call(xAxis);
 
-    svg.append("g").attr("class", "y axis").transition().call(yAxis);
+    svg.append("g").attr("class", "y axis").attr("class", "axisGray").transition().call(yAxis);
 
     return gantt;
 
