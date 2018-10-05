@@ -3,6 +3,7 @@ import {
   DASHBOARD_SELECT_MEETING,
   DASHBOARD_FETCH_MEETING_STATS,
   DASHBOARD_FETCH_MEETING_NETWORK,
+  DASHBOARD_FETCH_MEETING_TIMELINE,
   LOG_OUT
 } from '../constants/ActionTypes';
 
@@ -45,6 +46,11 @@ const dashboard = (state=initialState, action) => {
     return{...state,
            networkStatus: action.status,
            networkData: action.networkData ? action.networkData : state.networkData };
+  case(DASHBOARD_FETCH_MEETING_TIMELINE):
+    console.log("Fething meeting timeline", action);
+    return{...state,
+           timelineStatus: action.status,
+           timelineData: action.timelineData ? action.timelineData : state.timelineData };
   default:
     return state;
   }

@@ -20,6 +20,7 @@ const formatChartData = (processedUtterances, participantId) => {
   let data = [];
   let peerColors = ['#f56b6b', '#128EAD', '#7caf5f', '#f2a466'];
   let colors = [];
+  processedUtterances = _.sortBy(processedUtterances, "participantId");
 
   processedUtterances.forEach(p => {
     // our display name from firebase if we've got it.

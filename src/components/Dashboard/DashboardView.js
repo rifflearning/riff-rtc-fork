@@ -9,6 +9,7 @@ import Chart from 'chart.js';
 import moment from 'moment';
 import TurnChart from "./TurnChart";
 import NetworkChart from "./NetworkChart";
+import TimelineChart from "./TimelineChart";
 
 const MeetingTabs = styled.div.attrs({
   className: 'timeline'
@@ -77,7 +78,8 @@ const DashboardView = ({user, riffAuthToken, meetings,
                         fetchMeetingsStatus, fetchMeetingsMessage, numMeetings,
                         handleMeetingClick, selectedMeeting,
                         processedUtterances, statsStatus,
-                        handleRefreshClick, selectedMeetingDuration, processedNetwork}) =>
+                        handleRefreshClick, selectedMeetingDuration,
+                        processedNetwork, processedTimeline}) =>
 {
   console.log("fetch meetings status (view)", fetchMeetingsStatus, meetings);
 
@@ -144,6 +146,7 @@ const DashboardView = ({user, riffAuthToken, meetings,
                                     </div>
                               </div>
                         </div>
+                        <TimelineChart processedTimeline={processedTimeline} participantId={user.uid}></TimelineChart>
                         <h2 className="is-size-3 has-text-weight-semi-bold"> Why Turn-Taking? </h2>
                     <p>
                       In highly collaborative groups, people tend to have even

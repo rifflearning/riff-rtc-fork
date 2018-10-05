@@ -3,7 +3,8 @@ import {
   DASHBOARD_FETCH_MEETINGS,
   DASHBOARD_SELECT_MEETING,
   DASHBOARD_FETCH_MEETING_STATS,
-  DASHBOARD_FETCH_MEETING_NETWORK
+  DASHBOARD_FETCH_MEETING_NETWORK,
+  DASHBOARD_FETCH_MEETING_TIMELINE
 } from '../constants/ActionTypes';
 import _ from 'underscore';
 import { app, socket} from "../../riff";
@@ -239,6 +240,8 @@ export const processNetwork = (utterances, meetingId) => {
   finalEdges = _.filter(finalEdges, (e) => { return !(e.size < 0.1*sizeMultiplier); });
   let nodes = _.map(participants, (p, idx) => { return {id: p,
                                                         size: 20}; });
+  // sort them for consistent colors
+  nodes = _.sortBy(nodes, "id");
   console.log("nodes", nodes, "edges", finalEdges);
 
   let promises = _.map(nodes, (n) => {
@@ -254,6 +257,40 @@ export const processNetwork = (utterances, meetingId) => {
   });
 };
 
+
+export const processTimeline = (utterances, meetingId) => {
+  let participantUtterances = _.groupBy(utterances, 'participant');
+  let utts = _.map(utterances, (u) => {
+    return {
+      ...u,
+      startDate: new Date(u.startTime),
+      endDate: new Date(u.endTime),
+      taskName: u.participant
+    };
+  });
+
+  utts = _.sortBy(utts, (u) => { return u.startDate; });
+
+  let participants = Object.keys(participantUtterances);
+  let promises = _.map(participants, (p) => {
+    return app.service('participants').get(p)
+      .then((res) => {
+        return {name: res.name, id: p};
+      });
+  });
+
+  let startTime = _.min(utts, (u) => { return u.startTime; });
+  let endTime = _.max(utts, (u) => { return u.endTime; });
+
+  return Promise.all(promises).then((participants) => {
+    return {utts,
+            participants,
+            startTime,
+            endTime};
+  });
+};
+
+
 export const loadMeetingData = (meetingId) => dispatch => {
   dispatch({type: DASHBOARD_FETCH_MEETING_STATS, status: 'loading'});
   console.log("finding utterances for meeting", meetingId);
@@ -261,17 +298,20 @@ export const loadMeetingData = (meetingId) => dispatch => {
     .then((utterances) => {
       console.log("utterances", utterances);
       return {processedUtterances: processUtterances(utterances, meetingId),
-              processedNetwork: processNetwork(utterances, meetingId)};
+              processedNetwork: processNetwork(utterances, meetingId),
+              processedTimeline: processTimeline(utterances, meetingId)};
 
-    }).then(({processedUtterances, processedNetwork}) => {
+    }).then(({processedUtterances, processedNetwork, processedTimeline}) => {
       console.log("utterances:", processedUtterances, "network:", processedNetwork);
 
+      // dispatch processed network data
       processedNetwork.then((networkObj) => {
         dispatch({type: DASHBOARD_FETCH_MEETING_NETWORK,
                   status: 'loaded',
                   networkData: networkObj});
       });
 
+      // dispatch processed utterance (aggregated) data
       processedUtterances.then((processedUtterances) => {
         let promises = _.map(processedUtterances, (u) => {
           return app.service('participants').get(u.participantId)
@@ -285,6 +325,13 @@ export const loadMeetingData = (meetingId) => dispatch => {
                     status: 'loaded',
                     processedUtterances: processedUtterances});
         });
+      });
+
+      processedTimeline.then((processedTimeline) => {
+        console.log("processed timeline:", processedTimeline);
+        dispatch({type: DASHBOARD_FETCH_MEETING_TIMELINE,
+                  status: 'loaded',
+                  timelineData: processedTimeline});
       });
     }).catch(err => {
       console.log("couldn't retrieve meeting data", err);
