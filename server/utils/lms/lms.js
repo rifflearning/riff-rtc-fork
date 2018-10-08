@@ -25,6 +25,13 @@ const { getRedisClient } = require('../redisclient');
 const { EmeritusGroupApi } = require('../group');
 
 
+const SEC_PER_MIN = 60;
+const SEC_PER_HR = 60 * SEC_PER_MIN;
+const SEC_PER_DAY = 24 * SEC_PER_HR;
+
+// TODO: Consider getting this value from the configuration
+const USERGROUP_CACHE_EXPIRE_SECS = 2 * SEC_PER_DAY;
+
 /* ******************************************************************************
  * Lms                                                                     */ /**
  *
@@ -94,17 +101,28 @@ class Lms
    */
   async getGroup(req)
   {
-    // a groupApi is for a course (aka context) it's easier to create a new one for
-    // each request than try to reuse them.
-    let groupApi = new this.GroupApi({ req, groupApiConfig: this.lmsConfig.group_api, logger: this.logger });
+    // Check the cache for the user's group first
+    const redisClient = getRedisClient();
+    let usergroupKey = Lms.getUsergroupCacheKey({ body: req.body });
+    let group = await redisClient.getAsync(usergroupKey);
+    if (group)
+    {
+      this.logger.debug({ usergroupKey, group }, 'LTI usergroup cache hit');
+      return group;
+    }
 
     try
     {
+      this.logger.debug({ usergroupKey }, 'LTI usergroup cache miss');
+
+      // a groupApi is for a course (aka context) it's easier to create a new one for
+      // each request than try to reuse them.
+      let groupApi = new this.GroupApi({ req, groupApiConfig: this.lmsConfig.group_api, logger: this.logger });
+
       let group = await groupApi.getGroup(this.GroupApi.getRequestorId(req));
-      // TODO: cache the group found for this user in redis for 8-24 hours
-      // redis key could be: lms.consumer_key + '/' + req.body.context_id + '/' + req.body.user_id
-      // value: group_name
-      // setRedisGroup(group, { lmsId: lms.consumer_key, courseId: req.body.context_id, userId: req.body.user_id });
+
+      // cache the user's group
+      redisClient.set(usergroupKey, group, 'EX', USERGROUP_CACHE_EXPIRE_SECS);
       return group;
     }
     catch (e)
@@ -187,6 +205,55 @@ class Lms
   {
     return this.GroupApi.getGroupsCacheKey(reqParams);
   }
+
+  /* **************************************************************************
+   * getUsergroupCacheKey (static)                                       */ /**
+   *
+   * Get the usergroup cache key. The key used to cache the group name for a
+   * particular user in a course. For a regular LTI launch, the values needed
+   * to derive the key are obtained from the POST body, and those properties
+   * will be used first if they exist. Otherwise the params and query
+   * properties will be checked to find those values.
+   *
+   * @param {Object} body
+   *      The request body (contains properties from the POST)
+   *
+   * @param {Object} query
+   *      The request query properties
+   *
+   * @param {Object} params
+   *      The request parameters (extracted from the route)
+   *
+   * @returns {string}
+   */
+  static getUsergroupCacheKey({ body = {}, query = {}, params = {} } = {})
+  {
+    let consumerKey = body.oauth_consumer_key || params.consumerKey;
+    let contextId = body.context_id || query.contextId;
+    let userId = body.user_id || query.userId;
+
+    if (consumerKey === undefined || contextId === undefined || userId === undefined)
+    {
+      let context =
+        {
+          body,
+          query,
+          params,
+          properties:
+          {
+            consumerKey: [ 'body.oauth_consumer_key', 'params.consumerKey' ],
+            contextId: [ 'body.context_id', 'query.contextId' ],
+            userId: [ 'body.user_id', 'query.userId' ],
+          },
+        };
+      throw new AppError('missing properties to define groups key', context);
+    }
+
+    let usergroupCacheKey = `riff-rtc:lti:${consumerKey}:${contextId}:${userId}`;
+
+    return usergroupCacheKey;
+  }
+
 }
 
 /* class type definitions */
