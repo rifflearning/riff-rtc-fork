@@ -1,12 +1,12 @@
 /* ******************************************************************************
- * deletecachedgroups.js                                                        *
+ * deletecachedusergroup.js                                                     *
  * *************************************************************************/ /**
  *
- * @fileoverview Express route handler for deleting all cached records for ???
+ * @fileoverview Express route handler for deleting the cached record for a user's group
  *
  * [More detail about the file's contents]
  *
- * Created on       October 6, 2018
+ * Created on       October 8, 2018
  * @author          Michael Jay Lippert
  *
  * @copyright (c) 2018 Riff Learning,
@@ -21,32 +21,30 @@ const { AppError } = require('../utils/errortypes');
 
 
 /* **************************************************************************
- * asyncDeleteCachedGroups                                             */ /**
+ * asyncDeleteCachedUsergroup                                          */ /**
  *
- * Delete all cached groups for the specified LMS. This deletes the intermediate
- * cache records specific to the LMS, it does NOT delete the cached group
- * for a specific LMS user.
- * This is used to force reloading the groups from the LMS's group api so it
- * will pick up any changes (new groups and/or new/removed group members).
+ * Delete the cached group for the specified user/course.
+ *
+ * There are 2 levels of cached group information, this is the first. You
+ * will also have to delete the cached groups {@link deleteCachedGroups} if
+ * you want to force the group for this user to be obtained from the LMS's
+ * group api.
  *
  * @param {ExpressRequest} req
  * @param {ExpressResponse} res
- *
- * @returns {Promise} resolved when cached records are deleted.
  */
-async function asyncDeleteCachedGroups(req, res/*, next*/)
+async function asyncDeleteCachedUsergroup(req, res/*, next*/)
 {
-  const logger = req.app.get('routerLogger').child({ route_handler: 'deleteCachedGroups' });
+  const logger = req.app.get('routerLogger').child({ route_handler: 'deleteCachedUsergroup' });
 
   logger.debug({ req, reqUrl: req.url, reqOrigUrl: req.originalUrl, params: req.params, query: req.query },
-               'deleteCachedGroups entered...');
+               'deleteCachedUsergroup entered...');
 
-  let lms = new Lms({ consumerKey: req.params.consumerKey, logger });
   let key = null;
 
   try
   {
-    key = lms.getGroupsCacheKey({ params: req.params, query: req.query });
+    key = Lms.getUsergroupCacheKey({ params: req.params, query: req.query });
   }
   catch (e)
   {
@@ -84,7 +82,7 @@ async function asyncDeleteCachedGroups(req, res/*, next*/)
   catch (err)
   {
     logger.error({ err, params: req.params, query: req.query },
-                 'Internal error deleting cached groups for course');
+                 'Internal error deleting cached usergroup');
     res.status(500); // Internal Server Error
     return res.end();
   }
@@ -92,15 +90,15 @@ async function asyncDeleteCachedGroups(req, res/*, next*/)
 
 
 // Make sure that all extraneous error paths from the async route handler are dealt with.
-const deleteCachedGroups = expressAsyncHandler(asyncDeleteCachedGroups);
+const deleteCachedUsergroup = expressAsyncHandler(asyncDeleteCachedUsergroup);
 
 
 // ES6 import compatible export
-//        either: import deleteCachedGroups from './deletecachedgroups';
-//            or: import { deleteCachedGroups } from './deletecachedgroups';
-//   or CommonJS: const { deleteCachedGroups } = require('./deletecachedgroups');
+//        either: import deleteCachedUsergroup from './deletecachedusergroup';
+//            or: import { deleteCachedUsergroup } from './deletecachedusergroup';
+//   or CommonJS: const { deleteCachedUsergroup } = require('./deletecachedusergroup');
 module.exports =
 {
-  'default': deleteCachedGroups,
-  deleteCachedGroups,
+  'default': deleteCachedUsergroup,
+  deleteCachedUsergroup,
 };

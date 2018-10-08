@@ -119,7 +119,7 @@ class Lms
       // each request than try to reuse them.
       let groupApi = new this.GroupApi({ req, groupApiConfig: this.lmsConfig.group_api, logger: this.logger });
 
-      let group = await groupApi.getGroup(this.GroupApi.getRequestorId(req));
+      group = await groupApi.getGroup(this.GroupApi.getRequestorId(req));
 
       // cache the user's group
       redisClient.set(usergroupKey, group, 'EX', USERGROUP_CACHE_EXPIRE_SECS);
@@ -228,9 +228,9 @@ class Lms
    */
   static getUsergroupCacheKey({ body = {}, query = {}, params = {} } = {})
   {
-    let consumerKey = body.oauth_consumer_key || params.consumerKey;
-    let contextId = body.context_id || query.contextId;
-    let userId = body.user_id || query.userId;
+    let consumerKey = body.oauth_consumer_key || params.consumerKey || query.consumerKey;
+    let contextId = body.context_id || params.contextId || query.contextId;
+    let userId = body.user_id || params.userId || query.userId;
 
     if (consumerKey === undefined || contextId === undefined || userId === undefined)
     {
@@ -241,9 +241,9 @@ class Lms
           params,
           properties:
           {
-            consumerKey: [ 'body.oauth_consumer_key', 'params.consumerKey' ],
-            contextId: [ 'body.context_id', 'query.contextId' ],
-            userId: [ 'body.user_id', 'query.userId' ],
+            consumerKey: [ 'body.oauth_consumer_key', 'params.consumerKey', 'query.consumerKey' ],
+            contextId: [ 'body.context_id', 'params.contextId', 'query.contextId' ],
+            userId: [ 'body.user_id', 'params.userId', 'query.userId' ],
           },
         };
       throw new AppError('missing properties to define groups key', context);

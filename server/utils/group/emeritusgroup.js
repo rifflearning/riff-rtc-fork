@@ -153,8 +153,8 @@ class EmeritusGroupApi
    */
   static getGroupsCacheKey({ body = {}, query = {}, params = {} } = {})
   {
-    let apiDomain = body.custom_canvas_api_domain || query.domain;
-    let contextId = body.context_id || query.contextId;
+    let apiDomain = body.custom_canvas_api_domain || params.domain || query.domain;
+    let contextId = body.context_id || params.contextId || query.contextId;
 
     if (apiDomain === undefined || contextId === undefined)
     {
@@ -165,8 +165,8 @@ class EmeritusGroupApi
           params,
           properties:
           {
-            apiDomain: [ 'body.custom_canvas_api_domain', 'query.domain' ],
-            contextId: [ 'body.context_id', 'query.contextId' ],
+            apiDomain: [ 'body.custom_canvas_api_domain', 'params.domain', 'query.domain' ],
+            contextId: [ 'body.context_id', 'params.contextId', 'query.contextId' ],
           },
         };
       throw new AppError('missing properties to define groups key', context);
