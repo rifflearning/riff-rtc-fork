@@ -2,13 +2,13 @@
  * index.js                                                                     *
  * *************************************************************************/ /**
  *
- * @fileoverview Export all public entities from the group modules
+ * @fileoverview Export all public entities from the lms module(s)
  *
  * An index.js file should contain no implementation, its sole purpose is
  * to provide a focal point for exporting all public entities defined by
  * sibling modules.
  *
- * Created on       September 30, 2018
+ * Created on       October 8, 2018
  * @author          Michael Jay Lippert
  *
  * @copyright (c) 2018 Riff Learning,
@@ -17,13 +17,14 @@
  * ******************************************************************************/
 
 
-const { EmeritusGroupApi } = require('./emeritusgroup');
+const { Lms } = require('./lms');
 
 // ES6 import compatible export
-//    NO default: import EmeritusGroupApi from '.'; // intentionally not supported
-//    use either: import { EmeritusGroupApi } from '.';
-//   or CommonJS: const { EmeritusGroupApi } = require('.');
+//        either: import Lms from '.';
+//           or: import { Lms } from '.';
+//   or CommonJS: const { Lms } = require('.');
 module.exports =
 {
-  EmeritusGroupApi,
+  'default': Lms,
+  Lms,
 };

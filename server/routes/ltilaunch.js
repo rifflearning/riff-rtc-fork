@@ -14,16 +14,9 @@
  *
  * ******************************************************************************/
 
-const util = require('util');
-
-const config = require('config');
-
-const lti = require('ims-lti');
-
-const { getRedisClient } = require('../utils/redisclient');
 const { expressAsyncHandler } = require('../utils/express_asynchandler');
-const { LoggedError } = require('../utils/errortypes');
-const { getLmsGroup } = require('../utils/group');
+const { AppError } = require('../utils/errortypes');
+const { Lms } = require('../utils/lms');
 
 
 /* **************************************************************************
@@ -45,19 +38,18 @@ async function asyncLtiLaunch(req, res, next)
 
   logger.debug({ req, reqUrl: req.url, reqOrigUrl: req.originalUrl, body: req.body }, 'ltiLaunch entered...');
 
-  let ltiProvider = null;
   let lms = null;
   try
   {
     if (!req.body || !req.body.oauth_consumer_key) // eslint-disable-line curly
-      throw new Error('Request body did not contain an oauth_consumer_key value!');
+      throw new AppError('Request body did not contain an oauth_consumer_key value!');
 
-    ({ lms, ltiProvider } = getLtiProvider(req.body.oauth_consumer_key, logger));
+    lms = new Lms({ consumerKey: req.body.oauth_consumer_key, logger });
   }
   catch (e)
   {
-    let errmsg = 'Could not configure LTI Provider, check consumer key and LMS list!';
-    if (!(e instanceof LoggedError))
+    let errmsg = 'Could not create an LMS w/ the given consumer key, check the key and LMS list!';
+    if (!(e instanceof AppError) || !e.logged)
     {
       logger.error(e.toString());
       logger.debug({ err: e });
@@ -68,15 +60,6 @@ async function asyncLtiLaunch(req, res, next)
   }
 
   req.session.body = req.body;
-
-  let isValidRequest = util.promisify(ltiProvider.valid_request);
-
-  // skip validity check if debug setting requests it
-  if (config.get('server.debug.assume_lti_valid'))
-  {
-    logger.warn('Skipping OAUTH validity check');
-    isValidRequest = () => Promise.resolve(true);
-  }
 
   try
   {
@@ -97,7 +80,7 @@ async function asyncLtiLaunch(req, res, next)
     req.session.ltiData =
       {
         lti_user: true,
-        is_valid: await isValidRequest(req),
+        is_valid: await lms.isValidRequest(req),
         group: 'riff_Team Unknown',
         user:
         {
@@ -119,7 +102,7 @@ async function asyncLtiLaunch(req, res, next)
         },
       };
 
-    req.session.ltiData.group = await getLmsGroup(lms, req);
+    req.session.ltiData.group = await lms.getGroup(req);
 
     // If valid all this handler is responsible for is populating session.ltiData
     // The next handler in the chain should render the index.html with that
@@ -130,37 +113,11 @@ async function asyncLtiLaunch(req, res, next)
   {
     // invalid lti launch request
     let errmsg = 'LTI Verification failed!';
-    if (!(err instanceof LoggedError)) // eslint-disable-line curly
+    if (err instanceof AppError && !err.logged) // eslint-disable-line curly
       logger.error({ err }, errmsg);
     res.status(400); // Bad Request
     return res.send(errmsg);
   }
-}
-
-/* **************************************************************************
- * getLtiProvider                                                      */ /**
- *
- * [Description of getLtiProvider]
- */
-function getLtiProvider(oauthConsumerKey, logger)
-{
-  // Find the matching oauthConsumerSecret
-  let lmss = config.has('server.lmss') ? config.get('server.lmss') : [];
-  let lms = lmss.find(curLms => curLms.lti.oauth_consumer_key === oauthConsumerKey);
-
-  if (!lms)
-  {
-    logger.error({ oauth_consumer_key: oauthConsumerKey,
-                   LMSs: lmss.map(curLms => curLms.name) }, 'No LMS found with given oauth_consumer_key');
-    throw new LoggedError(`No LMS found with given oauth_consumer_key: ${oauthConsumerKey}`);
-  }
-
-  // Create the ltiProvider
-  let client = getRedisClient();
-  let store = new lti.Stores.RedisStore('consumer_key', client);
-  let ltiProvider = new lti.Provider(lms.lti.oauth_consumer_key, lms.lti.oauth_consumer_secret, store);
-
-  return { lms, ltiProvider };
 }
 
 // Make sure that all extraneous error paths from the async route handler are dealt with.
@@ -168,9 +125,9 @@ const ltiLaunch = expressAsyncHandler(asyncLtiLaunch);
 
 
 // ES6 import compatible export
-//        either: import ltiLaunch from 'ltilaunch';
-//            or: import { ltiLaunch } from 'ltilaunch';
-//   or CommonJS: const { ltiLaunch } = require('ltilaunch');
+//        either: import ltiLaunch from './ltilaunch';
+//            or: import { ltiLaunch } from './ltilaunch';
+//   or CommonJS: const { ltiLaunch } = require('./ltilaunch');
 module.exports =
 {
   'default': ltiLaunch,

@@ -14,30 +14,6 @@
  *
  * ******************************************************************************/
 
-/* ******************************************************************************
- * LoggedError                                                             */ /**
- *
- * Throw a LoggedError when details about the error have been logged before throwing.
- * This lets us avoid logging the error multiple times up the chain by checking
- * the instanceof type.
- *
- ********************************************************************************/
-class LoggedError extends Error
-{
-  /* **************************************************************************
-   * constructor                                                         */ /**
-   *
-   * LoggedError class constructor.
-   *
-   * @param {string} message
-   */
-  constructor(message)
-  {
-    super(message);
-    this.name = 'LoggedError';
-  }
-}
-
 
 /* ******************************************************************************
  * AppError                                                                */ /**
@@ -55,12 +31,14 @@ class AppError extends Error
    *
    * @param {string} message
    * @param {Object} context
+   * @param {boolean} logged
    */
-  constructor(message, context = {})
+  constructor(message, context = {}, logged = false)
   {
     super(message);
     this.name = 'AppError';
     this.context = context;
+    this.logged = logged;
   }
 }
 
@@ -71,5 +49,4 @@ class AppError extends Error
 module.exports =
 {
   AppError,
-  LoggedError,
 };

@@ -39,7 +39,7 @@ const SEC_PER_MIN = 60;
 const SEC_PER_HR = 60 * SEC_PER_MIN;
 
 // TODO: Consider getting this value from the configuration
-const GROUPS_CACHE_EXPIRE_SECS = 2 * SEC_PER_MIN;
+const GROUPS_CACHE_EXPIRE_SECS = 24 * SEC_PER_HR;
 
 
 /* ******************************************************************************
@@ -55,10 +55,10 @@ class EmeritusGroupApi
    *
    * EmeritusGroupApi class constructor.
    *
-   * @param {!EmeritusGroupApi.Config} config
+   * @param {EmeritusGroupApi.Config} config
    *      The settings to configure this EmeritusGroupApi
    */
-  constructor({ lms, req, logger } = {})
+  constructor({ groupApiConfig, req, logger } = {})
   {
     this.logger = (logger || req.app.get('routerLogger')).child({ 'class': 'EmeritusGroupApi' });
 
@@ -68,17 +68,18 @@ class EmeritusGroupApi
        context_id:               this.contextId,
      } = req.body);  // eslint-disable-line indent
 
-    this.groupApiConfig = lms.group_api;
-    this.groupsCacheKey = `riff-rtc:emeritus:${this.apiDomain}:${this.contextId}`;
+    this.groupApiConfig = groupApiConfig;
+    this.groupsCacheKey = EmeritusGroupApi.getGroupsCacheKey({ body: req.body });
   }
 
   /* **************************************************************************
    * getGroup                                                            */ /**
    *
-   * [Description of getGroup]
+   * Get the name of the group the requestor belongs to. An error is thrown
+   * if the requestor doesn't belong to any group.
    *
    * @param {string} requestorId
-   *      [Description of the requestorId parameter]
+   *      The ID of the user whose riff group is to be found and returned.
    *
    * @returns {string}
    */
@@ -113,16 +114,16 @@ class EmeritusGroupApi
   }
 
   /* **************************************************************************
-   * getRequesterId                                                      */ /**
+   * getRequestorId (static)                                             */ /**
    *
-   * [Description of getRequesterId]
+   * [Description of getRequestorId]
    *
    * @param {ExpressRequest} req
    *      [Description of the req parameter]
    *
    * @returns {number}
    */
-  getRequesterId(req)
+  static getRequestorId(req)
   {
     // The req body values are all strings, but when we query the api we're
     // going to receive the ids as numbers, so the id we return is converted
@@ -131,14 +132,57 @@ class EmeritusGroupApi
   }
 
   /* **************************************************************************
-   * _getGroups                                                          */ /**
+   * getGroupsCacheKey (static)                                          */ /**
    *
-   * [Description of _getGroups]
+   * Get the groups cache key. The key used to cache the groups info for a
+   * particular course. For a regular LTI launch, the values needed to derive
+   * the key are obtained from the POST body, and those properties will be
+   * used first if they exist. Otherwise the params and query properties will
+   * be checked to find those values.
    *
-   * @param {string}
-   *      [Description of the  parameter]
+   * @param {Object} body
+   *      The request body (contains properties from the POST)
+   *
+   * @param {Object} query
+   *      The request query properties
+   *
+   * @param {Object} params
+   *      The request parameters (extracted from the route)
    *
    * @returns {string}
+   */
+  static getGroupsCacheKey({ body = {}, query = {}, params = {} } = {})
+  {
+    let apiDomain = body.custom_canvas_api_domain || query.domain;
+    let contextId = body.context_id || query.contextId;
+
+    if (apiDomain === undefined || contextId === undefined)
+    {
+      let context =
+        {
+          body,
+          query,
+          params,
+          properties:
+          {
+            apiDomain: [ 'body.custom_canvas_api_domain', 'query.domain' ],
+            contextId: [ 'body.context_id', 'query.contextId' ],
+          },
+        };
+      throw new AppError('missing properties to define groups key', context);
+    }
+
+    let groupsCacheKey = `riff-rtc:emeritus:${apiDomain}:${contextId}`;
+
+    return groupsCacheKey;
+  }
+
+  /* **************************************************************************
+   * _getGroups                                                          */ /**
+   *
+   * Get the groups for this.contextId.
+   *
+   * @returns {EmeritusGroups}
    */
   async _getGroups()
   {
@@ -165,12 +209,10 @@ class EmeritusGroupApi
   /* **************************************************************************
    * _getGroupsFromCache                                                 */ /**
    *
-   * [Description of _getGroupsFromCache]
+   * Get the groups for this.contextId from the cache or null if the groups
+   * are not in the cache.
    *
-   * @param {string}
-   *      [Description of the  parameter]
-   *
-   * @returns {string}
+   * @returns {?EmeritusGroups}
    */
   async _getGroupsFromCache()
   {
@@ -185,12 +227,9 @@ class EmeritusGroupApi
   /* **************************************************************************
    * _getGroupsFromLMS                                                   */ /**
    *
-   * [Description of _getGroupsFromLMS]
+   * Get the groups for this.contextId by querying the LMS REST API.
    *
-   * @param {string}
-   *      [Description of the  parameter]
-   *
-   * @returns {string}
+   * @returns {EmeritusGroups}
    */
   async _getGroupsFromLMS()
   {
@@ -268,13 +307,15 @@ class EmeritusGroupApi
  *
  * @typedef {!Object} EmeritusGroupApi.Config
  *
- * @property {string} lms
- *      The LMS configuration for an Emeritus canvas instance containing the
+ * @property {GroupApiConfig} groupApiConfig
+ *      The group api configuration for an Emeritus canvas instance containing the
  *      information needed to query the LMS for group information.
  *
  * @property {ExpressRequest} req
  *      The express request containing the values for the course that contains
  *      the groups to be examined.
+ *
+ * @property {Logger | undefined} logger
  */
 
 
