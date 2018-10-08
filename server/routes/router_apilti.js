@@ -19,6 +19,8 @@ const express = require('express');
 const router = express.Router();
 
 const { ltiConfig } = require('./lticonfig');
+const { deleteCachedGroups } = require('./deletecachedgroups');
+// const { deleteCachedUserGroup } = require('./deletecachedusergroup');
 
 
 router.use(
@@ -32,6 +34,8 @@ router.use(
 /* GET single page application */
 router.get('/config', ltiConfig);
 router.get('/launch', getLaunch);
+router.delete('/lmss/:consumerKey/groups/cache', deleteCachedGroups);
+// router.delete('/:consumerKey/users/:userId/group/cache', deleteCachedUserGroup);
 
 
 /* **************************************************************************

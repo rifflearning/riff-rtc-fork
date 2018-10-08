@@ -50,6 +50,7 @@ function getRedisClient()
   clientInstance.getAsync = util.promisify(clientInstance.get);
   clientInstance.setAsync = util.promisify(clientInstance.set);
   clientInstance.existsAsync = util.promisify(clientInstance.exists);
+  clientInstance.delAsync = util.promisify(clientInstance.del);
 
   return clientInstance;
 }
