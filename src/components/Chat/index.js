@@ -29,8 +29,6 @@ import { riffAddUserToMeeting } from '../../redux/actions/riff';
 import { store, persistor } from '../../redux/store';
 import LeaveRoomButton from './LeaveRoomButton';
 import {ScaleLoader} from 'react-spinners';
-import app from '../../firebase';
-let db = app.firestore();
 
 
 const mapStateToProps = state => ({

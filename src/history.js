@@ -1,3 +1,5 @@
 // src/history.js
-import { createBrowserHistory } from 'history'
-export default createBrowserHistory();
+import { createBrowserHistory } from 'history';
+
+export const browserHistory = createBrowserHistory();
+export default browserHistory;
