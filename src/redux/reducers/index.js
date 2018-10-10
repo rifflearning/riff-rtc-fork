@@ -1,14 +1,17 @@
 import { combineReducers } from 'redux';
-import auth from './auth';
-import chat from './chat';
-import menu from './menu';
-import dashboard from './dashboard';
-import profile from './profile';
-import makeMeeting from './makeMeeting';
 import storage from 'redux-persist/lib/storage'; // defaults to localStorage for web and AsyncStorage for react-native
 import { connectRouter } from 'connected-react-router';
 import { persistReducer } from 'redux-persist';
+
+import auth from './auth';
+import chat from './chat';
+import dashboard from './dashboard';
+import lti from './lti';
+import makeMeeting from './makeMeeting';
+import menu from './menu';
+import profile from './profile';
 import riff from './riff';
+
 import browserHistory from "../../history";
 
 
@@ -45,6 +48,7 @@ export default persistReducer(
   connectRouter(browserHistory)(
     combineReducers({
       auth: auth,
+      lti: lti,
       riff: riff,
       menu: menu,
       dashboard: dashboard,

@@ -4,6 +4,7 @@ import NavBarView from "./NavBarView";
 import { connect } from 'react-redux';
 import {OPEN_NAV_MENU, CLOSE_NAV_MENU} from '../../redux/constants/ActionTypes';
 import { logOutUser } from '../../redux/actions/auth';
+import { logoutLTIUser } from '../../redux/actions/lti';
 
 const mapStateToProps = state => ({
   loggedIn: state.auth.loggedIn,
@@ -13,6 +14,7 @@ const mapStateToProps = state => ({
 const mapDispatchToProps = dispatch => ({
   handleLogOut: (event) => {
     dispatch(logOutUser());
+    dispatch(logoutLTIUser());
   },
   openMenu: () => {
     dispatch({type: OPEN_NAV_MENU});

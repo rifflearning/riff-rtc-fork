@@ -6,9 +6,9 @@ import {
 } from '../constants/ActionTypes';
 import _ from 'underscore';
 import { app, socket} from "../../riff";
-import fs from '../../firebase';
+import firebaseApp from '../../firebase';
 
-let db = fs.firestore();
+let db = firebaseApp.firestore();
 
 export const updateMeetingList = (meetings) => {
   return {type: DASHBOARD_FETCH_MEETINGS,

@@ -6,7 +6,6 @@ import { CREATE_USER_SUCCESS,
          INPUT_STATE_CHANGE,
          CLEAR_ERROR,
          LOG_OUT} from '../constants/ActionTypes';
-import firebase from "firebase";
 import app from "../../firebase";
 import { push } from 'connected-react-router';
 
@@ -63,7 +62,7 @@ export const clearAuthError = () => {
 };
 
 export const logOutUser = () => dispatch => {
-  return firebase.auth().signOut().then((res) => {
+  return app.auth().signOut().then((res) => {
     console.log("signed out?", res);
   }).then((res) => {
     dispatch({
@@ -91,7 +90,7 @@ export const loginAnonymously = (uid) => {
 };
 
 export const attemptLoginAnonymous = () => {
-  return firebase.auth().signInAnonymously().catch(function(error) {
+  return app.auth().signInAnonymously().catch(function(error) {
     // Handle Errors here.
     var errorCode = error.code;
     var errorMessage = error.message;
@@ -105,7 +104,7 @@ export const attemptLoginAnonymous = () => {
 }
 
 export const attemptUserCreate = (email, pass) => dispatch => {
-  var credential = firebase.auth.EmailAuthProvider.credential(email, pass);
+  var credential = app.auth.EmailAuthProvider.credential(email, pass);
   app.auth().currentUser.linkAndRetrieveDataWithCredential(credential).then(function (usercred) {
     var user = usercred.user;
     dispatch(createUserSuccess(usercred));
