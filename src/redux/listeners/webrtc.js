@@ -1,17 +1,5 @@
 import SimpleWebRTC from 'simplewebrtc';
 import sibilant from 'sibilant-webaudio';
-import { JOINING_ROOM,
-         JOINED_ROOM,
-         IN_ROOM,
-         ADD_PEER,
-         REMOVE_PEER,
-         CHAT_READY_TO_CALL,
-         CHAT_SET_WEBRTC_CONFIG,
-         CHAT_START_WEBRTC,
-         CHAT_GET_MEDIA_ERROR,
-         CHAT_SHARE_STREAM,
-         CHAT_VOLUME_CHANGED
-       } from '../constants/ActionTypes';
 import {
   addPeer,
   removePeer,
@@ -153,10 +141,8 @@ export default function (nick, localVideoNode, dispatch, getState) {
           console.log("ERROR", err);
         });
       });
-      dispatch(readyToCall());      
+      dispatch(readyToCall());
     }
-
-
   });
 
   return webrtc;

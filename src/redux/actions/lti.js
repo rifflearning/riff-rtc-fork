@@ -27,9 +27,10 @@ export const loginLTIUser = ltiData => dispatch => {
       },
     };
 
+  const ltiLoginUserAction = { type: LTI_LOGIN_USER, ltiState };
   let ltiUserEmail = "LTI_" + ltiState.user.email;
   let ltiUserPass =  "LTIPASS_" + ltiState.user.id;
-  let ltiRoomName = ltiState.context.id + "_" + ltiState.user.group;
+  let ltiRoomName = ltiState.user.group;
   console.log("Logging in user through LTI...");
 
   app.auth().signInWithEmailAndPassword(ltiUserEmail, ltiUserPass)
@@ -46,7 +47,7 @@ export const loginLTIUser = ltiData => dispatch => {
     .then((resp) => {
       // We've either signed in or created a new account and signed in
       dispatch(loginUserSuccess(resp));
-      dispatch({ type: LTI_LOGIN_USER, ltiState });
+      dispatch(ltiLoginUserAction);
     })
     .catch((err) => {
       console.error(`LTI user (${ltiUserEmail}) login or create account failed with code: ${err.code}`);
@@ -57,3 +58,8 @@ export const loginLTIUser = ltiData => dispatch => {
       dispatch(push('/room'));
     });
 };
+
+export const logoutLTIUser = () => {
+  return { type: LTI_LOGOUT_USER };
+};
+

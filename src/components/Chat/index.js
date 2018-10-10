@@ -48,6 +48,7 @@ const mapStateToProps = state => ({
   volume: state.chat.volume,
   chat: state.chat,
   auth: state.auth,
+  lti: state.lti,
   riff: state.riff,
   state: state
 });
@@ -73,24 +74,29 @@ const mapDispatchToProps = dispatch => ({
   joinWebRtc: (localVideoRef, nick) => {
     dispatch(joinWebRtc(localVideoRef, nick));
   },
-  handleReadyClick: (event, name, chat, auth, riff, webrtc) => {
+  handleReadyClick: (event, chat, auth, lti, riff, webrtc) => {
     if ((chat.roomName == '' || chat.displayName == '')) {
       dispatch(joinRoomError('You need to specify a room and a display name!'));
     }  else if (chat.getMediaError) {
       dispatch(joinRoomError('Make sure your camera and microphone are ready.'));
     } else {
+      let chatroom = chat.roomName;
+      if (lti.loggedIn) {
+        chatroom = `${chatroom}_${lti.context.id}`;
+        console.log(`lti user\'s webrtc room name set to: ${chatroom}`);
+      }
       event.preventDefault();
       webrtc.stopVolumeCollection();
-      webrtc.joinRoom(chat.roomName, function (err, rd) {
+      webrtc.joinRoom(chatroom, function (err, rd) {
         console.log(err, "---", rd);
       });
 
-      dispatch(joinedRoom(name));
+      dispatch(joinedRoom(chatroom));
       riffAddUserToMeeting(auth.user.uid,
                            auth.user.email ? auth.user.email : "",
-                           chat.roomName,
+                           chatroom,
                            chat.displayName,
-                           chat.roomName,
+                           chatroom,
                            chat.webRtcPeers,
                            riff.authToken
                           );
@@ -215,7 +221,7 @@ opacity: 0.5;
 `;
 
 
-const RenderVideos = ({inRoom, webRtcPeers, roomName, displayName,
+const RenderVideos = ({inRoom, webRtcPeers, roomName, roRoomName, displayName, roDisplayName,
                        handleKeyPress, handleDisplayNameChange, handleRoomNameChange,
                        savedDisplayName,
                        handleReadyClick,
@@ -245,9 +251,10 @@ const RenderVideos = ({inRoom, webRtcPeers, roomName, displayName,
                                 <div className="column">
                                     <RoomNameEntry
                                         type="text"
-                                        name="name"
+                                        name="room"
                                         placeholder="my-room-name"
                                         value={roomName}
+                                        readOnly={roRoomName}
                                         onChange={event => handleRoomNameChange(event.target.value)}/>
                                   </div>
                             </div>
@@ -263,6 +270,7 @@ const RenderVideos = ({inRoom, webRtcPeers, roomName, displayName,
                                           name="name"
                                           placeholder="Your Name"
                                           value={displayName}
+                                          readOnly={roDisplayName}
                                           onKeyPress={ (event) => handleKeyPress(event, webrtc) }
                                           onChange={event => handleDisplayNameChange(event.target.value)}/>
                                     </div>
@@ -432,18 +440,25 @@ class Chat extends Component {
           </Menu>
           <RenderVideos inRoom={this.props.inRoom}
                         roomName={this.props.roomName}
+                        roRoomName={this.props.lti.loggedIn}
                         displayName={this.props.displayName}
+                        roDisplayName={this.props.lti.loggedIn}
                         handleKeyPress={this.props.handleKeyPress}
                         handleDisplayNameChange={this.props.handleDisplayNameChange}
                         savedDisplayName={this.props.savedDisplayName}
                         webRtcPeers={this.props.webRtcPeers}
                         handleRoomNameChange={this.props.handleRoomNameChange}
-                        handleReadyClick={(event) => this.props.handleReadyClick(event, this.name, this.props.chat, this.props.auth, this.props.riff, this.webrtc)}
-            joinButtonDisabled={(this.props.roomName == '' || this.props.displayName == '')}
-            clearJoinRoomError={this.props.clearJoinRoomError}
-            joinRoomError={this.props.joinRoomError}
-            chat={this.props.chat}
-            webrtc={this.webrtc}>
+                        handleReadyClick={(event) => this.props.handleReadyClick(event,
+                                                                                 this.props.chat,
+                                                                                 this.props.auth,
+                                                                                 this.props.lti,
+                                                                                 this.props.riff,
+                                                                                 this.webrtc)}
+                        joinButtonDisabled={(this.props.roomName == '' || this.props.displayName == '')}
+                        clearJoinRoomError={this.props.clearJoinRoomError}
+                        joinRoomError={this.props.joinRoomError}
+                        chat={this.props.chat}
+                        webrtc={this.webrtc}>
           </RenderVideos>
         </div>
       </div>
