@@ -25,7 +25,7 @@ import firebase from "../firebase";
 import addAuthListener from '../redux/listeners/auth';
 import { attemptLoginAnonymous } from '../redux/actions/auth';
 import { attemptRiffAuthenticate } from '../redux/actions/riff';
-import { initializeLTIUser } from '../redux/actions/ltiUser';
+import { loginLTIUser } from '../redux/actions/lti';
 
 const Footer = styled.footer.attrs({
   className: 'footer'
@@ -58,8 +58,8 @@ const mapDispatchToProps = dispatch => ({
     console.log("attempt riff auth");
     dispatch(attemptRiffAuthenticate());
   },
-  initializeLTIUser: (data) => {
-    dispatch(initializeLTIUser(data));
+  loginLTIUser: (data) => {
+    dispatch(loginLTIUser(data));
   },
   dispatch: dispatch
 });
@@ -81,7 +81,7 @@ class App extends React.Component {
     // if window was loaded with LTI data
     if (window.lti_data.lti_user) {
       console.log("Loaded with LTI data and user.");
-      this.props.initializeLTIUser(window.lti_data);
+      this.props.loginLTIUser(window.lti_data);
     } else if (!this.props.auth.user.uid && !this.props.auth.uid) {
       console.log("No user detected, creating anonymous ID");
       this.props.attemptLoginAnonymous();
