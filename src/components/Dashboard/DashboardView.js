@@ -33,7 +33,7 @@ const MeetingView = ({meeting, selected, handleMeetingClick}) => {
     <a onClick = {(event) => handleMeetingClick(event, meeting)}>
     <div className="timeline-item">
       <div className="timeline-marker is-image is-32x32">
-        <MaterialIcon icon="voice_chat" color={selected ? '#ab45ab' : '#bdc3c7'} style={{marginLeft: '0.25rem', marginTop: '0.25rem'}}/>
+        <MaterialIcon icon="voice_chat" size={20} color={selected ? '#ab45ab' : '#bdc3c7'} style={{marginLeft: '0.25rem', marginTop: '0.25rem', paddingLeft: '0.05rem', paddingTop: '0.1rem', fontSize: '1.3rem'}}/>
       </div>
 
       <div className="timeline-content">
@@ -66,9 +66,9 @@ const MeetingList = ({ fetchMeetingsStatus,
   console.log("rendering meeting list");
   return (
     <MeetingTabs>
-      <header className="timeline-header">
+      <div className="timeline-header" style={{minHeight: '2em'}}>
         <span className="tag is-medium is-inverted is-primary">Today</span>
-      </header>
+      </div>
       {meetingTiles}
     </MeetingTabs>
   );
@@ -102,16 +102,13 @@ const DashboardView = ({user, riffAuthToken, meetings,
     );
   } else {
     return (
-      <div>
-        <div className="columns">
-          <div className="column is-one-fifth has-text-centered">
-            <a className="button is-rounded"  onClick={event => handleRefreshClick(event, user.uid)}>
-              <MaterialIcon icon="refresh"/>
-            </a>
-          </div>
-        </div>
       <div className="columns has-text-centered is-centered">
         <div className="column is-one-quarter has-text-left">
+          <div className="has-text-centered is-centered">
+          <a className="button is-rounded"  onClick={event => handleRefreshClick(event, user.uid)}>
+            <MaterialIcon icon="refresh"/>
+          </a>
+          </div>
           <MeetingList meetings={meetings}
                        selectedMeeting={selectedMeeting}
                        fetchMeetingsStatus={fetchMeetingsStatus}
@@ -133,7 +130,10 @@ const DashboardView = ({user, riffAuthToken, meetings,
                               <h3 className="is-size-4 is-primary">{selectedMeetingDuration} </h3>
                         </div>
                     </div>
-                  <div className="columns" style={{maxHeight: "90vh", overflowY: 'scroll'}}>
+                    <div className="columns" style={{maxHeight: "90vh", overflowY: 'scroll'}}>
+                        <div className="column">
+                            <TurnChart processedUtterances={processedUtterances} participantId={user.uid}/>
+                          </div>
                       <div className="column has-text-left">
                                 <br/>
 
@@ -151,24 +151,6 @@ const DashboardView = ({user, riffAuthToken, meetings,
                                           </div>
                                     </div>
                         </div>
-                          <div className="column">
-                              <div className="card has-text-centered is-centered"
-                                     style={{borderRadius: '5px', maxWidth: '30vw', paddingTop: '0.75rem'}}>
-                                  <div className="card-image has-text-centered is-centered">
-                                      <TurnChart processedUtterances={processedUtterances} participantId={user.uid}/>
-                                    </div>
-                                    <div className="card-content">
-                                        <div className="title is-5 has-text-left">Time Spoken</div>
-                                          <div className="content has-text-left is-size-7">
-                                              The graph above represents the distribution of speaking during
-                                                your meeting, which is our turn-taking metric. In turn-taking, we
-                                                measure only active human vocalization, not the pauses in normal
-                                                speech, which is why time spoken is typically less than the
-                                                meeting duration.
-                                            </div>
-                                      </div>
-                                </div>
-                            </div>
                     </div>
                     <div className="columns">
                         <div className="columns is-half">
@@ -178,7 +160,6 @@ const DashboardView = ({user, riffAuthToken, meetings,
                 </React.Fragment>
               }
         </div>
-      </div>
       </div>
     );
   }
