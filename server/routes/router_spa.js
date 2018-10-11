@@ -36,8 +36,10 @@ router.use(
  * after which we will return the SPA index file w/ some extra information
  * in a global window property named `lti_data`.
  */
-if (config.get('server.lti.enabled')) // eslint-disable-line curly
-  router.post('/lti/launch', ltiLaunch, spaIndex);
+if (config.get('server.lti.enabled'))
+{
+  router.post('/lti/launch/:route*', ltiLaunch, spaIndex);
+}
 
 /* GET single page application */
 router.get('*', spaIndex);

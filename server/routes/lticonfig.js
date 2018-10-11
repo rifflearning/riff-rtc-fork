@@ -31,7 +31,9 @@ function ltiConfig(req, res)
 
   logger.debug({ req, reqUrl: req.url, reqOrigUrl: req.originalUrl, body: req.body }, 'ltiConfig entered...');
 
-  let config = getConfig({ scheme: req.protocol, host: req.hostname });
+  let path = req.query.path || '/room';
+  path = path.startsWith('/') ? path : `/${path}`;
+  let config = getConfig({ scheme: req.protocol, host: req.hostname, path });
   let xmlConfig = js2xml(config, { compact: true, spaces: 2 });
   res.type('text/xml');
   res.send(xmlConfig);
@@ -49,11 +51,17 @@ function ltiConfig(req, res)
  *
  * @returns {Object}
  */
-function getConfig({ scheme = 'https', host = 'localhost' } = {})
+function getConfig({ scheme = 'https', host = 'localhost', path = '/room' } = {})
 {
+  const mapPath =
+    {
+      '/room':  { title: 'Riff Video Chat' },
+      '/riffs': { title: 'Riff Meeting Metrics' },
+      '/':      { title: 'Riff Platform' },
+    };
   // Possibly dynamic (ie we may want to change them at runtime) LTI configuration field(s)
-  let ltiLaunchUrl = `${scheme}://${host}/api/lti/launch`;
-  const toolTitle = 'Riff Chat';
+  let ltiLaunchUrl = `${scheme}://${host}/lti/launch${path}`;
+  const toolTitle = mapPath[path] ? mapPath[path].title : mapPath['/'].title;
 
   /* eslint-disable no-multi-spaces */
   /**
