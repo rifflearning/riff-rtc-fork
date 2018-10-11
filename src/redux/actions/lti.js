@@ -1,7 +1,6 @@
 import { LTI_LOGIN_USER,
          LTI_LOGOUT_USER,
        } from '../constants/ActionTypes';
-import {push} from 'connected-react-router';
 import {attemptUserCreate, attemptUserSignIn, loginUserSuccess, createUserFail} from './auth';
 import {changeRoomNameState, joinRoom} from './makeMeeting';
 import {changeDisplayName} from './chat';
@@ -53,9 +52,9 @@ export const loginLTIUser = ltiData => dispatch => {
       console.error(`LTI user (${ltiUserEmail}) login or create account failed with code: ${err.code}`);
     })
     .then(() => {
+      // an LTI user cannot set the chat room name or display name so we need to set them now.
       dispatch(joinRoom(ltiRoomName));
       dispatch(changeDisplayName(ltiState.user.fullName));
-      dispatch(push('/room'));
     });
 };
 

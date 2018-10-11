@@ -26,6 +26,7 @@ import addAuthListener from '../redux/listeners/auth';
 import { attemptLoginAnonymous } from '../redux/actions/auth';
 import { attemptRiffAuthenticate } from '../redux/actions/riff';
 import { loginLTIUser } from '../redux/actions/lti';
+import { replace } from 'connected-react-router';
 
 const Footer = styled.footer.attrs({
   className: 'footer'
@@ -61,6 +62,9 @@ const mapDispatchToProps = dispatch => ({
   loginLTIUser: (data) => {
     dispatch(loginLTIUser(data));
   },
+  changeRoute: (path) => {
+    dispatch(replace(path));
+  },
   dispatch: dispatch
 });
 
@@ -80,8 +84,15 @@ class App extends React.Component {
 
     // if window was loaded with LTI data
     if (window.lti_data.lti_user) {
-      console.log("Loaded with LTI data and user.");
+      console.log("Loaded with LTI data and user.", this.props);
       this.props.loginLTIUser(window.lti_data);
+      const ltiLaunchPathPrefix = '/lti/launch';
+      let launchPath = this.props.location.pathname;
+      if (launchPath.startsWith(ltiLaunchPathPrefix)) {
+        launchPath = launchPath.slice(ltiLaunchPathPrefix.length);
+        launchPath = launchPath || '/';
+        this.props.changeRoute(launchPath);
+      }
     } else if (!this.props.auth.user.uid && !this.props.auth.uid) {
       console.log("No user detected, creating anonymous ID");
       this.props.attemptLoginAnonymous();
