@@ -57,6 +57,13 @@ background-color: rgba(171,69,171,0.9);
 z-index: 1;
 `;
 
+const ChartInfo = styled.p.attrs({
+  className: 'has-text-weight-bold is-size-5'
+})`
+padding: 2rem;
+color: #fff;
+`;
+
 
 const INFO_CLICKED = 'INFO_CLICKED';
 const chartCardReducer = (isInfoOpen, action) => {
@@ -103,7 +110,7 @@ const ChartCard = enhance((props) => {
                     <MaterialIcon icon="close"/>
                   </a>
               </span>
-              <p>{props.chartInfo}</p>
+              <ChartInfo>{props.chartInfo}</ChartInfo>
           </ChartInfoDiv>}
       <ChartDiv>
           {props.chartDiv}

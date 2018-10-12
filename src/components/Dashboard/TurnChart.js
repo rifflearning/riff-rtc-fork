@@ -41,6 +41,10 @@ const formatChartData = (processedUtterances, participantId) => {
   return { data: data, colors: colors };
 };
 
+const chartInfo = "This shows a breakdown of how long each member of your meeting spoke for. More \
+equal speaking time across all members is associated with higher creativity, more trust between \
+group members, and better brainstorming.";
+
 const TurnChart = ({processedUtterances, participantId}) => {
   let r = formatChartData(processedUtterances, participantId);
   console.log("data for chart:", r.data);
@@ -66,7 +70,7 @@ const TurnChart = ({processedUtterances, participantId}) => {
                     height="25vw" width="25vw" />);
 
   return (
-    <ChartCard title="Speaking Time" chartDiv={chartDiv}/>
+    <ChartCard title="Speaking Time" chartDiv={chartDiv} chartInfo={chartInfo}/>
   );
 };
 

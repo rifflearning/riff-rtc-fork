@@ -71,7 +71,7 @@ margin-top: -10px;
 padding-bottom: 10rem;
 `;
 
-const chartInfo = "This shows a timeline of your meeting.";
+const chartInfo = "This chart shows a timeline of when people spoke during your meeting.";
 
 // processedTimeline:
 // processedUtterances: [list of utterances...]

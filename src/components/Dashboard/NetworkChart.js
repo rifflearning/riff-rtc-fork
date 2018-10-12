@@ -48,6 +48,9 @@ const addLabelsToData = (networkData, participantId) => {
 };
 
 
+const chartInfo = "This network graph represents who you are most likely to speak after. \
+A stronger connection to another person in your meeting means you are likely paying more \
+attention to what they have to say.";
 const NetworkChart = ({processedNetwork, participantId}) => {
   console.log("data for network:", processedNetwork);
   processedNetwork = addColorsToData(processedNetwork, participantId);
@@ -81,7 +84,8 @@ const NetworkChart = ({processedNetwork, participantId}) => {
   return (
     <ChartCard
       title="Influence"
-      chartDiv={Network}>
+      chartDiv={Network}
+      chartInfo={chartInfo}>
     </ChartCard>
   );
 };
