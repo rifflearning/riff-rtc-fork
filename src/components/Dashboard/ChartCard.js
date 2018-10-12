@@ -7,6 +7,7 @@ import {ScaleLoader} from 'react-spinners';
 import MaterialIcon from 'material-icons-react';
 import Chart from 'chart.js';
 import moment from 'moment';
+import {withReducer} from 'recompose';
 
 const CardTitle = styled.div.attrs({
   className: "title is-5 has-text-left"
@@ -45,24 +46,58 @@ padding-top: 0.75rem;
 };
 
 
+const ChartInfoDiv = styled.div`
+position: absolute;
+top: 0px;
+left: 0px;
+height: 100%;
+width: 100%;
+background-color: rgba(171,69,171,0.9);
+z-index: 1;
+`;
 
-const ChartCard = ({chartDiv, title, maxWidth}) => {
-  maxWidth = maxWidth ? maxWidth : 25;
-  let Card = WidthCard(maxWidth);
+
+const INFO_CLICKED = 'INFO_CLICKED';
+const chartCardReducer = (isInfoOpen, action) => {
+  switch (action.type) {
+  case INFO_CLICKED:
+    return !isInfoOpen;
+  default:
+    return isInfoOpen;
+  }
+};
+
+const enhance = withReducer('isInfoOpen', 'dispatch', chartCardReducer, false);
+
+//const ChartCard = ({chartDiv, title, maxWidth}) => {
+const ChartCard = enhance((props) => {
+  let mw = props.maxWidth ? props.maxWidth : 25;
+  let Card = WidthCard(mw);
   return (
     <Card>
-      <CardTitle>{title}
+      <CardTitle>{props.title}
         <span className="has-text-right" style={{float: 'right'}}>
-          <a onClick={event => handleRefreshClick(event, user.uid)}>
+          <a onClick={event => props.dispatch({type: INFO_CLICKED}) }>
             <MaterialIcon icon="info"/>
           </a>
         </span>
       </CardTitle>
+      {props.isInfoOpen ?
+        <ChartInfoDiv>
+            <span className="has-text-right" style={{float: 'right'}}>
+                <a onClick={event => props.dispatch({type: INFO_CLICKED}) }>
+                    <MaterialIcon icon="close"/>
+                  </a>
+              </span>
+            <p>Chart Info</p>
+          </ChartInfoDiv> :
+          <div>
+          </div>}
       <ChartDiv>
-        {chartDiv}
+          {props.chartDiv}
       </ChartDiv>
     </Card>
   );
-};
+});
 
 export default ChartCard;
