@@ -16,16 +16,7 @@ margin-right: 1rem;
 color: rgb(138,106,148);
 `;
 
-const Card = styled.div.attrs({
-  className: "card has-text-centered is-centered"
-})`
-background-color: #f6f0fb;
-border: 2px solid rgb(138,106,148);
-box-shadow: none;
-border-radius: 5px;
-max-width: 25vw;
-padding-top: 0.75rem;
-`;
+
 
 const ChartDiv = styled.div.attrs({
   className: "card-image has-text-centered is-centered"
@@ -36,8 +27,28 @@ left: 0px;
 }
 `;
 
+const WidthCard = (maxWidth) => {
+  console.log("setting max width to:", maxWidth + "vw");
+  const Card = styled.div.attrs({
+    className: "card has-text-centered is-centered"
+  })`
+margin-left: auto;
+margin-right: auto;
+background-color: #f6f0fb;
+border: 2px solid rgb(138,106,148);
+box-shadow: none;
+border-radius: 5px;
+max-width: ${props => maxWidth + "vw"};
+padding-top: 0.75rem;
+`;
+  return Card;
+};
 
-const ChartCard = ({chartDiv, title}) => {
+
+
+const ChartCard = ({chartDiv, title, maxWidth}) => {
+  maxWidth = maxWidth ? maxWidth : 25;
+  let Card = WidthCard(maxWidth);
   return (
     <Card>
       <CardTitle>{title}
