@@ -8,7 +8,7 @@ const Gantt = function() {
     top : 20,
     right : 40,
     bottom : 20,
-    left : 150
+    left : 25
   };
   var selector = '#gantt';
   var timeDomainStart = d3.timeDay.offset(new Date(),-3);

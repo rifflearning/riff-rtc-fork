@@ -16,6 +16,7 @@ import moment from 'moment';
 import lifecycle from 'react-pure-lifecycle';
 import _ from 'underscore';
 import Gantt from './gantt';
+import ChartCard from "./ChartCard";
 
 const colorYou = '#ab45ab';
 const colorOther = '#bdc3c7';
@@ -60,31 +61,24 @@ const methods = {
 };
 
 const WaveDiv = styled.div`
-background-color: rgb(138,106,148)
-&::before{
-        content: "";
-        position: absolute;
-        left: 0;
-        top: 0;
-        right: 0;
-        background-repeat: repeat;
-        height: 10px;
-        background-size: 20px 20px;
-        background-image:
-        radial-gradient(circle at 10px -5px, transparent 12px, maroon 13px);
-      }
+background: rgba(171,69,171,1);
+margin-top: -10px;
+padding-bottom: 10rem;
 `;
 
 // processedTimeline:
 // processedUtterances: [list of utterances...]
 // participants: [{id, name, ...}, ...]
 const TimelineView = ({processedTimeline, participantId}) => {
+  const chartDiv = (<div id="gantt"></div>);
   return (
     <React.Fragment>
+      <svg id="Layer_1"  x="0px" y="0px" viewBox="0 0 1440 126">
+        <path style={{fill: "rgba(171,69,171,1)"}} d="M685.6,38.8C418.7-11.1,170.2,9.9,0,30v96h1440V30C1252.7,52.2,1010,99.4,685.6,38.8z"></path>
+      </svg>
       <WaveDiv>
-        <div id="gantt"></div>
+        <ChartCard title="Timeline" chartDiv={chartDiv} maxWidth = "50"/>
       </WaveDiv>
-    
     </React.Fragment>
   );
 }

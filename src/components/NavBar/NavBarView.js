@@ -13,7 +13,7 @@ const NavBar = styled.nav.attrs({
   className: 'navbar is-transparent'
 })`
   background-color:rgba(255, 255, 255, 0);
-  min-height: 3.25rem;
+  max-height: 4rem;
   .navbar-item img {
     max-height: 100%;
   }

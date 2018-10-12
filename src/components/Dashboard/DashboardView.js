@@ -16,7 +16,7 @@ const MeetingTabs = styled.div.attrs({
 })`
 padding-left: 2.5rem;
 overflow-y: scroll;
-max-height: 85vh;
+max-height: 100%;
 &::-webkit-scrollbar {
     width: 0px;  /* remove scrollbar space */
     background: transparent;  /* optional: just make scrollbar invisible */
@@ -81,8 +81,6 @@ const DashboardView = ({user, riffAuthToken, meetings,
                         handleRefreshClick, selectedMeetingDuration,
                         processedNetwork, processedTimeline}) =>
 {
-  console.log("fetch meetings status (view)", fetchMeetingsStatus, meetings);
-
   if (fetchMeetingsStatus === 'loading') {
     return (
       <div className="columns is-centered has-text-centered">
@@ -93,7 +91,7 @@ const DashboardView = ({user, riffAuthToken, meetings,
     );
   } else if (fetchMeetingsStatus === 'error') {
     return (
-      <div className="columns is-centered has-text-centered is-vcentered" style={{height: '90vh'}}>
+      <div className="columns is-centered has-text-centered is-vcentered" style={{height: '92vh'}}>
         <div className="column is-vcentered" style={{alignItems: 'center'}}>
           <p className="is-size-4 is-primary">{fetchMeetingsMessage}</p>
           <ScaleLoader color={"#8A6A94"}/>
@@ -102,20 +100,16 @@ const DashboardView = ({user, riffAuthToken, meetings,
     );
   } else {
     return (
-      <div className="columns has-text-centered is-centered">
+      <div className="columns has-text-centered is-centered"
+           style={{marginTop: "0px", maxHeight: "92vh"}}>
         <div className="column is-one-quarter has-text-left">
-          <div className="has-text-centered is-centered">
-          <a className="button is-rounded"  onClick={event => handleRefreshClick(event, user.uid)}>
-            <MaterialIcon icon="refresh"/>
-          </a>
-          </div>
           <MeetingList meetings={meetings}
                        selectedMeeting={selectedMeeting}
                        fetchMeetingsStatus={fetchMeetingsStatus}
                        fetchMeetingsMessage={fetchMeetingsMessage}
                        handleMeetingClick={handleMeetingClick}/>
         </div>
-        <div className="column" style={{maxHeight: "95vh", overflowY: 'scroll'}}>
+        <div className="column" style={{maxHeight: "92vh", overflowY: 'scroll', overflowX: 'hidden', padding: '0'}}>
           {
             statsStatus === 'loading'
               ? <div>
@@ -130,10 +124,10 @@ const DashboardView = ({user, riffAuthToken, meetings,
                               <h3 className="is-size-4 is-primary">{selectedMeetingDuration} </h3>
                         </div>
                     </div>
-                    <div className="columns">
-                        <div className="column">
-                        <div className="columns">
-                            <div className="column is-half">
+                    <div className="columns is-centered">
+                        <div className="column" style={{paddingBottom: "0px"}}>
+                        <div className="columns is-centered">
+                            <div className="column is-half has-text-centered is-centered">
                                 <TurnChart processedUtterances={processedUtterances} participantId={user.uid}/>
                               </div>
                               <div className="column is-half has-text-left">
@@ -141,7 +135,7 @@ const DashboardView = ({user, riffAuthToken, meetings,
                                 </div>
                           </div>
 
-                          <div className="section">
+                          <div className="section" style={{padding: "0px"}}>
                               <TimelineChart processedTimeline={processedTimeline} participantId={user.uid}></TimelineChart>
                             </div>
                           </div>
