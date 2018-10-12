@@ -14,6 +14,7 @@ import MaterialIcon from 'material-icons-react';
 import Chart from 'chart.js';
 import moment from 'moment';
 import _ from 'underscore';
+import ChartCard from './ChartCard';
 
 const colorYou = '#ab45ab';
 let peerColors = ['#f56b6b', '#128EAD', '#7caf5f', '#f2a466'];
@@ -47,37 +48,41 @@ const addLabelsToData = (networkData, participantId) => {
 };
 
 
-const divStyle = {
-  '.sigma-scene': {
-    left: "0px"
-  }
-};
-
 const NetworkChart = ({processedNetwork, participantId}) => {
   console.log("data for network:", processedNetwork);
   processedNetwork = addColorsToData(processedNetwork, participantId);
   processedNetwork = addLabelsToData(processedNetwork, participantId);
 
-  return (
+  const Network = (
     <Sigma
       graph={processedNetwork}
       renderer="canvas"
+      style={{
+        width: "24.8vw",
+        height: "25vw"
+      }}
       settings={{
-             drawEdges: true,
-             clone: false,
-             maxNodeSize: 20,
-             minNodeSize: 20,
-             minEdgeSize: _.min(processedNetwork.edges, (e) => { return e.size; }).size,
-             maxEdgeSize: _.max(processedNetwork.edges, (e) => { return e.size; }).size,
-             defaultEdgeColor: "rgb(243, 108,	110)",
-             defaultNodeColor: "#bdc3c7"
-           }}>
+        drawEdges: true,
+        clone: false,
+        maxNodeSize: 20,
+        minNodeSize: 20,
+        minEdgeSize: _.min(processedNetwork.edges, (e) => { return e.size; }).size,
+        maxEdgeSize: _.max(processedNetwork.edges, (e) => { return e.size; }).size,
+        defaultEdgeColor: "rgb(243, 108,	110)",
+        defaultNodeColor: "#bdc3c7"
+      }}>
       <RelativeSize initialSize={10}/>
       <EdgeShapes default="curvedArrow"/>
       <NodeShapes default="circle" borderColor="#FF3333"/>
       <ForceLink background easing="cubicInOut"/>
       <RandomizeNodePositions/>
-    </Sigma>
+    </Sigma>);
+
+  return (
+    <ChartCard
+      title="Influence"
+      chartDiv={Network}>
+    </ChartCard>
   );
 };
 

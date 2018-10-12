@@ -6,37 +6,13 @@ import ReactChartkick, { ColumnChart, PieChart } from 'react-chartkick';
 import {ScaleLoader} from 'react-spinners';
 import MaterialIcon from 'material-icons-react';
 import Chart from 'chart.js';
+import ChartCard from './ChartCard';
 import moment from 'moment';
 
 ReactChartkick.addAdapter(Chart);
 
-const CardTitle = styled.div.attrs({
-  className: "title is-5 has-text-left"
-})`
-margin-left: 1rem;
-margin-right: 1rem;
-color: rgb(138,106,148);
-`;
-
-const Card = styled.div.attrs({
-  className: "card has-text-centered is-centered"
-})`
-background-color: #f6f0fb;
-border: 2px solid rgb(138,106,148);
-box-shadow: none;
-border-radius: 5px;
-max-width: 20vw;
-padding-top: 0.75rem;
-`;
-
-const ChartDiv = styled.div.attrs({
-  className: "card-image has-text-centered is-centered"
-})`
-padding-bottom: 1rem;
-`;
-
-
 const formatChartData = (processedUtterances, participantId) => {
+
   console.log("formatting:", processedUtterances);
 
   const colorYou = '#ab45ab';
@@ -85,21 +61,12 @@ const TurnChart = ({processedUtterances, participantId}) => {
     }
   };
 
+  const chartDiv = (<PieChart donut={true} library={chartOptions}
+                    data={r.data} colors={r.colors}
+                    height="25vw" width="25vw" />);
+
   return (
-    <Card>
-      <CardTitle>Speaking Time
-        <span className="has-text-right" style={{float: 'right'}}>
-          <a onClick={event => handleRefreshClick(event, user.uid)}>
-            <MaterialIcon icon="info"/>
-          </a>
-        </span>
-      </CardTitle>
-      <ChartDiv>
-        <PieChart donut={true} library={chartOptions}
-                  data={r.data} colors={r.colors}
-                  height="20vw" width="20vw" />
-      </ChartDiv>
-    </Card>
+    <ChartCard title="Speaking Time" chartDiv={chartDiv}/>
   );
 };
 

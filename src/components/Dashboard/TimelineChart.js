@@ -59,14 +59,34 @@ const methods = {
   componentDidMount
 };
 
+const WaveDiv = styled.div`
+background-color: rgb(138,106,148)
+&::before{
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 0;
+        right: 0;
+        background-repeat: repeat;
+        height: 10px;
+        background-size: 20px 20px;
+        background-image:
+        radial-gradient(circle at 10px -5px, transparent 12px, maroon 13px);
+      }
+`;
 
 // processedTimeline:
 // processedUtterances: [list of utterances...]
 // participants: [{id, name, ...}, ...]
 const TimelineView = ({processedTimeline, participantId}) => {
   return (
-    <div id="gantt"></div>
-  )
+    <React.Fragment>
+      <WaveDiv>
+        <div id="gantt"></div>
+      </WaveDiv>
+    
+    </React.Fragment>
+  );
 }
 
 const TimelineChart = lifecycle(methods)(TimelineView);

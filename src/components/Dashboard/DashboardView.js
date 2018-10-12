@@ -115,7 +115,7 @@ const DashboardView = ({user, riffAuthToken, meetings,
                        fetchMeetingsMessage={fetchMeetingsMessage}
                        handleMeetingClick={handleMeetingClick}/>
         </div>
-        <div className="column">
+        <div className="column" style={{maxHeight: "95vh", overflowY: 'scroll'}}>
           {
             statsStatus === 'loading'
               ? <div>
@@ -130,33 +130,23 @@ const DashboardView = ({user, riffAuthToken, meetings,
                               <h3 className="is-size-4 is-primary">{selectedMeetingDuration} </h3>
                         </div>
                     </div>
-                    <div className="columns" style={{maxHeight: "90vh", overflowY: 'scroll'}}>
-                        <div className="column">
-                            <TurnChart processedUtterances={processedUtterances} participantId={user.uid}/>
-                          </div>
-                      <div className="column has-text-left">
-                                <br/>
-
-                                  <div className="card has-text-centered is-centered"
-                                         style={{borderRadius: '5px', maxWidth: '30vw', paddingTop: '0.75rem'}}>
-                                      <div className="card-image has-text-centered is-centered">
-                                          <NetworkChart processedNetwork={processedNetwork} participantId={user.uid}/>
-                                        </div>
-                                        <div className="card-content">
-                                            <div className="title is-5 has-text-left">Influence</div>
-                                              <div className="content has-text-left is-size-7">
-                                                  This network shows who most commonly speaks after whom.
-                                                    The thicker an edge is from person A to person B, the more likely A is to speak directly after B.
-                                                </div>
-                                          </div>
-                                    </div>
-                        </div>
-                    </div>
                     <div className="columns">
-                        <div className="columns is-half">
-                            <TimelineChart processedTimeline={processedTimeline} participantId={user.uid}></TimelineChart>
+                        <div className="column">
+                        <div className="columns">
+                            <div className="column is-half">
+                                <TurnChart processedUtterances={processedUtterances} participantId={user.uid}/>
+                              </div>
+                              <div className="column is-half has-text-left">
+                                  <NetworkChart processedNetwork={processedNetwork} participantId={user.uid}/>
+                                </div>
                           </div>
-                      </div>
+
+                          <div className="section">
+                              <TimelineChart processedTimeline={processedTimeline} participantId={user.uid}></TimelineChart>
+                            </div>
+                          </div>
+                    </div>
+                    
                 </React.Fragment>
               }
         </div>
