@@ -120,6 +120,7 @@ const Gantt = function() {
 
     svg.append("g").attr("class", "y axis").attr("class", "axisGray").transition().call(yAxis);
 
+    console.log("gantt looks like:", gantt);
     return gantt;
 
   };

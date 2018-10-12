@@ -20,12 +20,11 @@ import ChartCard from "./ChartCard";
 
 const colorYou = '#ab45ab';
 const colorOther = '#bdc3c7';
-let peerColors = ['#f56b6b', '#128EAD', '#7caf5f', '#f2a466'];
+let peerColors = ['#f56b6b', '#128AD', '#7caf5f', '#f2a466'];
 
-const componentDidMount = (props) => {
+const drawGantt = (props) => {
   const {processedTimeline, participantId} = props;
   const {utts, participants, startTime, endTime} = processedTimeline;
-
   // create map of id: name
   let participants2 = _.sortBy(participants, "id");
   console.log("sorted participants:", participants2);
@@ -51,9 +50,15 @@ const componentDidMount = (props) => {
   gantt(utts2);
 };
 
+const componentDidMount = (props) => {
+  drawGantt(props);
+};
+
 const componentDidUpdate = (props) => {
-  console.log("component updating...");
-}
+  // console.log("component updating...", props);
+  // drawGantt(props);
+  return false;
+};
 
 const methods = {
   componentDidUpdate,
@@ -66,10 +71,12 @@ margin-top: -10px;
 padding-bottom: 10rem;
 `;
 
+const chartInfo = "This shows a timeline of your meeting.";
+
 // processedTimeline:
 // processedUtterances: [list of utterances...]
 // participants: [{id, name, ...}, ...]
-const TimelineView = ({processedTimeline, participantId}) => {
+const TimelineView = (props) => {
   const chartDiv = (<div id="gantt"></div>);
   return (
     <React.Fragment>
@@ -77,7 +84,13 @@ const TimelineView = ({processedTimeline, participantId}) => {
         <path style={{fill: "rgba(171,69,171,1)"}} d="M685.6,38.8C418.7-11.1,170.2,9.9,0,30v96h1440V30C1252.7,52.2,1010,99.4,685.6,38.8z"></path>
       </svg>
       <WaveDiv>
-        <ChartCard title="Timeline" chartDiv={chartDiv} maxWidth = "50"/>
+        <ChartCard title="Timeline"
+                   chartDiv={chartDiv}
+                   // messy, but here we need to give the child component
+                   // a way to redraw the chart
+                   redraw={() => drawGantt(props)}
+                   chartInfo={chartInfo}
+                   maxWidth = "50"/>
       </WaveDiv>
     </React.Fragment>
   );

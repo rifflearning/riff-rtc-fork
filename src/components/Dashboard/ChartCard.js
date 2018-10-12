@@ -7,6 +7,7 @@ import {ScaleLoader} from 'react-spinners';
 import MaterialIcon from 'material-icons-react';
 import Chart from 'chart.js';
 import moment from 'moment';
+import lifecycle from 'react-pure-lifecycle';
 import {withReducer} from 'recompose';
 
 const CardTitle = styled.div.attrs({
@@ -69,10 +70,23 @@ const chartCardReducer = (isInfoOpen, action) => {
 
 const enhance = withReducer('isInfoOpen', 'dispatch', chartCardReducer, false);
 
+// we use redraw here for pure d3 charts (like the TimelineChart)
+// since we need a way to redraw when this component re-renders/updates.
+const componentDidUpdate = (props) => {
+  if (props.redraw) {
+    props.redraw();
+  }
+};
+
+const methods = {
+  componentDidUpdate
+};
+
 //const ChartCard = ({chartDiv, title, maxWidth}) => {
 const ChartCard = enhance((props) => {
   let mw = props.maxWidth ? props.maxWidth : 25;
   let Card = WidthCard(mw);
+  console.log("chart div:", props.chartDiv);
   return (
     <Card>
       <CardTitle>{props.title}
@@ -82,17 +96,15 @@ const ChartCard = enhance((props) => {
           </a>
         </span>
       </CardTitle>
-      {props.isInfoOpen ?
+      {props.isInfoOpen &&
         <ChartInfoDiv>
             <span className="has-text-right" style={{float: 'right'}}>
                 <a onClick={event => props.dispatch({type: INFO_CLICKED}) }>
                     <MaterialIcon icon="close"/>
                   </a>
               </span>
-            <p>Chart Info</p>
-          </ChartInfoDiv> :
-          <div>
-          </div>}
+              <p>{props.chartInfo}</p>
+          </ChartInfoDiv>}
       <ChartDiv>
           {props.chartDiv}
       </ChartDiv>
@@ -100,4 +112,4 @@ const ChartCard = enhance((props) => {
   );
 });
 
-export default ChartCard;
+export default lifecycle(methods)(ChartCard);
