@@ -127,6 +127,7 @@ function getConfig({ scheme = 'https', host = 'localhost', path = '/room' } = {}
               { _attributes: { name: 'text'             }, _text: toolTitle },
               { _attributes: { name: 'visibility'       }, _text: 'public' },
               { _attributes: { name: 'default'          }, _text: 'enabled' },
+              { _attributes: { name: 'windowTarget'     }, _text: '_blank' }, // launch in new window/tab
               { _attributes: { name: 'enabled'          }, _text: 'true' }
             ]
           }
