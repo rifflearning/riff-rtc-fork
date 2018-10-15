@@ -1,4 +1,4 @@
-import * as d3 from 'd3';
+import d3 from '../../libs/d3';
 
 const Gantt = function() {
     var FIT_TIME_DOMAIN_MODE = "fit";
