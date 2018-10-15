@@ -6,6 +6,12 @@ import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/integration/react';
 import { ConnectedRouter } from 'connected-react-router';
 
+// TODO: WHY? If this isn't here, video chat crashes when someone joins!
+//       And yet as far as I can tell this package is only supposed to be used
+//       for development. -mjl 2018-10-15
+import 'react-hot-loader';
+
+
 import App from './components/App';
 import registerServiceWorker from './registerServiceWorker';
 import { browserHistory } from './history';
