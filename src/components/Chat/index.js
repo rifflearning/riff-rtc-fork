@@ -28,6 +28,7 @@ import addWebRtcListeners from "../../redux/listeners/webrtc";
 import { riffAddUserToMeeting } from '../../redux/actions/riff';
 import { store, persistor } from '../../redux/store';
 import LeaveRoomButton from './LeaveRoomButton';
+import TextChat from './TextChat';
 import {ScaleLoader} from 'react-spinners';
 
 
@@ -296,6 +297,7 @@ const RenderVideos = ({inRoom, webRtcPeers, roomName, roRoomName, displayName, r
                           <h1>Nobody else here...</h1>
                           <ScaleLoader color={"#8A6A94"}/>
                           </div>
+                          <TextChat/>
                     </div>
                     }
               </div>
