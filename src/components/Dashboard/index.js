@@ -37,12 +37,12 @@ const mapDispatchToProps = dispatch => ({
   handleRefreshClick: (event, uid, selectedMeeting) => {
     dispatch(loadRecentMeetings(uid, selectedMeeting));
   },
-  handleMeetingClick: (event, meeting) => {
+  handleMeetingClick: (event, uid, meeting) => {
     event.preventDefault();
     console.log("selected meeting", meeting._id);
     /// TODO: Why do we want 2 distinct actions to select the meeting and to load the meeting data? -mjl 2018-09-05
     dispatch(selectMeeting(meeting));
-    dispatch(loadMeetingData(meeting._id));
+    dispatch(loadMeetingData(uid, meeting._id));
   },
 });
 

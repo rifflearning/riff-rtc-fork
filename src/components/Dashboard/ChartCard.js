@@ -58,7 +58,7 @@ z-index: 1;
 `;
 
 const ChartInfo = styled.p.attrs({
-  className: 'has-text-weight-bold is-size-5'
+  className: 'has-text-weight-bold is-size-6'
 })`
 padding: 2rem;
 color: #fff;

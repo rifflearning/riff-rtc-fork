@@ -90,7 +90,7 @@ export const loadRecentMeetings = (uid, selectedMeeting) => dispatch => {
       if (meetings.length > 0) {
         let newSelectedMeeting = meetings[0];
         dispatch(selectMeeting(newSelectedMeeting));
-        dispatch(loadMeetingData(newSelectedMeeting._id));
+        dispatch(loadMeetingData(uid, newSelectedMeeting._id));
       }
       //return meetings;
     })
@@ -176,7 +176,7 @@ function cmpMeetingsByStartTime(a, b) {
 // goal is to process and create a network of who follows whom
 // each node is a participant
 // each directed edge A->B indicates probability that B follows A. 
-export const processNetwork = (utterances, meetingId) => {
+export const processNetwork = (uid, utterances, meetingId) => {
   let participantUtterances = _.groupBy(utterances, 'participant');
   let participants = Object.keys(participantUtterances);
   let sortedUtterances = _.sortBy(utterances, (u) => { return u.startTime; });
@@ -220,6 +220,9 @@ export const processNetwork = (utterances, meetingId) => {
     }
     return memo;
   }, {});
+
+  // limit to only the current user
+  //aggregatedCounts = aggregatedCounts[uid];
 
   let finalEdges = [];
   let edges = _.each(_.pairs(aggregatedCounts), (obj, idx) => {
@@ -291,14 +294,14 @@ export const processTimeline = (utterances, meetingId) => {
 };
 
 
-export const loadMeetingData = (meetingId) => dispatch => {
+export const loadMeetingData = (uid, meetingId) => dispatch => {
   dispatch({type: DASHBOARD_FETCH_MEETING_STATS, status: 'loading'});
   console.log("finding utterances for meeting", meetingId);
   return app.service('utterances').find({query: {meeting: meetingId, $limit: 10000}})
     .then((utterances) => {
       console.log("utterances", utterances);
       return {processedUtterances: processUtterances(utterances, meetingId),
-              processedNetwork: processNetwork(utterances, meetingId),
+              processedNetwork: processNetwork(uid, utterances, meetingId),
               processedTimeline: processTimeline(utterances, meetingId)};
 
     }).then(({processedUtterances, processedNetwork, processedTimeline}) => {

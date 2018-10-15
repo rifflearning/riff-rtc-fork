@@ -8,7 +8,7 @@ const Gantt = function() {
     top : 20,
     right : 40,
     bottom : 20,
-    left : 25
+    left : 50
   };
   var selector = '#gantt';
   var timeDomainStart = d3.timeDay.offset(new Date(),-3);
@@ -16,10 +16,11 @@ const Gantt = function() {
   var timeDomainMode = FIT_TIME_DOMAIN_MODE;// fixed or fit
   var taskTypes = [];
   var taskStatus = [];
-  // var height = document.body.clientHeight - margin.top - margin.bottom-5;
-  // var width = document.body.clientWidth - margin.right - margin.left-5;
-  var height = 300;
-  var width = 600;
+
+  //var height = document.body.clientHeight - margin.top - margin.bottom-5;
+  var width = document.body.clientWidth /2 - margin.right - margin.left;
+  var height = 250;
+  //var width = 600;
 
   var tickFormat = "%H:%M";
 

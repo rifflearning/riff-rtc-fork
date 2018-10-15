@@ -27,10 +27,10 @@ max-height: 100%;
 }
 `;
 
-const MeetingView = ({meeting, selected, handleMeetingClick}) => {
+const MeetingView = ({uid, meeting, selected, handleMeetingClick}) => {
   let m = moment(meeting.startTime).format("ha MMM Do");
   return (
-    <a onClick = {(event) => handleMeetingClick(event, meeting)}>
+    <a onClick = {(event) => handleMeetingClick(event, uid, meeting)}>
     <div className="timeline-item">
       <div className="timeline-marker is-image is-32x32">
         <MaterialIcon icon="voice_chat" size={20} color={selected ? '#ab45ab' : '#bdc3c7'} style={{marginLeft: '0.25rem', marginTop: '0.25rem', paddingLeft: '0.05rem', paddingTop: '0.1rem', fontSize: '1.3rem'}}/>
@@ -48,16 +48,19 @@ const MeetingView = ({meeting, selected, handleMeetingClick}) => {
   );
 };
 
-const MeetingList = ({ fetchMeetingsStatus,
+const MeetingList = ({ uid,
+                       fetchMeetingsStatus,
                        fetchMeetingsMessage,
                        meetings,
                        selectedMeeting,
                        handleMeetingClick }) => {
   let meetingTiles = meetings
     .map((meeting) => {
-      return (<MeetingView key={meeting._id}
-                           meeting={meeting}
-                           selected={selectedMeeting !== null && meeting._id === selectedMeeting._id}
+      return (<MeetingView
+              key={meeting._id}
+              uid={uid}
+              meeting={meeting}
+              selected={selectedMeeting !== null && meeting._id === selectedMeeting._id}
               handleMeetingClick={handleMeetingClick}/>
 
              );
@@ -103,11 +106,13 @@ const DashboardView = ({user, riffAuthToken, meetings,
       <div className="columns has-text-centered is-centered"
            style={{marginTop: "0px", maxHeight: "92vh"}}>
         <div className="column is-one-quarter has-text-left">
-          <MeetingList meetings={meetings}
-                       selectedMeeting={selectedMeeting}
-                       fetchMeetingsStatus={fetchMeetingsStatus}
-                       fetchMeetingsMessage={fetchMeetingsMessage}
-                       handleMeetingClick={handleMeetingClick}/>
+          <MeetingList
+            uid={user.uid}
+            meetings={meetings}
+            selectedMeeting={selectedMeeting}
+            fetchMeetingsStatus={fetchMeetingsStatus}
+            fetchMeetingsMessage={fetchMeetingsMessage}
+            handleMeetingClick={handleMeetingClick}/>
         </div>
         <div className="column" style={{maxHeight: "92vh", overflowY: 'scroll', overflowX: 'hidden', padding: '0'}}>
           {
