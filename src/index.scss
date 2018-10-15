@@ -5,7 +5,7 @@
 
 // WIDTHS
 // In Bulma, this makes the hamburger only appear in small screens.
-// Without it, it appears by default even in med-big screens 
+// Without it, it appears by default even in med-big screens
 $gap: 32px;
 $tablet:	568px;
 $desktop:	896px + (2 * $gap);
@@ -38,9 +38,9 @@ $family-sans-serif: "Nunito", sans-serif;
 @import "node_modules/bulma/sass/elements/container.sass";
 @import "node_modules/bulma/sass/elements/form.sass";
 @import "node_modules/bulma/sass/elements/title.sass";
+@import "node_modules/bulma/sass/components/navbar.sass";
 @import "node_modules/bulma/sass/layout/hero.sass";
 @import "node_modules/bulma/sass/layout/section.sass";
-@import "node_modules/bulma/sass/components/navbar.sass";
 @import "node_modules/bulma/sass/layout/_all.sass";
 @import "node_modules/bulma/sass/components/_all.sass";
 @import "node_modules/bulma/sass/elements/_all.sass";
