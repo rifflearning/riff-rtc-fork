@@ -2,6 +2,8 @@ import {
   DASHBOARD_FETCH_MEETINGS,
   DASHBOARD_SELECT_MEETING,
   DASHBOARD_FETCH_MEETING_STATS,
+  DASHBOARD_FETCH_MEETING_NETWORK,
+  DASHBOARD_FETCH_MEETING_TIMELINE,
   LOG_OUT
 } from '../constants/ActionTypes';
 
@@ -15,7 +17,9 @@ const initialState = {
   numMeetings: 0,
   selectedMeeting: null,
   processedUtterances: [],
-  statsStatus: 'loading'
+  statsStatus: 'loading',
+  networkStatus: 'loading',
+  networkData: null
 };
 
 const dashboard = (state=initialState, action) => {
@@ -37,6 +41,16 @@ const dashboard = (state=initialState, action) => {
     return {...state,
             statsStatus: action.status,
             processedUtterances: action.processedUtterances ? action.processedUtterances : state.processedUtterances};
+  case(DASHBOARD_FETCH_MEETING_NETWORK):
+    console.log("Fething meeting network", action);
+    return{...state,
+           networkStatus: action.status,
+           networkData: action.networkData ? action.networkData : state.networkData };
+  case(DASHBOARD_FETCH_MEETING_TIMELINE):
+    console.log("Fething meeting timeline", action);
+    return{...state,
+           timelineStatus: action.status,
+           timelineData: action.timelineData ? action.timelineData : state.timelineData };
   default:
     return state;
   }

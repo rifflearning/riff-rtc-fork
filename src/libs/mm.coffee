@@ -4,11 +4,7 @@
 #  'transitions': <Number Of transitions in interval>,
 #  'turns': [{'participant': <participantId>,
 #             'turns': <Percent of turns in interval by this participant>}, ...]
-  d3 = Object.assign({},
-                     require('d3-selection'),
-                     require('d3-scale'),
-                     require('d3-transition'),
-                    )
+  d3 = require('./d3').default
 
   NETWORK_RADIUS = 115 * 2/3
   PARTICIPANT_NODE_RADIUS = 20 * 2/3
@@ -45,7 +41,7 @@
       @remoteParticipants = [...@data.participants.slice(0, @data.participants.indexOf(@localParticipants[0])),
                              ...@data.participants.slice(@data.participants.indexOf(@localParticipants[0]) + 1)]
 
-                             
+
       # @nodeColorScale = d3.scaleOrdinal()
       #       .domain @remoteParticipants
       #       .range @peerColors
@@ -329,7 +325,7 @@
     # https://stackoverflow.com/questions/38224875/replacing-d3-transform-in-d3-v4
     @getTransformation: (transform) ->
       # Create a dummy g for calculation purposes only. This will never
-      # be appended to the DOM and will be discarded once this function 
+      # be appended to the DOM and will be discarded once this function
       # returns.
       g = document.createElementNS "http://www.w3.org/2000/svg", "g"
 

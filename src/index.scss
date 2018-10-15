@@ -27,6 +27,31 @@ a:hover {
   color: $purpleHover;
 }
 
+.sigma-scene {
+    left: 0px;
+}
+
+.sigma-mouse {
+    left: 0px
+}
+
+.line {
+    fill: none;
+    stroke: #bdc3c7;
+    stroke-width: 2px;
+}
+
+.axisGray line{
+    stroke: #bdc3c7;
+}
+
+.axisGray path{
+    stroke: #bdc3c7;
+}
+
+.axisGray text{
+    fill: #bdc3c7;
+} 
 
 // Update Bulma's global variables
 $family-sans-serif: "Nunito", sans-serif;
