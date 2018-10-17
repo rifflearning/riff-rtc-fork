@@ -28,6 +28,7 @@ import addWebRtcListeners from "../../redux/listeners/webrtc";
 import { riffAddUserToMeeting } from '../../redux/actions/riff';
 import { store, persistor } from '../../redux/store';
 import LeaveRoomButton from './LeaveRoomButton';
+import TextChat from './TextChat';
 import {ScaleLoader} from 'react-spinners';
 
 
@@ -460,6 +461,7 @@ class Chat extends Component {
                         chat={this.props.chat}
                         webrtc={this.webrtc}>
           </RenderVideos>
+          {this.props.inRoom && <TextChat/>}
         </div>
       </div>
     );

@@ -20,7 +20,9 @@ import {
   CHAT_CHANGE_PEER_DISPLAY_NAME,
   CHAT_JOIN_ROOM_ERROR,
   CHAT_CLEAR_JOIN_ROOM_ERROR,
-  CHAT_CHANGE_PEER_RIFF_ID
+  CHAT_CHANGE_PEER_RIFF_ID,
+  TEXT_CHAT_SEND_MSG,
+  TEXT_CHAT_MSG_UPDATE
 } from '../constants/ActionTypes';
 
 const initialState = {
@@ -49,6 +51,10 @@ const initialState = {
   webRtc: {
     config: null,
     signalMasterPath: ''
+  },
+  textchat: {
+    messages: [],
+    badge: 0
   }
 };
 
@@ -65,9 +71,9 @@ const chat = (state = initialState, action) => {
                                signalMasterPath: action.signalMasterPath}};
   case(ADD_PEER):
       // this removes any null peers
-    console.log("adding peer", action)    
-    let [riffId, displayName] = action.peer.peer.nick.split(" ")
-    console.log("adding peer", riffId, displayName)
+    console.log("adding peer", action);
+    let [riffId, displayName] = action.peer.peer.nick.split(" ");
+    console.log("adding peer", riffId, displayName);
     const peers = state.webRtcPeers.filter(n => !(n === null));
     let peer_ids = state.webRtcPeers.map(p => p.id);
     if (peer_ids.indexOf(action.peer.id) >= 1) {
@@ -145,6 +151,18 @@ const chat = (state = initialState, action) => {
     return {...state, audioMuted: true};
   case(UNMUTE_AUDIO):
     return {...state, audioMuted: false};
+  case(TEXT_CHAT_MSG_UPDATE):
+    // will never be a message this user has sent (will always be peer)
+    let dNames = state.webRtcPeers.map((p) => { return p.nick.split(" ")[1]; });
+    let rIds = state.webRtcPeers.map((p) => { return p.nick.split(" ")[0]; });
+    const peerIdx = rIds.indexOf(action.messageObj.participant);
+    const dispName = dNames[peerIdx];
+    let msg = {...action.messageObj,
+               name: dispName};
+    return {...state, textchat: {...state.textchat,
+                                 messages: [...state.textchat.messages,
+                                            msg],
+                                 badge: 1}};
   default:
     return state;
   }

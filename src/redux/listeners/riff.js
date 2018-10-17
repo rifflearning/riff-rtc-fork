@@ -3,6 +3,8 @@ import {
   updateMeetingParticipants,
   updateTurnData,
   updateRiffMeetingId} from '../actions/riff';
+import {
+  updateTextChat} from '../actions/textchat';
 
 
 function transformTurns(participants, turns) {
@@ -29,6 +31,20 @@ export default function (dispatch, getState) {
       // update meeting mediator data
       dispatch(updateMeetingParticipants(obj.participants));
       dispatch(updateRiffMeetingId(obj.meeting._id));
+    }
+  });
+
+  app.service('messages').on('created', function (obj) {
+    var state = getState();
+    console.log("message created!", obj);
+    if (obj.meeting === state.riff.meetingId &&
+        obj.participant != state.auth.user.uid) {
+      dispatch(updateTextChat(
+        obj.msg,
+        obj.meeting,
+        obj.participant,
+        obj.time
+      ));
     }
   });
 
