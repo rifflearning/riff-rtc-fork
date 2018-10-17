@@ -50,7 +50,8 @@ const addLabelsToData = (networkData, participantId) => {
 
 const chartInfo = "This network graph represents who you are most likely to speak after. \
 A stronger connection to another person in your meeting means you are likely paying more \
-attention to what they have to say.";
+attention to what they have to say. If you don't have an edge between you and another person, \
+you likely did not speak after them very often.";
 const NetworkChart = ({processedNetwork, participantId}) => {
   console.log("data for network:", processedNetwork);
   processedNetwork = addColorsToData(processedNetwork, participantId);
@@ -67,12 +68,13 @@ const NetworkChart = ({processedNetwork, participantId}) => {
       settings={{
         drawEdges: true,
         clone: false,
-        maxNodeSize: 20,
-        minNodeSize: 20,
+        maxNodeSize: 15,
+        minNodeSize: 15,
         minEdgeSize: _.min(processedNetwork.edges, (e) => { return e.size; }).size,
         maxEdgeSize: _.max(processedNetwork.edges, (e) => { return e.size; }).size,
         defaultEdgeColor: "rgb(243, 108,	110)",
         defaultNodeColor: "#bdc3c7"
+//        sideMargin: "10px"
       }}>
       <RelativeSize initialSize={10}/>
       <EdgeShapes default="curvedArrow"/>

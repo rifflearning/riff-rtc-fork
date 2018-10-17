@@ -240,9 +240,10 @@ export const processNetwork = (uid, utterances, meetingId) => {
                                                         id: "e" + idx,
                                                         size: (e.size / maxEdgeSize)*sizeMultiplier};});
   // filter any edges under 0.2 weight
-  finalEdges = _.filter(finalEdges, (e) => { return !(e.size < 0.1*sizeMultiplier); });
+  //finalEdges = _.filter(finalEdges, (e) => { return !(e.size < 0.1*sizeMultiplier); });
   let nodes = _.map(participants, (p, idx) => { return {id: p,
                                                         size: 20}; });
+  finalEdges = _.filter(finalEdges, (e) => { return e.source == uid; });
   // sort them for consistent colors
   nodes = _.sortBy(nodes, "id");
   console.log("nodes", nodes, "edges", finalEdges);
