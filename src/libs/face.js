@@ -1,9 +1,9 @@
-import {log} from './utils';
+import { logger } from './utils';
 const Thumos = require('thumos');
 
 export default function trackFace(app, user, roomname, videoId) {
 
-  log("starting to track facial movement!");
+  logger.debug("trackFace: starting to track facial movement!");
 
   let faceOverlay = window.client_config.faceTracking.overlay;
   let faceEventFreq = window.client_config.faceTracking.eventFrequency;
@@ -21,9 +21,9 @@ export default function trackFace(app, user, roomname, videoId) {
       'y_array': data.yArray,
 
     }).then(function (res) {
-      log('face movement event is being emitted!!! ', res);
+      logger.debug('trackFace: face movement event is being emitted!!! ', res);
     }).catch(function (err) {
-      console.log('ERROR: ', err);
+      logger.error('ERROR: ', err);
     });
   });
 
