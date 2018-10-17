@@ -297,7 +297,6 @@ const RenderVideos = ({inRoom, webRtcPeers, roomName, roRoomName, displayName, r
                           <h1>Nobody else here...</h1>
                           <ScaleLoader color={"#8A6A94"}/>
                           </div>
-                          <TextChat/>
                     </div>
                     }
               </div>
@@ -462,6 +461,7 @@ class Chat extends Component {
                         chat={this.props.chat}
                         webrtc={this.webrtc}>
           </RenderVideos>
+          <TextChat/>
         </div>
       </div>
     );

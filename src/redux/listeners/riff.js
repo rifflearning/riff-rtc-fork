@@ -3,6 +3,8 @@ import {
   updateMeetingParticipants,
   updateTurnData,
   updateRiffMeetingId} from '../actions/riff';
+import {
+  updateTextChat} from '../actions/textchat';
 
 
 function transformTurns(participants, turns) {
@@ -34,11 +36,17 @@ export default function (dispatch, getState) {
 
   app.service('messages').on('created', function (obj) {
     var state = getState();
-    if (obj.meeting.room === state.chat.roomName) {
-      console.log(obj);
-      dispatch(updateTextChat())
+    console.log("message created!", obj);
+    if (obj.meeting === state.riff.meetingId &&
+        obj.participant != state.auth.user.uid) {
+      dispatch(updateTextChat(
+        obj.msg,
+        obj.meeting,
+        obj.participant,
+        obj.time
+      ));
     }
-  })
+  });
 
   // this.app.service('meetings').on('patched', function (obj) {
   //   if (obj.room === state.chat.roomName) {

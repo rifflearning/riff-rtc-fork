@@ -10,17 +10,16 @@ export const sendTextChatMsg = (message, participant, meeting) => dispatch => {
     msg: message,
     participant: participant,
     meeting: meeting
+  }).then(function (result) {
+    console.log("created a message!", result);
+  }).catch(function (err) {
+    console.log("errored out", err);
   });
-  // return {type: TEXT_CHAT_SEND_MSG,
-  //         message,
-  //         participant,
-  //         meeting};
 };
 
 export const updateTextChat = (message, meeting, participant, time) => {
+  const messageObj = {message,meeting,participant,time};
   return {type: TEXT_CHAT_MSG_UPDATE,
-          message,
-          meeting,
-          participant,
-          time};
+          messageObj
+         };
 };
