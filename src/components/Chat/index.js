@@ -461,7 +461,7 @@ class Chat extends Component {
                         chat={this.props.chat}
                         webrtc={this.webrtc}>
           </RenderVideos>
-          <TextChat/>
+          {this.props.inRoom && <TextChat/>}
         </div>
       </div>
     );
