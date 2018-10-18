@@ -1,4 +1,4 @@
-function getUrlParam(sParam) {
+export function getUrlParam(sParam) {
   var sPageURL = decodeURIComponent(window.location.search.substring(1)),
       sURLVariables = sPageURL.split('&'),
       sParameterName,
@@ -13,13 +13,16 @@ function getUrlParam(sParam) {
   }
 };
 
-function log() {
+export function log() {
   if (window.client_config.react_app_debug == true) {
     console.log.apply(console, arguments);
   }
 };
 
-export {
-  getUrlParam,
-  log
-};
+export const logger =
+  {
+    debug: window.client_config.react_app_debug ? console.log.bind(window.console) : () => {},
+    info: console.log.bind(window.console),
+    warn: console.warn.bind(window.console),
+    error: console.error.bind(window.console),
+  };

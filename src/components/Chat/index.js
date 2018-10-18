@@ -11,6 +11,7 @@ import MaterialIcon from 'material-icons-react';
 import {
   setWebRtcConfig,
   joinWebRtc,
+  joinRoom,
   joinedRoom,
   leaveRoom,
   muteAudio,
@@ -30,6 +31,7 @@ import { store, persistor } from '../../redux/store';
 import LeaveRoomButton from './LeaveRoomButton';
 import TextChat from './TextChat';
 import {ScaleLoader} from 'react-spinners';
+import { logger } from '../../libs/utils';
 
 
 const mapStateToProps = state => ({
@@ -41,7 +43,7 @@ const mapStateToProps = state => ({
   mediaError: state.chat.getMediaError,
   joinRoomError: state.chat.joinRoomError,
   webRtc: state.chat.webRtc,
-  webrtcId: state.chat.webrtcId,
+  webRtcId: state.chat.webRtcId,
   displayName: state.chat.displayName,
   savedDisplayName: state.chat.savedDisplayName,
   webRtcPeers: state.chat.webRtcPeers[0] === null ? [] : state.chat.webRtcPeers,
@@ -81,23 +83,25 @@ const mapDispatchToProps = dispatch => ({
     }  else if (chat.getMediaError) {
       dispatch(joinRoomError('Make sure your camera and microphone are ready.'));
     } else {
-      let chatroom = chat.roomName;
+      let webRtcRoom = chat.roomName;
       if (lti.loggedIn) {
-        chatroom = `${chatroom}_${lti.context.id}`;
-        console.log(`lti user\'s webrtc room name set to: ${chatroom}`);
+        webRtcRoom = `${webRtcRoom}_${lti.context.id}`;
+        logger.debug(`Chat.handleReadyClick: lti user\'s webrtc room name set to: ${webRtcRoom}`);
       }
+      dispatch(joinRoom(webRtcRoom));
       event.preventDefault();
       webrtc.stopVolumeCollection();
-      webrtc.joinRoom(chatroom, function (err, rd) {
-        console.log(err, "---", rd);
+      webrtc.joinRoom(webRtcRoom, function (err, rd) {
+        logger.debug('Chat.handleReadyClick: webrtc.joinRoom cb:', { err, rd });
+        dispatch(joinedRoom(webRtcRoom));
       });
 
-      dispatch(joinedRoom(chatroom));
+      logger.debug(`Chat.handleReadyClick: calling riffAddUserToMeeting w/ room: "${webRtcRoom}"`);
       riffAddUserToMeeting(auth.user.uid,
                            auth.user.email ? auth.user.email : "",
-                           chatroom,
+                           webRtcRoom,
                            chat.displayName,
-                           chatroom,
+                           webRtcRoom,
                            chat.webRtcPeers,
                            riff.authToken
                           );
@@ -106,7 +110,7 @@ const mapDispatchToProps = dispatch => ({
     }
   },
   handleMuteAudioClick: (event, muted, webrtc) => {
-    console.log(event, muted);
+    logger.debug(event, muted);
     if (muted) {
       dispatch(unMuteAudio());
       webrtc.unmute();
@@ -115,8 +119,8 @@ const mapDispatchToProps = dispatch => ({
       webrtc.mute();
     }
   },
-  saveLocalWebrtcId: (webrtcId) => {
-    dispatch(saveLocalWebrtcId(webrtcId));
+  saveLocalWebrtcId: (webRtcId) => {
+    dispatch(saveLocalWebrtcId(webRtcId));
   },
   dispatch: dispatch,
 });
@@ -231,7 +235,7 @@ const RenderVideos = ({inRoom, webRtcPeers, roomName, roRoomName, displayName, r
                        joinButtonDisabled,
                        webrtc, chat}) =>
       {
-        //console.log("webrtc peers:", webRtcPeers);
+        //logger.debug("webrtc peers:", webRtcPeers);
         if (webRtcPeers.length > 0) {
           return (
             <div className="column">
@@ -316,14 +320,14 @@ class Chat extends Component {
                                      localVideo,
                                      this.props.dispatch,
                                      store.getState);
-    console.log("> webrtc connection ID:", this.webrtc.connection.connection.id);
+    logger.debug("> webrtc connection ID:", this.webrtc.connection.connection.id);
 
     // leave chat when window unloads
     window.addEventListener("beforeunload", this.onUnload);
   }
 
   onUnload(event) {
-    console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>UNLOADING!", event, this.props.riff.meetingId);
+    logger.debug('Chat.onUnload: >>>>>>>>>>>>>>>>>>>>>>>>>>>>UNLOADING!', event, this.props.riff.meetingId);
     if (!this.props.inRoom) {
       return undefined;
     }
@@ -333,7 +337,7 @@ class Chat extends Component {
     }
 
     if (event) {
-      console.log(event);
+      logger.debug('Chat.onUnload:', event);
       event.returnValue = "If you leave, you'll have to re-join the room.";
       return true;
     }
@@ -341,7 +345,7 @@ class Chat extends Component {
       this.props.riff.meetingId,
       this.props.user.uid).then(function (res) {
 
-        console.log("remove participant:", res);
+        logger.debug("Chat.onUnload: remove participant:", res);
         this.props.leaveRoom();
         this.webrtc.leaveRoom();
         if (this.webrtc.stopSibilant) {

@@ -2,8 +2,7 @@ import { LTI_LOGIN_USER,
          LTI_LOGOUT_USER,
        } from '../constants/ActionTypes';
 import {attemptUserCreate, attemptUserSignIn, loginUserSuccess, createUserFail} from './auth';
-import {changeRoomNameState, joinRoom} from './makeMeeting';
-import {changeDisplayName} from './chat';
+import {changeRoomName, changeDisplayName} from './chat';
 import app from '../../firebase';
 
 
@@ -53,7 +52,7 @@ export const loginLTIUser = ltiData => dispatch => {
     })
     .then(() => {
       // an LTI user cannot set the chat room name or display name so we need to set them now.
-      dispatch(joinRoom(ltiRoomName));
+      dispatch(changeRoomName(ltiRoomName));
       dispatch(changeDisplayName(ltiState.user.fullName));
     });
 };

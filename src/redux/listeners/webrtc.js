@@ -21,6 +21,7 @@ import {
 } from '../actions/riff';
 import ReactDOM from 'react-dom';
 
+import { logger } from '../../libs/utils';
 import { app, socket } from '../../riff';
 import captureSpeaking from '../../libs/audio';
 
@@ -51,11 +52,11 @@ export default function (nick, localVideoNode, dispatch, getState) {
 
   const webrtc = new SimpleWebRTC(webRtcConfig);
 
-  console.log("Creating webrtc constant...", webrtc);
-//  console.log("Local Session ID:", webrtc.connection.socket.sessionId)
+  logger.debug("Creating webrtc constant...", webrtc);
+//  logger.debug("Local Session ID:", webrtc.connection.socket.sessionId)
 
   webrtc.on('videoAdded', function (video, peer) {
-    console.log("added video", peer, video, "nick:", peer.nick);
+    logger.debug("added video", peer, video, "nick:", peer.nick);
     dispatch(addPeer({peer: peer, videoEl: video}));
     let [riffId, nick] = peer.nick.split(' ');
 //    dispatch(changePeerRiffId(peer, riffId));
@@ -67,7 +68,7 @@ export default function (nick, localVideoNode, dispatch, getState) {
     dispatch(removePeer({peer: peer,
                          videoEl: video}));
     if (state.chat.inRoom) {
-      console.log("riff removing participant: ", peer.nick, "from meeting", state.riff.meetingId);
+      logger.debug("riff removing participant: ", peer.nick, "from meeting", state.riff.meetingId);
       let [riffId, ...rest] = peer.nick.split(" ");
       participantLeaveRoom(state.riff.meetingId, riffId);
     }
@@ -93,7 +94,7 @@ export default function (nick, localVideoNode, dispatch, getState) {
     // when using localvideonode, we don't get a stream in chrome.
     //let stream = localVideoNode.captureStream ? localVideoNode.captureStream() : localVideoNode.mozCaptureStream();
     dispatch(getMediaError(false));
-    console.log("local webrtc connection id:", webrtc.connection.connection.id);
+    logger.debug("local webrtc connection id:", webrtc.connection.connection.id);
     dispatch(saveLocalWebrtcId(webrtc.connection.connection.id));
 
     var sib = new sibilant(stream);
@@ -127,18 +128,20 @@ export default function (nick, localVideoNode, dispatch, getState) {
       //   }
       // }.bind(getState));
 
+      logger.debug(`webrtc readyToCall handler: binding to sib stoppedSpeaking w/ room? "${getState().chat.webRtcRoom}"`);
       sib.bind('stoppedSpeaking', (data) => {
+        logger.debug(`webrtc readyToCall sib.stoppedSpeaking create utterance for user: ${getState().auth.user.uid} in room: "${getState().chat.webRtcRoom}"`);
         app.service('utterances').create({
           participant: getState().auth.user.uid,
-          room: getState().chat.roomName,
+          room: getState().chat.webRtcRoom,
           startTime: data.start.toISOString(),
           endTime: data.end.toISOString(),
           token: getState().riff.authToken
         }).then(function (res) {
-          //console.log("speaking event recorded:", res)
+          //logger.debug("speaking event recorded:", res)
           dispatch(updateRiffMeetingId(res.meeting));
         }).catch(function (err) {
-          console.log("ERROR", err);
+          logger.error("ERROR", err);
         });
       });
       dispatch(readyToCall());

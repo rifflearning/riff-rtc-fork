@@ -1,4 +1,4 @@
-import { JOINING_ROOM,
+import { JOIN_ROOM,
          JOINED_ROOM,
          IN_ROOM,
          ADD_PEER,
@@ -107,6 +107,11 @@ export const changePeerRiffId = (peer, riffId) => {
           riffId: riffId};
 };
 
+export const joinRoom = (roomName) => {
+  return { type: JOIN_ROOM,
+           roomName: roomName };
+};
+
 export const joinedRoom = (name) => {
   return {type: JOINED_ROOM,
           name: name};
@@ -123,19 +128,19 @@ export const displayNameSaveFail = (err) => {
           message: err};
 };
 
-export const saveLocalWebrtcId = (webrtcId) => {
-  console.log("saving local webrtc id:", webrtcId)
+export const saveLocalWebrtcId = (webRtcId) => {
+  console.log("saving local webrtc id:", webRtcId)
   return {type: CHAT_WEBRTC_ID_CHANGE,
-          webrtcId: webrtcId};
+          webRtcId: webRtcId};
 };
 
-export const saveDisplayName = (name, uid, meetingId, webrtcId) => dispatch => {
+export const saveDisplayName = (name, uid, meetingId, webRtcId) => dispatch => {
   let docId = uid + "_" + meetingId;
   let docRef = db.collection('meetings').doc(docId);
   docRef.set({
     user: uid,
     meeting: meetingId,
-    webrtcId: webrtcId,
+    webRtcId: webRtcId,
     displayName: name,
   },{merge: true}).then(() => {
     dispatch(displayNameSaveSuccess());

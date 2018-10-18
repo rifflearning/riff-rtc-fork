@@ -1,4 +1,4 @@
-import {log} from './utils';
+import { logger } from './utils';
 
 export default function captureSpeakingEvent(server, userinfo) {
   /*
@@ -6,7 +6,7 @@ export default function captureSpeakingEvent(server, userinfo) {
    * closing over the server + userinfo args
    */
   return function(data) {
-    log(userinfo)
+    logger.debug('captureSpeakingEvent: userinfo', userinfo)
     server.service('utterances').create({
       'participant': userinfo.username,
       'room': userinfo.roomName,
@@ -14,13 +14,13 @@ export default function captureSpeakingEvent(server, userinfo) {
       'endTime': data.end.toISOString(),
       'token': userinfo.token
     }).then(function (res) {
-      log('speaking event recorded!', res);
+      logger.debug('captureSpeakingEvent: speaking event recorded!', res);
       var start = new Date(res['startTime']);
       var end = new Date(res['endTime']);
       var duration = end - start;
-      log(duration);
+      logger.debug('captureSpeakingEvent: duration', duration);
     }).catch(function (err) {
-      log('ERROR:', err)
+      logger.error('ERROR:', err)
     })
   }
 }

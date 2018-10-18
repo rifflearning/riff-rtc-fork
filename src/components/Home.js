@@ -1,6 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import {log} from '../libs/utils';
+import { logger } from '../libs/utils';
 import MakeMeetingCard from './MakeMeetingCard';
 import getUserMedia from 'getusermedia';
 import attachMediaStream from 'attachmediastream';
@@ -27,11 +27,11 @@ class Home extends React.Component {
 
   constructor(props) {
     super(props);
-    console.log(props);
+    logger.debug('Home.ctor:', { props });
   }
 
   componentDidMount() {
-    log("Dom node: ", this.bgvid);
+    logger.debug("Home.didMount: Dom node: ", this.bgvid);
   }
 
   render() {

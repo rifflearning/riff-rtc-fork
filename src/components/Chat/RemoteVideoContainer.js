@@ -1,7 +1,5 @@
 import React from 'react';
-import {log} from '../../libs/utils';
-
-
+import { logger } from '../../libs/utils';
 
 
 class PeerVideo extends React.Component {
@@ -12,9 +10,9 @@ class PeerVideo extends React.Component {
   }
 
   appendVideo (el) {
-    console.log("appending?", "color:", this.props.peerColor)
+    logger.debug("appending?", "color:", this.props.peerColor)
     if (el !== null) {
-      
+
       this.video.style.setProperty('overflow', 'hidden');
       this.video.style.setProperty('display', 'block');
       this.video.style.setProperty('width', '100%');
@@ -30,7 +28,7 @@ class PeerVideo extends React.Component {
   render () {
     if (this.props.peerLength < 4) {
       this.video.style.setProperty('border-bottom', '5px solid ' + this.props.peerColor);
-      console.log("will it ever change?");
+      logger.debug("will it ever change?");
       return (
         <div className = {"videoContainer remotes column"}
              id = {"container_" + this.props.peer.id}
@@ -40,7 +38,7 @@ class PeerVideo extends React.Component {
         </div>
       );
     } else {
-      console.log("will it ever change?", '5px solid ' + this.props.peerColor);
+      logger.debug("will it ever change?", '5px solid ' + this.props.peerColor);
       this.video.style.setProperty('border-bottom', '5px solid ' + this.props.peerColor);
       return (
         <div className = {"videoContainer remotes column is-narrow"}
@@ -57,22 +55,22 @@ class PeerVideo extends React.Component {
 class RemoteVideoContainer extends React.Component {
   constructor(props) {
     super(props);
-    console.log("remote video props:", props);
+    logger.debug("remote video props:", props);
   }
 
   videos() {
     let peerLength = this.props.peers.length;
-    console.log("rendering", peerLength, "peers....", this.props.peers);
-    console.log("names:", this.props.chat.webRtcPeerDisplayNames);
-    console.log("riff ids:", this.props.chat.webRtcRiffIds);
+    logger.debug("rendering", peerLength, "peers....", this.props.peers);
+    logger.debug("names:", this.props.chat.webRtcPeerDisplayNames);
+    logger.debug("riff ids:", this.props.chat.webRtcRiffIds);
     return this.props.peers.map(function (peer) {
 //      const idx = this.props.chat.webRtcPeers.map(item => item.id).indexOf(peer.id);
       let [riffId, displayName] = peer.nick.split(" ");
       let riffIds = this.props.chat.webRtcRiffIds.sort();
-      console.log("riff ids:", riffIds);
+      logger.debug("riff ids:", riffIds);
       const idx = riffIds.indexOf(riffId);
       let peerColor = this.props.chat.peerColors[idx];
-      console.log("!!PEER COLOR:", peerColor, "IDX:", idx, "Riff ID:", riffId);
+      logger.debug("!!PEER COLOR:", peerColor, "IDX:", idx, "Riff ID:", riffId);
       return (<PeerVideo key={ peer.id }
               peer = { peer }
               peerColor = {peerColor}
