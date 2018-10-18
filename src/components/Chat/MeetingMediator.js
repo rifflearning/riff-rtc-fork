@@ -10,7 +10,7 @@ const mapStateToProps = state => ({
   transitions: state.riff.transitions,
   user: state.auth.user,
   displayName: state.chat.displayName,
-  roomName: state.chat.roomName,
+  webRtcRoom: state.chat.webRtcRoom,
   riffParticipants: state.riff.participants,
   riff: state.riff,
   chat: state.chat
@@ -35,7 +35,7 @@ class MeetingMediator extends Component {
       app,
       this.props.riffParticipants,
       this.props.user.uid,
-      this.props.roomName,
+      this.props.webRtcRoom,
       this.props.displayName,
       this.props.chat.peerColors,
       this.props.chat.webRtcRiffIds
