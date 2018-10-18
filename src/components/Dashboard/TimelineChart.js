@@ -20,7 +20,7 @@ import ChartCard from "./ChartCard";
 
 const colorYou = '#ab45ab';
 const colorOther = '#bdc3c7';
-let peerColors = ['#f56b6b', '#128AD', '#7caf5f', '#f2a466'];
+let peerColors = ['#f56b6b', '#128EAD', '#7caf5f', '#f2a466'];
 
 const drawGantt = (props) => {
   const {processedTimeline, participantId} = props;
@@ -33,7 +33,9 @@ const drawGantt = (props) => {
   let participantMap = _.object(participantIds, participantNames);
 
   const getColor = (pId) => {
-    let color = peerColors[participantIds.indexOf(pId)];
+    let pIndex = participantIds.indexOf(pId);
+    //console.log("participant index:", pIndex, "color:", peerColors[pIndex]);
+    let color = peerColors[pIndex];
     if (color == undefined) {
       color = colorOther;
     }
