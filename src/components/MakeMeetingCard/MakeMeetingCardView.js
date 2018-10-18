@@ -29,7 +29,7 @@ const MakeMeetingCardView = ({
   roomName,
   handleRoomNameChange,
   handleKeyPress,
-  joinRoom,
+  joinChatRoom,
   isInvalid}) => (
     <GradientCard>
       <div className="card-content">

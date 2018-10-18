@@ -2,10 +2,8 @@ import React, { Component } from "react";
 import { withRouter } from "react-router-dom";
 import { connect } from 'react-redux';
 import auth from "../../firebase";
-import {
-  changeRoomNameState,
-  joinRoom}
-from "../../redux/actions/makeMeeting";
+import { changeRoomNameState } from "../../redux/actions/makeMeeting";
+import { changeRoomName } from "../../redux/actions/chat";
 import { push } from 'connected-react-router';
 import MakeMeetingCardView from './MakeMeetingCardView';
 
@@ -30,15 +28,15 @@ const mapDispatchToProps = dispatch => ({
     }
   },
 
-  joinRoom: (roomName) => {
+  joinChatRoom: (roomName) => {
     //console.log("event:", event);
-    dispatch(joinRoom(roomName))
-    dispatch(push("/room"))
+    dispatch(changeRoomName(roomName));
+    dispatch(push("/room"));
   }
 })
 
 export default withRouter(
   connect(mapStateToProps,
-          mapDispatchToProps)(MakeMeetingCardView))
+          mapDispatchToProps)(MakeMeetingCardView));
 
 
